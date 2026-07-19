@@ -117,10 +117,9 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-017 — Tipos de Garantía
 
-- **Estado:** [PV] — alcance confirmado, valores aún sin definir.
-- **Confirmado (2026-07-18):** Garantías **sí forma parte del MVP**, integrada a Taller/Órdenes de Trabajo (no como módulo independiente complejo).
-- **Valores propuestos (a validar):** Garantía de Repuesto, Garantía de Mano de Obra.
-- **Referencia:** BQ-035, BQ-036.
+- **Estado:** [C] — **catálogo descartado para V1** (confirmado 2026-07-18, segunda ronda).
+- **Confirmado:** para V1, una garantía es solo un período (fecha inicio/fin) asociado a una reparación, sin distinguir tipos de cobertura (repuesto vs. mano de obra). Este catálogo de "tipos de garantía" queda explícitamente para una versión futura, junto con la gestión avanzada de garantías.
+- **Referencia:** BQ-035, BQ-036 (resueltas con alcance reducido).
 
 ## CAT-018 — Motivos de Rechazo / Anulación
 
@@ -159,9 +158,9 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-014 Unidades de Medida | [PV] | Inventario |
 | CAT-015 Prioridades | [PV] | Taller/Campo |
 | CAT-016 Almacenes/Sucursales | [C] | Inventario |
-| CAT-017 Tipos de Garantía | [PV] | Taller |
+| CAT-017 Tipos de Garantía | [C] — descartado para V1 | Taller |
 | CAT-018 Motivos de Rechazo/Anulación | [PV] | Ventas/Taller |
 | CAT-019 Monedas | [PV] | Ventas/Caja |
 | CAT-020 Documentos de Identidad | [PV] | Clientes/Proveedores |
 
-**Conclusión (actualizada 2026-07-18):** de los 20 catálogos identificados, **7 tienen valores totalmente confirmados** por el propietario (CAT-001, CAT-003, CAT-004, CAT-005, CAT-013, CAT-016, y CAT-002 con matiz de estructura pendiente). Los 13 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.
+**Conclusión (actualizada 2026-07-18, segunda ronda):** de los 20 catálogos identificados, **8 están resueltos** (CAT-001, CAT-003, CAT-004, CAT-005, CAT-013, CAT-016, CAT-017 —descartado para V1—, y CAT-002 con matiz de estructura pendiente). Los 12 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.

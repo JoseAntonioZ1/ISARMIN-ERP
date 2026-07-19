@@ -58,11 +58,13 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 
 ### 4.2 Roles y Permisos
 
+> **Confirmado por el propietario (2026-07-18):** el sistema **no debe asumir departamentos separados ni roles fijos en el código**. Los roles deben ser configurables por el Administrador, para permitir crecimiento futuro. Roles iniciales de referencia (semilla, no exhaustivos ni fijos): Administrador/Gerente, Ventas, Técnico, Caja — pero debe ser posible crear nuevos roles posteriormente sin cambios de arquitectura.
+
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-008 | El sistema permitirá crear y administrar roles como conjuntos de permisos. | Alta | [I] | Administrador | — |
+| RF-008 | El sistema permitirá crear, editar y administrar roles como conjuntos de permisos configurables, sin roles fijos en el código. | **Alta** | [C] | Administrador | — |
 | RF-009 | El sistema permitirá asignar uno o más roles a un usuario. | Alta | [PV] | Administrador | BQ-042 |
-| RF-010 | El sistema permitirá definir permisos granulares por módulo y acción (crear, editar, eliminar, consultar, anular). | Alta | [PV] | Administrador | BQ-063 |
+| RF-010 | El sistema permitirá definir permisos granulares por módulo y acción (crear, editar, eliminar, consultar, anular) para cada rol, incluyendo la posibilidad de que más de un rol comparta acceso a un mismo módulo (ej. la recepción de equipos, ver RF-051). | **Alta** | [C] | Administrador | BQ-063 (resuelta), BQ-089 (resuelta) |
 | RF-011 | El sistema deberá restringir el acceso a cada módulo según el rol del usuario autenticado. | Alta | [I] | — | — |
 
 ### 4.3 Clientes
@@ -71,7 +73,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 |---|---|---|---|---|---|
 | RF-012 | El sistema permitirá registrar clientes. | Alta | [C] | Recepcionista, Vendedor | — |
 | RF-013 | El sistema permitirá editar clientes. | Alta | [C] | Recepcionista, Vendedor | — |
-| RF-014 | El sistema permitirá eliminar clientes. **Nota del analista:** dado que un cliente puede tener historial de ventas u OT asociado (RN-005), se recomienda evaluar baja lógica en vez de eliminación física, para no romper trazabilidad. | Media | [C]/[PV] | Administrador | BQ-064 |
+| RF-014 | El sistema permitirá desactivar clientes manteniendo todo su historial asociado (ventas, reparaciones, servicios, pagos, historial de equipos). No existe eliminación física. | Alta | [C] | Administrador | BQ-064 (resuelta) |
 | RF-015 | El sistema permitirá buscar clientes. | Alta | [C] | Recepcionista, Vendedor | — |
 | RF-016 | El sistema permitirá diferenciar entre cliente persona natural y persona jurídica, para determinar el tipo de comprobante emitible. | Alta | [PV] | Vendedor | BQ-011, CAT-006 |
 | RF-017 | El sistema permitirá consultar el historial de compras, órdenes de trabajo y servicios de campo asociados a un cliente. | Alta | [I] | Todos (consulta) | RN-005 |
@@ -90,7 +92,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-023 | El sistema permitirá registrar productos con su información básica (nombre, categoría, unidad de medida, precio, stock). | Alta | [I] | Almacenero | — |
+| RF-023 | El sistema permitirá registrar productos con al menos los siguientes atributos: código, nombre, categoría, marca, unidad de medida, costo de adquisición, precio de venta, margen y stock. | Alta | [C] | Administrador | — |
 | RF-024 | El sistema permitirá editar productos. | Alta | [I] | Almacenero | — |
 | RF-025 | El sistema permitirá clasificar productos por categoría (herramientas eléctricas, manuales, materiales eléctricos/sanitarios, repuestos, accesorios, tecnología, etc.). | Alta | [C] | Almacenero | CAT-007 |
 | RF-026 | El sistema permitirá consultar el stock disponible de un producto en tiempo real. | Alta | [I] | Vendedor, Almacenero, Técnico | — |
@@ -103,13 +105,15 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 
 ### 4.6 Compras
 
+> **Flujo real confirmado por el propietario (2026-07-18):** Proveedor → Compra realizada → Documento de compra → Registro en sistema → Actualización de inventario. No existe un proceso formal de Orden de Compra con aprobación previa; **queda explícitamente para una versión futura**.
+
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-033 | El sistema permitirá registrar compras a proveedores de forma directa (proveedor, fecha, productos, cantidad, costo), sin requerir un flujo de aprobación previa — confirmado por el propietario (RN-024). | Alta | [C] | Administrador | BQ-020 |
-| RF-034 | El sistema permitirá registrar la recepción de mercadería asociada a una orden de compra, actualizando el stock. | Alta | [I] | Almacenero | RF-027 |
-| RF-035 | El sistema permitirá registrar el costo de compra de cada producto, actualizando su costo de referencia. | Alta | [PV] | Almacenero | BQ-021 |
-| RF-036 | El sistema permitirá consultar el historial de compras por proveedor o por producto. | Media | [I] | Almacenero, Contador | — |
-| RF-037 | El sistema permitirá registrar compras directas sin orden de compra previa. | Media | [PV] | Almacenero | BQ-022 |
+| RF-033 | El sistema permitirá registrar una compra ya realizada, indicando proveedor, fecha, productos adquiridos y cantidad, sin requerir una orden de compra ni aprobación previa. El registro deberá actualizar automáticamente el inventario (stock y Kardex) de los productos adquiridos. | Alta | [C] | Administrador | BQ-020, RN-024, RF-027 |
+| RF-034 | El sistema permitirá registrar el documento de compra (boleta/factura del proveedor u otro comprobante) asociado a cada compra registrada. | Alta | [C] | Administrador | — |
+| RF-035 | El sistema permitirá registrar el costo de cada producto adquirido, actualizando su costo de referencia mediante costo promedio ponderado (RN-013, decisión tentativa). | Alta | [PV] | Administrador | BQ-021 |
+| RF-036 | El sistema permitirá consultar el historial de compras por proveedor o por producto. | Media | [I] | Administrador | — |
+| RF-037 | *(Fuera de alcance v1 — versión futura)* El sistema permitirá formalizar un flujo de Orden de Compra con aprobación previa, para cuando el negocio requiera ese nivel de control. | Baja | [PV] | — | BQ-020, BQ-022 |
 
 ### 4.7 Ventas
 
@@ -138,18 +142,18 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-051 | El sistema permitirá registrar equipos para reparación, asociados a un cliente. | Alta | [C] | Recepcionista | — |
-| RF-052 | El sistema permitirá generar una Orden de Trabajo (OT) para un equipo recibido. | Alta | [C] | Recepcionista | RN-004, RN-005 |
-| RF-053 | El sistema permitirá emitir un comprobante de recepción al momento de registrar el equipo. | Alta | [C] | Recepcionista | — |
+| RF-051 | El sistema permitirá registrar equipos para reparación, asociados a un cliente. **Confirmado (2026-07-18):** la recepción no es exclusiva de un rol — hoy no existe un recepcionista dedicado, por lo que el sistema debe permitir que Administrador, Técnico o Ventas registren la recepción, según quién atienda al cliente en ese momento (permiso configurable por rol, RF-010). | Alta | [C] | Administrador, Técnico o Ventas (configurable) | BQ-089 (resuelta) |
+| RF-052 | El sistema permitirá generar una Orden de Trabajo (OT) para un equipo recibido, dejando registro del usuario que realizó el registro. | Alta | [C] | Administrador, Técnico o Ventas (configurable) | RN-004, RN-005 |
+| RF-053 | El sistema permitirá emitir un comprobante de recepción al momento de registrar el equipo. | Alta | [C] | Administrador, Técnico o Ventas (configurable) | — |
 | RF-054 | El sistema permitirá registrar el diagnóstico técnico de un equipo dentro de su OT. | Alta | [I] | Técnico | — |
 | RF-055 | El sistema permitirá generar una cotización de reparación a partir del diagnóstico registrado. | Alta | [I] | Técnico, Supervisor | — |
 | RF-056 | El sistema permitirá registrar la aprobación o el rechazo del cliente sobre una cotización de reparación. | Alta | [I] | Recepcionista | BQ-034 |
 | RF-057 | El sistema permitirá registrar los repuestos consumidos durante una reparación, descontándolos automáticamente del inventario. | Alta | [C] | Técnico | RN-002, RN-003 |
 | RF-058 | El sistema permitirá registrar el resultado de las pruebas realizadas antes de la entrega del equipo. | Media | [I] | Técnico | — |
 | RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, validando el pago previo. | Alta | [C] | Recepcionista | RN-001 |
-| RF-060 | El sistema permitirá consultar el historial único de cada equipo a través de sus distintos ingresos. | Alta | [C] | Todos (consulta) | RN-005 |
-| RF-061 | El sistema permitirá registrar una garantía asociada a una reparación, con su período de cobertura. | **Alta** (elevada de Media — Garantías confirmado en el MVP el 2026-07-18) | [PV] | Técnico, Administrador | BQ-035, BQ-036 |
-| RF-062 | El sistema permitirá vincular una nueva OT a una garantía vigente, identificando si la falla está cubierta. | **Alta** (elevada de Media) | [PV] | Administrador | BQ-036 |
+| RF-060 | El sistema permitirá consultar el historial completo de cada equipo a través de sus distintos ingresos, incluyendo por cada uno: fecha de ingreso, diagnóstico, reparación realizada, repuestos utilizados, técnico responsable y garantía asociada. | Alta | [C] | Todos (consulta) | RN-005 |
+| RF-061 | El sistema permitirá registrar, para una reparación, si tiene garantía asociada, su período (fecha de inicio y fecha de finalización). **Alcance V1 confirmado y reducido (2026-07-18):** no incluye tipos de garantía, condiciones de cobertura ni gestión avanzada — eso queda para una versión futura. | Alta | [C] | Técnico, Administrador | BQ-035 (resuelta con alcance reducido) |
+| RF-062 | El sistema permitirá asociar una nueva Orden de Trabajo a una garantía existente vigente. | Alta | [C] | Administrador | BQ-036 (resuelta con alcance reducido) |
 | RF-063 | El sistema permitirá registrar y consultar el estado actual de una OT en todo momento. | Alta | [PV] | Todos (consulta) | Business-States.md, BQ-032 |
 
 ### 4.10 Servicios de Campo
@@ -163,7 +167,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-068 | El sistema permitirá generar una cotización para un servicio de campo, de forma análoga al Taller. | Media | [PV] | Técnico, Supervisor | BQ-038 |
 | RF-069 | El sistema permitirá registrar la conformidad del cliente al finalizar un servicio de campo. | Media | [PV] | Técnico | BQ-039 |
 | RF-070 | El sistema permitirá registrar el cobro de un servicio de campo. | Alta | [PV] | Técnico, Cajero | BQ-040 |
-| RF-071 | El sistema deberá permitir el registro de información de un servicio de campo en condiciones de conectividad limitada, sincronizando al recuperar conexión. | Alta | [PV] | Técnico | BQ-052, BQ-053 |
+| RF-071 | El registro de un servicio de campo (diagnóstico, materiales, conformidad, cobro) se realizará **desde el sistema web**, típicamente al volver a la red local. **Confirmado y acotado el 2026-07-18:** para V1 se retiran explícitamente la aplicación móvil dedicada y la sincronización offline; el sistema debe diseñarse con un punto de extensión para incorporarlas en una versión futura, sin requerir rediseño. | Alta | [C] | Técnico | BQ-052 (resuelta), BQ-053 (resuelta) |
 
 ### 4.11 Reportes
 
@@ -176,12 +180,14 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-076 | El sistema permitirá generar un reporte de caja por período. | Alta | [I] | Contador, Gerente | — |
 | RF-077 | El sistema permitirá generar reportes adicionales según necesidad gerencial (rentabilidad, rotación de inventario, indicadores de taller). | Media | [PV] | Gerente | BQ-054 |
 
-### 4.12 Auditoría
+### 4.12 Auditoría (capacidad transversal, no módulo independiente)
+
+> **Confirmado por el propietario (2026-07-18):** la auditoría se mantiene en V1 como funcionalidad transversal (no como módulo complejo independiente ni con interfaz propia extensa).
 
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-078 | El sistema deberá registrar de forma inmutable las acciones relevantes de cada usuario (creación, edición, eliminación, anulación). | Alta | [C] | — | RNF-005 |
-| RF-079 | El sistema permitirá consultar el historial de auditoría filtrando por usuario, módulo y fecha. | Media | [I] | Administrador, Gerente | BQ-049 |
+| RF-078 | El sistema deberá registrar de forma inmutable las siguientes acciones críticas: creación de registros, modificaciones, eliminaciones lógicas, anulaciones, movimientos de inventario, movimientos de caja y cambios importantes en Órdenes de Trabajo. | Alta | [C] | — | RNF-005 |
+| RF-079 | El sistema permitirá consultar el historial de auditoría, mostrando para cada evento: usuario, fecha, hora, acción realizada y registro afectado. | Alta | [C] | Administrador | BQ-049 (resuelta) |
 
 ### 4.13 Configuración
 
@@ -191,12 +197,33 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-081 | El sistema permitirá configurar las series y correlativos de los distintos comprobantes. | Alta | [PV] | Administrador | BQ-050 |
 | RF-082 | El sistema permitirá administrar los catálogos del sistema (ver Business-Catalogs.md) sin requerir cambios de código, en línea con la visión de solución configurable declarada para el proyecto. | Media | [PV] | Administrador | — |
 
+### 4.14 Relación entre Ventas y Servicios Técnicos
+
+> **Nuevo requerimiento incorporado el 2026-07-18**, a partir de la validación del propietario: una venta puede combinar materiales vendidos con la mano de obra de una reparación o servicio de campo (ej. una instalación eléctrica factura materiales + mano de obra en un mismo comprobante).
+
+| ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
+|---|---|---|---|---|---|
+| RF-083 | El sistema permitirá que un comprobante de venta esté asociado a una reparación (OT), a un servicio de campo, o a una cotización aprobada de cualquiera de los dos, combinando en un mismo comprobante los materiales/repuestos utilizados y el costo de mano de obra. | Alta | [C] | Administrador, Ventas | RF-040, RF-057, RF-067 |
+
+### 4.15 Gestión Documental
+
+> **Nuevo módulo incorporado el 2026-07-18**, a partir de la validación del propietario: el sistema debe quedar preparado para almacenar archivos asociados a distintas entidades del negocio.
+
+| ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
+|---|---|---|---|---|---|
+| RF-084 | El sistema permitirá adjuntar fotografías de equipos a una Orden de Trabajo o a un Servicio de Campo. | Alta | [C] | Técnico, Administrador | RF-052, RF-064 |
+| RF-085 | El sistema permitirá adjuntar el documento de compra (boleta/factura del proveedor) a una compra registrada. | Alta | [C] | Administrador | RF-034 |
+| RF-086 | El sistema permitirá adjuntar cotizaciones, comprobantes e informes técnicos a la entidad correspondiente (venta, OT o servicio de campo). | Alta | [C] | Administrador, Ventas, Técnico | RF-039, RF-055, RF-068 |
+| RF-087 | El sistema deberá estar preparado para almacenar y recuperar los archivos adjuntos de forma confiable, incluyendo su respaldo (ver Non-Functional-Requirements.md, sección de Respaldos). | Alta | [C] | — | RNF (respaldos) |
+
 ## 5. Requerimientos explícitamente fuera de alcance (v1)
 
-No se documentan por ausencia total de información de negocio, no por decisión del analista:
-- Portal de autoservicio para clientes (depende de **BQ-006**).
+Confirmados como fuera de alcance por el propietario / `PROJECT_SCOPE.md` (2026-07-18):
+- Portal de autoservicio para clientes (**BQ-006**, resuelta).
+- Aplicación móvil dedicada y sincronización offline para Servicios de Campo — la V1 es web; queda como punto de extensión futuro (**BQ-052**, **BQ-053**, resueltas).
+- Flujo formal de Orden de Compra con aprobación previa (RF-037, **BQ-020**, **BQ-022**).
+- Gestión avanzada de garantías (tipos de garantía, condiciones de cobertura detalladas) — V1 solo registra si tiene garantía, período y asociación a nueva OT (RF-061, RF-062).
 - Integración con comercio electrónico / venta online.
-- Aplicación móvil dedicada para técnicos de campo (depende de **BQ-052**, **BQ-053**).
 
 ## 6. Siguiente paso
 

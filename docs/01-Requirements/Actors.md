@@ -55,18 +55,18 @@ ISARMIN PERÚ S.A.C. es una empresa pequeña que opera en **un único local prop
 - **Estado:** [DESCARTADO] — resuelve **BQ-059**.
 - **Motivo:** no existe un rol "Supervisor" de Taller/Campo distinto del Propietario; la supervisión (si aplica) la ejerce ACT-001, que ya tiene acceso completo.
 
-### ACT-004 — ~~Recepcionista~~ [DESCARTADO / PARCIALMENTE ABSORBIDO]
-- **Estado:** [DESCARTADO], con una ambigüedad abierta — resuelve parcialmente **BQ-060**, y origina la nueva pregunta **BQ-089**.
-- **Motivo:** no existe un rol "Recepcionista" independiente. Sus funciones especuladas (registrar cliente nuevo, registrar equipo recibido, emitir comprobante de recepción) ocurren en la práctica en la misma Área 1 (Tienda/Recepción) donde trabaja **ACT-005 — Ventas**, pero el acceso confirmado para Ventas (ver ACT-005) **no incluye explícitamente el módulo de Taller**. No se asume que Ventas absorbe esta función hasta que se confirme con el propietario.
+### ACT-004 — ~~Recepcionista~~ [DESCARTADO]
+- **Estado:** [DESCARTADO] — resuelve **BQ-060** y **BQ-089**.
+- **Motivo:** no existe un rol "Recepcionista" independiente ni dedicado. Confirmado por el propietario (segunda ronda, 2026-07-18): *"La recepción de equipos no corresponde exclusivamente al rol Ventas ni al rol Técnico. Actualmente la empresa no cuenta con un recepcionista dedicado. La persona que registre la recepción dependerá de quién atienda al cliente en ese momento."* La función de recepción queda repartida entre **ACT-001, ACT-005 y ACT-007** (ver permiso configurable RF-010), no absorbida por uno solo.
 
 ### ACT-005 — Ventas (antes "Vendedor")
 - **Tipo:** Primario / Interno
 - **Estado:** [C] — confirmado directamente por el propietario.
 - **Descripción:** Persona responsable de la atención y venta en el Área 1 (Tienda/Recepción). En la operación real se llama "Encargada de Ventas".
 - **Responsabilidades reales declaradas:** Atención al cliente, ventas de tienda, registro de ventas, apoyo administrativo.
-- **Acceso confirmado (fuente: propietario):** Clientes, Productos, Ventas, Caja, Consulta de inventario.
+- **Acceso confirmado (fuente: propietario):** Clientes, Productos, Ventas, Caja, Consulta de inventario, y además **Recepción de equipos (RF-051 a RF-053)**, de forma configurable y compartida con ACT-001 y ACT-007 (resuelto **BQ-089**, segunda ronda, 2026-07-18).
 - **Resuelve:** **BQ-061** (sí cobra directamente — el rol incluye Caja, no existe un cajero independiente).
-- **⚠️ Ambigüedad detectada, no asumida (BQ-089):** el acceso confirmado **no incluye explícitamente Taller/Órdenes de Trabajo**, pese a que la recepción y entrega de equipos ocurre físicamente en la misma área donde esta persona trabaja. No se debe asumir si registra la recepción/entrega de equipos en el sistema — debe confirmarse explícitamente.
+- **Nota sobre roles configurables:** el propietario listó "Caja" como rol semilla de referencia junto a Administrador/Gerente, Ventas y Técnico, para dejar claro que el catálogo de roles debe ser configurable a futuro — no implica que exista hoy una persona distinta para Caja; sigue siendo la misma Encargada de Ventas.
 
 ### ACT-006 — ~~Almacenero~~ [DESCARTADO]
 - **Estado:** [DESCARTADO] — contribuye a resolver **BQ-002**.
@@ -76,7 +76,7 @@ ISARMIN PERÚ S.A.C. es una empresa pequeña que opera en **un único local prop
 - **Tipo:** Primario / Interno
 - **Estado:** [C] — confirmado directamente por el propietario. Resuelve **BQ-041**: es un **único rol**, sin distinción entre Taller y Campo (consistente con que hoy es el mismo Propietario quien ejecuta ambos).
 - **Descripción:** Ejecuta diagnóstico, reparación y mantenimiento de equipos en Taller, y trabajos técnicos en Servicios de Campo. Hoy lo ejerce el propio Propietario (bajo su acceso de Administrador), pero el catálogo de roles del sistema debe contemplar "Técnico" como rol independiente para cuando se contrate personal técnico adicional.
-- **Acceso confirmado (fuente: propietario):** Taller, Diagnósticos, Órdenes de Trabajo, Consumo de materiales.
+- **Acceso confirmado (fuente: propietario):** Taller, Diagnósticos, Órdenes de Trabajo, Consumo de materiales, y además **Recepción de equipos** de forma configurable y compartida con ACT-001 y ACT-005 (**BQ-089**, segunda ronda, 2026-07-18).
 - **Nota:** dado que hoy el Técnico y el Administrador son la misma persona, no fue necesario para el propietario resolver formalmente si un usuario puede tener más de un rol simultáneo — **BQ-042 queda parcialmente resuelta** (no es una necesidad urgente hoy, pero el sistema debería permitirlo para cuando se contrate personal).
 
 ### ACT-008 — ~~Contador~~ [DESCARTADO PARA EL MVP]
@@ -120,7 +120,7 @@ ISARMIN PERÚ S.A.C. es una empresa pequeña que opera en **un único local prop
 
 ## 8. Matriz real de permisos (confirmada por el propietario — reemplaza la hipótesis anterior)
 
-> Esta matriz refleja la información entregada directamente por el propietario el 2026-07-18. Resuelve **BQ-063**. La única celda no confirmada explícitamente es la de Ventas sobre Taller, señalada abajo y en **BQ-089**.
+> Esta matriz refleja la información entregada directamente por el propietario el 2026-07-18 (dos rondas de validación). Resuelve **BQ-063** y **BQ-089**. Los permisos son **configurables por el Administrador** (RF-010) — esta tabla es el estado inicial de referencia (semilla), no un esquema fijo en código.
 
 | Módulo | Administrador/Propietario (ACT-001) | Ventas (ACT-005) | Técnico (ACT-007) |
 |---|---|---|---|
@@ -133,11 +133,11 @@ ISARMIN PERÚ S.A.C. es una empresa pequeña que opera en **un único local prop
 | Compras | ✔ | — | — |
 | Ventas | ✔ | ✔ | — |
 | Caja | ✔ | ✔ | — |
-| Taller / Diagnósticos / Órdenes de Trabajo | ✔ | ⚠️ **No confirmado (BQ-089)** | ✔ |
+| Recepción de equipos / Taller / Diagnósticos / Órdenes de Trabajo | ✔ | ✔ (configurable) | ✔ |
 | Servicios de Campo | ✔ | — | ✔ |
 | Reportes | ✔ | — | — |
 | Auditoría (bitácora transversal, no un módulo con UI propia) | ✔ (implícito, todo queda auditado) | — | — |
 
 ## 9. Preguntas abiertas relacionadas
 
-La mayoría de las preguntas originadas en este documento fueron resueltas o parcialmente resueltas el 2026-07-18. Quedan abiertas: **BQ-042** (multi-rol, baja urgencia), **BQ-043, BQ-044, BQ-047, BQ-048** (sesión y contraseñas), **BQ-045** (permisos por sede, baja urgencia dado que se confirmó sede única), y de forma prioritaria **BQ-089** (acceso de Ventas a Taller/recepción de equipos). Ver [Business-Questions.md](../02-Business/Business-Questions.md), sección **11. Usuarios y Roles**.
+La mayoría de las preguntas originadas en este documento fueron resueltas el 2026-07-18 (incluyendo, en la segunda ronda, **BQ-060, BQ-089**). Quedan abiertas: **BQ-042** (multi-rol, baja urgencia), **BQ-043, BQ-044, BQ-047, BQ-048** (sesión y contraseñas), **BQ-045** (permisos por sede, baja urgencia dado que se confirmó sede única). Ver [Business-Questions.md](../02-Business/Business-Questions.md), sección **11. Usuarios y Roles**.
