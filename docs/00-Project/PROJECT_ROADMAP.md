@@ -4,7 +4,7 @@
 
 ## Estado Actual
 
-🟢 Fase de Diseño (Fase 3) completada — lista para iniciar Fase 4 (Desarrollo)
+🔵 Fase 4 (Desarrollo) en curso — estructura profesional del proyecto (backend + frontend) creada el 2026-07-19; próximo paso: módulo de Autenticación
 
 ---
 
@@ -55,7 +55,7 @@ Estado: ✅ Completada — Arquitectura del sistema (`03-Architecture/Architectu
 - Base de datos
 - Integraciones
 
-Estado: ⏳ Pendiente
+Estado: 🔵 En curso — estructura profesional inicial creada (2026-07-19): solución .NET 9 con Clean Architecture (`ISARMIN.Domain`/`Application`/`Infrastructure`/`API` + proyectos de test xUnit), configuración base (EF Core + PostgreSQL vía Npgsql/EFCore.NamingConventions, JWT, Swagger, Serilog, CORS, manejo global de excepciones), y proyecto frontend React 19 + TypeScript + Vite (Tailwind CSS, React Router, TanStack Query, Zustand, React Hook Form + Zod). Aún sin módulos de negocio — el siguiente paso es el módulo de Autenticación.
 
 ---
 

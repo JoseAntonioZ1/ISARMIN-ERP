@@ -1,13 +1,46 @@
-node_modules/
+# === .NET / Backend ===
 bin/
 obj/
-dist/
-.vscode/settings.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+publish/
+*.pdb
 
+# User secrets / configuración local sensible
+appsettings.*.local.json
+secrets.json
+
+# === Node / Frontend ===
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+.vite/
+
+# === Variables de entorno ===
 .env
 .env.*
+!.env.example
 
+# === Logs ===
 *.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
 
+# === Datos de la aplicación (no versionar) ===
 uploads/
 backups/
+
+# === Editores / SO ===
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
