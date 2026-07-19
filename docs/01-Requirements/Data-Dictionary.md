@@ -103,8 +103,8 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | cantidad | Número | Sí | Positivo (entrada) o negativo (salida). | [C] | RN-002 |
 | fecha | Fecha/Hora | Sí | — | [C] | RN-002 |
 | usuario_id | Referencia a Usuario | Sí | Trazabilidad (RN-022). | [C] | RN-022 |
-| origen_tipo | Catálogo (Venta/Compra/OrdenTrabajo/ServicioCampo/Ajuste manual) | Sí | Ver decisión de modelado #2 en el modelo conceptual. | [I] | — |
-| origen_id | Identificador | Condicional | Nulo solo si origen_tipo = Ajuste manual sin origen transaccional. | [I] | — |
+| origen_tipo | Catálogo (Venta/Compra/OrdenTrabajo/ServicioCampo/Ajuste manual) | Sí | Dato informativo, **sin clave foránea declarativa** (corrección 2026-07-19: se descartó el patrón de FKs opcionales por tener demasiados orígenes posibles; ver `Architecture-Overview.md` sección 7.3). | [C] | — |
+| origen_id | Identificador (sin FOREIGN KEY en el esquema) | Condicional | Nulo solo si origen_tipo = Ajuste manual. Se resuelve por consulta, igual que `Auditoria.entidad_id`. | [C] | — |
 | motivo_ajuste | Texto | Condicional | Obligatorio solo si tipo_movimiento = Ajuste (RN-008). | [C] | RF-030 |
 
 ---
@@ -165,16 +165,23 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | medio_pago | Catálogo (Efectivo/Yape/Plin/Transferencia — CAT-008) | Sí | Confirmado y configurable. | [C] | RF-042 |
 | monto | Decimal | Sí | Permite dividir el pago entre medios (combinación exacta: sin confirmar). | [PV] | BQ-012 |
 
+---
+
+## 7.5 Cobranzas *(módulo propio, separado de Caja — corrección 2026-07-19)*
+
+> Cobranzas modela la **obligación de pago pendiente**; Caja (sección 8) modela el **movimiento físico del dinero**. Se separaron como módulos distintos en `Architecture-Overview.md` (sección 5) para no mezclar dos responsabilidades en una sola capa de Application.
+
 ### SaldoPendiente (transversal — Venta, OrdenTrabajo o ServicioCampo)
 | Campo | Tipo | Obligatorio | Descripción | Estado | Origen |
 |---|---|---|---|---|---|
 | id | Identificador | Sí | — | [C] | RN-001, RN-031 |
-| origen_tipo | Catálogo (Venta/OrdenTrabajo/ServicioCampo) | Sí | — | [C] | RN-031 |
-| origen_id | Identificador | Sí | — | [C] | RN-031 |
+| venta_id | Referencia a Venta (opcional) | Condicional | Exactamente uno de los tres campos de origen debe estar presente (restricción CHECK). | [C] | Architecture-Overview.md §7.1 |
+| orden_trabajo_id | Referencia a OrdenTrabajo (opcional) | Condicional | — | [C] | Architecture-Overview.md §7.1 |
+| servicio_campo_id | Referencia a ServicioCampo (opcional) | Condicional | — | [C] | Architecture-Overview.md §7.1 |
 | monto_pendiente | Decimal | Sí | — | [C] | BQ-093 |
 | usuario_autorizo_id | Referencia a Usuario (rol Administrador) | Sí | Solo el Administrador/Propietario autoriza. | [C] | BQ-093 |
 | fecha_referencia_pago | Fecha | No | Fecha o referencia de pago pendiente, cuando corresponda. | [C] | BQ-093 |
-| estado | Catálogo (Pendiente/Cobrado) | Sí | Se cierra vía UC-21 (Cobrar Saldo Pendiente). | [C] | RF-088 |
+| estado | Catálogo (Pendiente/Cobrado) | Sí | Se cierra vía UC-21 (Cobrar Saldo Pendiente), generando un MovimientoCaja. | [C] | RF-088 |
 
 ---
 
@@ -199,8 +206,12 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | caja_id | Referencia a Caja | Sí | — | [I] | RF-047 |
 | tipo | Catálogo (Ingreso/Egreso) | Sí | — | [I] | RF-047 |
 | monto | Decimal | Sí | — | [I] | RF-047 |
-| origen_tipo | Catálogo (Venta/OrdenTrabajo/ServicioCampo/Compra/Gasto) | Sí | — | [I] | RF-047 |
-| origen_id | Identificador | Condicional | Nulo si es un gasto operativo sin origen transaccional. | [I] | RF-047 |
+| venta_id | Referencia a Venta (opcional) | Condicional | FK opcional al origen (Architecture-Overview.md §7.2), no un par tipo/id genérico. | [C] | RF-047 |
+| compra_id | Referencia a Compra (opcional) | Condicional | — | [C] | RF-047 |
+| orden_trabajo_id | Referencia a OrdenTrabajo (opcional) | Condicional | — | [C] | RF-047 |
+| servicio_campo_id | Referencia a ServicioCampo (opcional) | Condicional | — | [C] | RF-047 |
+| saldo_pendiente_id | Referencia a SaldoPendiente (opcional) | Condicional | Presente cuando el movimiento proviene de UC-21 (Cobrar Saldo Pendiente). | [C] | RF-088 |
+| concepto_gasto | Texto | Condicional | Solo si es un egreso/gasto operativo sin origen transaccional (todas las FK anteriores nulas). | [I] | RF-047 |
 | usuario_id | Referencia a Usuario | Sí | — | [C] | RN-022 |
 | fecha | Fecha/Hora | Sí | — | [I] | RF-047 |
 
@@ -302,8 +313,10 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | Campo | Tipo | Obligatorio | Descripción | Estado | Origen |
 |---|---|---|---|---|---|
 | id | Identificador | Sí | — | [C] | RF-084 |
-| entidad_tipo | Catálogo (Venta/Compra/OrdenTrabajo/ServicioCampo) | Sí | — | [C] | RF-084 a RF-087 |
-| entidad_id | Identificador | Sí | — | [C] | RF-084 a RF-087 |
+| venta_id | Referencia a Venta (opcional) | Condicional | FK opcional al origen (Architecture-Overview.md §7.2); exactamente una debe estar presente. | [C] | RF-084 a RF-087 |
+| compra_id | Referencia a Compra (opcional) | Condicional | — | [C] | RF-084 a RF-087 |
+| orden_trabajo_id | Referencia a OrdenTrabajo (opcional) | Condicional | — | [C] | RF-084 a RF-087 |
+| servicio_campo_id | Referencia a ServicioCampo (opcional) | Condicional | — | [C] | RF-084 a RF-087 |
 | tipo_documento | Catálogo (Foto/DocumentoCompra/Cotización/Comprobante/InformeTécnico) | Sí | — | [C] | RF-084 a RF-087 |
 | archivo | Archivo/URL | Sí | Preparado para respaldo (RNF-007, RNF-025). | [C] | RF-087 |
 | fecha | Fecha | Sí | — | [C] | RF-084 |

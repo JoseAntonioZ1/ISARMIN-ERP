@@ -14,14 +14,13 @@ Cada entidad y relación aquí definida se deriva de un Requerimiento Funcional 
 
 Estas son interpretaciones del analista sobre **cómo estructurar** información ya confirmada, no reglas de negocio nuevas. Se marcan aparte porque la fase de Arquitectura deberá confirmarlas o ajustarlas:
 
-1. **Saldo Pendiente como entidad transversal** (`SaldoPendiente`): dado que RN-001/RN-031 permiten saldo pendiente autorizado en Ventas, OT y Servicios de Campo por igual, se modela una única entidad transversal en lugar de repetir los mismos campos en tres tablas. **Directriz confirmada para la fase de Arquitectura (2026-07-18):** evitar herencia (TPH/TPT) o polimorfismo complejo; priorizar una solución simple y mantenible, compatible con PostgreSQL/Entity Framework Core — por ejemplo, tres claves foráneas opcionales (`VentaId`, `OrdenTrabajoId`, `ServicioCampoId`), exactamente una no nula por registro. La forma exacta de garantizar esa exclusividad (restricción a nivel de base de datos vs. validación a nivel de aplicación) queda como decisión de la fase de Arquitectura, no de este documento.
-2. **Movimiento de Inventario como entidad transversal** (`MovimientoInventario`, el Kardex): un único registro de movimientos con un campo "motivo" (catálogo CAT-013: Compra, Venta, Consumo en Taller, Consumo en Campo, Ajuste, Devolución) y una referencia a su origen, en vez de duplicar la lógica de descuento de stock en cada módulo.
-3. **Documento Adjunto y Auditoría como entidades transversales**, cada una con referencia genérica a la entidad que documentan/auditan (Venta, Compra, OrdenTrabajo, ServicioCampo).
+1. **Saldo Pendiente como entidad transversal, en un módulo propio ("Cobranzas") separado de Caja** (`SaldoPendiente`): dado que RN-001/RN-031 permiten saldo pendiente autorizado en Ventas, OT y Servicios de Campo por igual, se modela una única entidad transversal en lugar de repetir los mismos campos en tres tablas. **Corrección 2026-07-19:** Cobranzas (SaldoPendiente) y Caja son conceptos distintos — Cobranzas modela una obligación de pago pendiente, Caja modela el movimiento físico de dinero. **Resuelto en `Architecture-Overview.md` (sección 7.1):** tres claves foráneas opcionales (`VentaId`, `OrdenTrabajoId`, `ServicioCampoId`), exactamente una no nula, con restricción `CHECK` en PostgreSQL — se descarta herencia (TPH/TPT) o polimorfismo complejo.
+2. **Movimiento de Inventario como entidad transversal** (`MovimientoInventario`, el Kardex). **Resuelto en `Architecture-Overview.md` (sección 7.3, corrección 2026-07-19):** a diferencia de `SaldoPendiente`, **no** usa múltiples claves foráneas opcionales (serían demasiadas — hasta 6 motivos posibles, CAT-013). Solo `ProductoId` es una FK fuerte; el origen (`origen_tipo` + `origen_id`) es informativo, sin integridad referencial declarativa — mismo patrón que `Auditoria`, porque el Kardex es un log histórico del producto, no una relación de dominio activa como `SaldoPendiente`.
+3. **Documento Adjunto y Movimiento de Caja como entidades transversales con FK opcionales** (mismo criterio que SaldoPendiente: pocos orígenes posibles, se consultan/reconcilian por su origen — RN-015). **Auditoría** usa referencia genérica sin FK declarativa (mismo criterio que MovimientoInventario: registra cualquier entidad del sistema). Ver `Architecture-Overview.md`, sección 7.
 4. **Usuario–Rol como relación N:M** (tabla `UsuarioRol`), no 1:N, para no bloquear a futuro la posibilidad de multi-rol (BQ-042, parcialmente resuelta — hoy no es necesario, pero no cuesta modelarlo flexible desde el inicio).
 5. **Participación de Trabajador Temporal** como dato de referencia (no un actor con cuenta), asociado a una OT o Servicio de Campo (RN-027, RF-090).
-6. **Código de producto** (2026-07-18): el registro de productos en V1 es manual; cada producto tiene un **código interno obligatorio** y un **código de barras comercial opcional** — el campo debe existir desde el inicio aunque la lectura por escáner no sea obligatoria en V1 (BQ-056 resuelta).
-
-> **Nota:** el mismo principio de simplicidad aplicado a `SaldoPendiente` (decisión #1) debería evaluarse análogamente para `MovimientoInventario`, `MovimientoCaja`, `DocumentoAdjunto` y `Auditoria` durante la fase de Arquitectura — no se asume aquí, queda como pregunta a resolver en ese momento.
+6. **Código de producto** (2026-07-18, definición formalizada 2026-07-19 en `Architecture-Overview.md` sección 7.5): el registro de productos en V1 es manual; cada producto tiene un **código interno obligatorio** (asignado manualmente por el Administrador) y un **código de barras comercial opcional** — el campo debe existir desde el inicio aunque la lectura por escáner no sea obligatoria en V1 (BQ-056 resuelta).
+7. **Patrón de Application: CQRS ligero** (2026-07-19, recomendado por el propietario): cada caso de uso de escritura es un Command, cada caso de uso de lectura es una Query, sin librería de mediación (ver `Architecture-Overview.md`, sección 4.1). No afecta las entidades de este documento, solo cómo se organiza el código que las usa.
 
 ## 4. Diagrama conceptual — Núcleo Comercial (Usuarios, Clientes, Inventario, Compras, Ventas, Caja)
 
@@ -43,12 +42,10 @@ erDiagram
     PRODUCTO ||--o{ VENTA_DETALLE : incluido_en
 
     COMPRA ||--o{ COMPRA_DETALLE : contiene
-    COMPRA ||--o{ MOVIMIENTO_INVENTARIO : genera
     COMPRA ||--o{ DOCUMENTO_ADJUNTO : adjunta
 
     VENTA ||--o{ VENTA_DETALLE : contiene
     VENTA ||--o{ PAGO_VENTA : recibe
-    VENTA ||--o{ MOVIMIENTO_INVENTARIO : genera
     VENTA ||--o| SALDO_PENDIENTE : puede_tener
     VENTA ||--o{ DOCUMENTO_ADJUNTO : adjunta
 
@@ -59,6 +56,8 @@ erDiagram
     USUARIO ||--o{ AUDITORIA : ejecuta
 ```
 
+> **Nota (corrección 2026-07-19):** `MovimientoInventario` solo tiene relación declarativa (FK fuerte) con `Producto`. Su origen (Compra, Venta, OrdenTrabajo, ServicioCampo o Ajuste) se registra como dato informativo (`origen_tipo` + `origen_id`), sin FK declarativa — por eso no aparecen líneas de `Compra`/`Venta` hacia `MovimientoInventario` en este diagrama. Ver `Architecture-Overview.md`, sección 7.3.
+
 ## 5. Diagrama conceptual — Núcleo Técnico (Taller, Servicios de Campo, Garantías)
 
 ```mermaid
@@ -67,7 +66,6 @@ erDiagram
     ORDEN_TRABAJO ||--o| DIAGNOSTICO : tiene
     ORDEN_TRABAJO ||--o| COTIZACION_REPARACION : tiene
     ORDEN_TRABAJO ||--o{ CONSUMO_REPUESTO : registra
-    ORDEN_TRABAJO ||--o{ MOVIMIENTO_INVENTARIO : genera
     ORDEN_TRABAJO ||--o| GARANTIA : genera
     ORDEN_TRABAJO ||--o| SALDO_PENDIENTE : puede_tener
     ORDEN_TRABAJO ||--o{ DOCUMENTO_ADJUNTO : adjunta
@@ -81,7 +79,6 @@ erDiagram
 
     CLIENTE ||--o{ SERVICIO_CAMPO : solicita
     SERVICIO_CAMPO ||--o{ SERVICIO_CAMPO_DETALLE : registra
-    SERVICIO_CAMPO ||--o{ MOVIMIENTO_INVENTARIO : genera
     SERVICIO_CAMPO ||--o| SALDO_PENDIENTE : puede_tener
     SERVICIO_CAMPO ||--o{ DOCUMENTO_ADJUNTO : adjunta
     SERVICIO_CAMPO ||--o{ PARTICIPACION_TEMPORAL : involucra
@@ -101,15 +98,15 @@ erDiagram
 | **Cliente** | Persona natural o jurídica que compra, repara o contrata servicios. Baja lógica únicamente (RN-023). | [C] | RF-012 |
 | **Proveedor** | Empresa/persona que suministra productos. | [I] | RF-018 |
 | **Categoria** | Clasificación de productos (CAT-002). | [C] (valores) / [PV] (jerarquía) | RF-025 |
-| **Producto** | Ítem del inventario único y compartido (RN-006). Atributos: código, nombre, categoría, marca, unidad de medida, costo, precio, margen, stock. | [C] | RF-023 |
-| **MovimientoInventario** | Kardex: cada entrada/salida de stock, con motivo (CAT-013) y referencia a su origen. | [C] | RN-002, RF-027 |
+| **Producto** | Ítem del inventario único y compartido (RN-006). Atributos: código interno (obligatorio), código de barras comercial (opcional), nombre, categoría, marca, unidad de medida, costo, precio, margen, stock. | [C] | RF-023 |
+| **MovimientoInventario** | Kardex: cada entrada/salida de stock, con motivo (CAT-013). FK fuerte solo a Producto; el origen es informativo, sin FK declarativa (mismo patrón que Auditoria). | [C] | RN-002, RF-027 |
 | **Compra** | Registro de una compra directa a un proveedor (sin OC formal, RN-024). | [C] | RF-033 |
 | **CompraDetalle** | Línea de producto dentro de una Compra (cantidad, costo unitario). | [C] | RF-033 |
 | **Venta** | Comprobante de venta (cotización, boleta, factura, nota de venta o ticket). | [C] | RF-038 |
 | **VentaDetalle** | Línea de producto dentro de una Venta. | [I] | RF-038 |
 | **PagoVenta** | Un medio de pago aplicado a una Venta (permite pagos combinados). | [PV] | BQ-012 (medios confirmados; combinación de varios en una venta: sin confirmar) |
-| **SaldoPendiente** | Entidad transversal: monto pendiente autorizado por el Administrador, asociado a una Venta, OrdenTrabajo o ServicioCampo. | [C] | RN-001, RN-031, BQ-093 |
-| **Caja** | Caja única del negocio (RN-025). | [C] | RF-046 |
+| **SaldoPendiente** | Módulo Cobranzas (separado de Caja): monto pendiente autorizado por el Administrador, asociado a una Venta, OrdenTrabajo o ServicioCampo. | [C] | RN-001, RN-031, BQ-093 |
+| **Caja** | Caja única del negocio (RN-025). Recibe un `MovimientoCaja` cuando Cobranzas registra el cobro de un saldo pendiente. | [C] | RF-046 |
 | **MovimientoCaja** | Ingreso o egreso de Caja, vinculado a su origen (venta, cobro de OT/servicio, compra, gasto). | [I] | RF-047 |
 | **OrdenTrabajo (OT)** | Registro de una reparación, desde la recepción hasta la entrega. Pertenece siempre a un Cliente (RN-004). | [C] | RF-051 |
 | **Diagnostico** | Evaluación técnica de la falla, asociada 1:1 a una OT. | [I] | RF-054 |

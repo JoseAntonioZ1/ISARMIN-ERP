@@ -161,3 +161,37 @@ El almacenamiento de archivos (Gestión Documental, RF-084 a RF-087) se abstrae 
 - Deja un punto de extensión explícito para que un servicio cloud (ej. Firebase) se agregue en el futuro como almacenamiento secundario, sin modificar `Application` ni `Domain` — solo agregando una nueva implementación en `Infrastructure`.
 
 Estado: ✅ Aceptada
+
+---
+
+## ADR-011
+
+### Decisión
+
+La capa `Application` se organiza mediante **CQRS ligero**: cada caso de uso de escritura es un `Command` con su `Handler`, cada caso de uso de lectura es una `Query` con su `Handler`. Sin librería de mediación (no se adopta MediatR); los controladores de `API` resuelven los handlers directamente por inyección de dependencias.
+
+### Justificación
+
+- Recomendación explícita del propietario (2026-07-19).
+- Separa claramente operaciones que cambian estado (pasan por el modelo de dominio rico) de operaciones de solo lectura (pueden proyectar directamente a DTOs, sin cargar entidades completas), sin la complejidad operativa de un CQRS completo (bases separadas, *event sourcing*) que este proyecto no necesita (RNF-005: 5–20 usuarios concurrentes).
+- Evita agregar una dependencia nueva (MediatR) no evaluada en `TECH_STACK.md`; puede incorporarse después sin romper la estructura, si el crecimiento del proyecto lo justifica.
+
+Estado: ✅ Aceptada
+
+---
+
+## ADR-012
+
+### Decisión
+
+Se separan dos correcciones al diseño de datos transversales registrado en ADR-007:
+
+1. **Cobranzas** (`SaldoPendiente`) se modela como módulo de `Application` independiente de **Caja** (`Caja`, `MovimientoCaja`) — Cobranzas registra la obligación de pago; Caja registra el movimiento físico del dinero cuando esa obligación se cobra.
+2. **MovimientoInventario** (Kardex) **no** sigue el patrón de claves foráneas opcionales de ADR-007. Solo `ProductoId` es una FK fuerte; su origen (Compra, Venta, OrdenTrabajo, ServicioCampo, Ajuste) se registra como dato informativo (`origen_tipo` + `origen_id`) sin FK declarativa — el mismo patrón que `Auditoria`.
+
+### Justificación
+
+- Corrección explícita del propietario (2026-07-19): evitar que Caja y Cobranzas se mezclen en un solo módulo, y evitar demasiadas columnas de clave foránea opcional en `MovimientoInventario` (hasta 6 motivos posibles en CAT-013, frente a los 3 orígenes de `SaldoPendiente`).
+- El criterio general para decidir entre "FK opcionales" y "referencia genérica sin FK" queda documentado en `Architecture-Overview.md` (sección 7): depende de si la entidad es una relación de dominio activa con pocos orígenes (FK fuerte) o un registro histórico/log con muchos orígenes posibles (referencia informativa).
+
+Estado: ✅ Aceptada

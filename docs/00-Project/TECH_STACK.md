@@ -81,6 +81,7 @@
 - Clean Code
 - Repository Pattern
 - Dependency Injection
+- CQRS ligero (Commands/Queries por caso de uso, sin librería de mediación — ver `03-Architecture/Architecture-Overview.md`, sección 4.1, y ADR-011)
 
 ---
 

@@ -28,7 +28,7 @@ Diccionario de datos conceptual y glosario de términos del dominio, tal como re
 | **Factura** | Comprobante de pago emitido a compradores que requieren sustentar crédito fiscal (cuentan con RUC). | [C] |
 | **Nota de Venta** | Documento interno de venta sin validez tributaria como comprobante de pago (no reemplaza boleta/factura ante SUNAT). | [C] |
 | **Ticket** | Comprobante simplificado de venta, usualmente impreso en formato térmico. | [C] |
-| **Garantía** | Compromiso de responder, sin costo adicional o con condiciones preferenciales, ante una falla del mismo tipo en un equipo reparado o producto vendido, dentro de un período determinado. Módulo mencionado en el alcance; sin reglas definidas aún. | [PV] |
+| **Garantía** | Para V1: período (fecha de inicio y fin) asociado a una reparación, que permite vincular una nueva OT si el equipo reingresa por la misma falla. Sin tipos de garantía ni condiciones de cobertura detalladas (RN-017, alcance acotado). | [C] |
 | **Comprobante de Recepción** | Documento entregado al cliente al momento de dejar su equipo en el Taller, como constancia de la entrega física (previo al diagnóstico y la cotización). | [C] |
 | **Orden de Compra (OC)** | Documento mediante el cual ISARMIN formaliza un pedido de mercadería a un proveedor. | [PV] |
 | **Arqueo de Caja** | Proceso de conteo y conciliación del efectivo/movimientos de una caja al cierre de un turno o jornada, para verificar que lo físico coincida con lo registrado en el sistema. | [PV] |
@@ -41,10 +41,15 @@ Diccionario de datos conceptual y glosario de términos del dominio, tal como re
 | **Técnico de Taller** | Actor que ejecuta diagnóstico y reparación dentro de las instalaciones de ISARMIN. | [I] |
 | **Técnico de Campo** | Actor que ejecuta trabajos técnicos en las instalaciones del cliente. Pendiente de validar si es un rol distinto al Técnico de Taller. | [PV] |
 | **Auditoría** | Registro histórico e inmutable de las acciones relevantes realizadas por los usuarios en el sistema (quién, qué, cuándo), mencionado como requisito no funcional (RNF-005). | [C] |
-| **Rol** | Conjunto de permisos que se asigna a un usuario y que determina qué acciones y módulos puede utilizar. | [I] |
-| **Permiso** | Autorización específica y atómica para ejecutar una acción sobre un módulo (ej. "crear cliente", "anular venta"). | [PV] |
+| **Rol** | Conjunto configurable de permisos que se asigna a un usuario (RN-028); no es un valor fijo en el código — el Administrador puede crear roles nuevos. | [C] |
+| **Permiso** | Autorización específica y atómica para ejecutar una acción sobre un módulo (ej. "Inventario.Ajustar"). | [C] |
 | **Catálogo** | Tabla maestra de valores predefinidos y reutilizables por el sistema (ej. formas de pago, estados de OT). Ver [Business-Catalogs.md](../02-Business/Business-Catalogs.md). | [I] |
 | **Backup / Respaldo** | Copia de la información del sistema realizada de forma periódica para permitir su recuperación ante pérdida de datos (RNF-004). | [C] |
+| **Código Interno** | Identificador propio que ISARMIN asigna a cada producto al registrarlo manualmente en el sistema. Obligatorio. No confundir con el Código de Barras Comercial. | [C] |
+| **Código de Barras Comercial** | Código de fábrica (ej. EAN-13, UPC) impreso en el empaque de un producto. Opcional; se captura si el producto lo trae, sin que el sistema dependa de él en V1. | [C] |
+| **Cobranzas** | Módulo que registra obligaciones de pago pendientes (Saldo Pendiente) originadas en una Venta, una Orden de Trabajo o un Servicio de Campo, siempre autorizadas por el Administrador/Propietario. Distinto de Caja: Cobranzas registra la deuda, Caja registra el movimiento físico del dinero cuando esa deuda se cobra. | [C] |
+| **Saldo Pendiente** | Monto que un cliente queda debiendo tras la entrega de un equipo, una venta o un servicio de campo, con autorización del Administrador/Propietario. Ver Cobranzas. | [C] |
+| **CQRS ligero** | Patrón de la capa Application: separar cada operación en un *Command* (si cambia datos) o una *Query* (si solo los lee), sin librería de mediación ni infraestructura de lectura/escritura separada. Ver `Architecture-Overview.md`, sección 4.1. | [C] |
 
 ## 4. Acrónimos
 

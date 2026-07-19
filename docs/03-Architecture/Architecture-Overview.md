@@ -53,13 +53,16 @@ ISARMIN.sln
 │   │   │   ├── Inventario/
 │   │   │   ├── Compras/
 │   │   │   ├── Ventas/
+│   │   │   │   ├── Commands/      (ej. RegistrarVentaCommand + Handler)
+│   │   │   │   └── Queries/        (ej. ConsultarVentaQuery + Handler, DTOs de solo lectura)
+│   │   │   ├── Cobranzas/
 │   │   │   ├── Caja/
 │   │   │   ├── Taller/
 │   │   │   ├── ServiciosCampo/
 │   │   │   ├── GestionDocumental/
-│   │   │   ├── Reportes/
+│   │   │   ├── Reportes/            (solo Queries — no tiene Commands propios)
 │   │   │   └── Configuracion/
-│   │   └── Common/                (comportamiento transversal: Auditoría, SaldoPendiente)
+│   │   └── Common/                (comportamiento transversal: interfaces ICommandHandler/IQueryHandler)
 │   ├── ISARMIN.Infrastructure/
 │   │   ├── Persistence/           (DbContext, configuraciones EF Core, migraciones)
 │   │   ├── Repositories/
@@ -75,6 +78,17 @@ ISARMIN.sln
 
 Esta estructura sigue el patrón de **"Application organizada por módulo/feature"** en lugar de por tipo técnico (no hay una carpeta `Services/` genérica con 40 archivos) — es más mantenible a largo plazo y refleja directamente los límites de dominio de la sección 5.
 
+### 4.1 Patrón de Application: CQRS ligero (corrección 2026-07-19)
+
+Dentro de cada módulo de `Application`, toda operación se modela como un **Command** (escritura) o una **Query** (lectura), nunca como un "Service" genérico con métodos mixtos:
+
+- **Command:** representa una intención de cambio (`RegistrarVentaCommand`, `EntregarEquipoCommand`, `AjustarInventarioCommand` — uno por cada Caso de Uso de escritura en `Use-Cases.md`). Su `Handler` carga las entidades de `Domain` necesarias, aplica las invariantes de negocio (ej. RN-003, RN-008) y persiste vía Repository/Unit of Work.
+- **Query:** representa una intención de lectura (`ConsultarStockQuery`, `ConsultarHistorialEquipoQuery`). Su `Handler` puede consultar directamente contra `DbContext` (proyecciones `AsNoTracking` a DTOs) **sin pasar por el modelo de dominio rico** — una lectura no necesita reconstruir invariantes de escritura, solo devolver datos.
+
+**Por qué "ligero" y no CQRS completo:** una sola base de datos (PostgreSQL), sin réplicas de lectura separadas, sin *event sourcing*. La separación es a nivel de código (Application), no de infraestructura — apropiada para el tamaño real de la operación (RNF-005: 5–20 usuarios concurrentes), sin la complejidad operativa de un CQRS completo que este proyecto no necesita.
+
+**Despacho sin librería de mediación:** los controladores de `API` resuelven `ICommandHandler<TCommand, TResultado>` / `IQueryHandler<TQuery, TResultado>` directamente por inyección de dependencias (constructor). No se agrega MediatR ni otra librería de *pipeline* — mantiene el patrón "ligero" sin una dependencia nueva no evaluada en `TECH_STACK.md`. Si el proyecto crece y se justifica un pipeline con comportamientos transversales (ej. logging, validación automática por *pipeline*), MediatR podría incorporarse después sin romper esta estructura, ya que los Commands/Queries ya están modelados como clases independientes.
+
 ## 5. Límites de módulos (Bounded Contexts)
 
 Cada módulo de negocio (`PROJECT_SCOPE.md`) se traduce en una carpeta/namespace propio dentro de `Domain` y `Application`. Un módulo **no** referencia directamente el `DbContext` de otro — solo sus interfaces expuestas.
@@ -85,15 +99,18 @@ Cada módulo de negocio (`PROJECT_SCOPE.md`) se traduce en una carpeta/namespace
 | **Terceros** | Cliente, Proveedor | Identidad (auditoría) |
 | **Catálogo e Inventario** *(shared kernel)* | Producto, Categoria, MovimientoInventario | Identidad |
 | **Compras** | Compra, CompraDetalle | Terceros, Catálogo e Inventario |
-| **Ventas** | Venta, VentaDetalle, PagoVenta | Terceros, Catálogo e Inventario, Caja (SaldoPendiente) |
-| **Taller** | OrdenTrabajo, Diagnostico, CotizacionReparacion, ConsumoRepuesto, Garantia | Terceros, Catálogo e Inventario, Caja (SaldoPendiente) |
-| **Servicios de Campo** | ServicioCampo, ServicioCampoDetalle | Terceros, Catálogo e Inventario, Caja (SaldoPendiente) |
-| **Caja** *(incluye Cobranzas)* | Caja, MovimientoCaja, SaldoPendiente | Identidad |
+| **Ventas** | Venta, VentaDetalle, PagoVenta | Terceros, Catálogo e Inventario, Cobranzas |
+| **Taller** | OrdenTrabajo, Diagnostico, CotizacionReparacion, ConsumoRepuesto, Garantia | Terceros, Catálogo e Inventario, Cobranzas |
+| **Servicios de Campo** | ServicioCampo, ServicioCampoDetalle | Terceros, Catálogo e Inventario, Cobranzas |
+| **Cobranzas** *(módulo propio — separado de Caja, ver nota abajo)* | SaldoPendiente | Identidad (quién autoriza) |
+| **Caja** | Caja, MovimientoCaja | Identidad, Cobranzas (al registrar el cobro de un saldo pendiente) |
 | **Gestión Documental** *(shared kernel)* | DocumentoAdjunto | — (referenciado por Compras, Ventas, Taller, Campo) |
 | **Reportes** | (sin entidades propias; consulta de otros módulos) | Todos (solo lectura) |
 | **Auditoría** *(transversal, no es un módulo con lógica de negocio)* | Auditoria | Se implementa como interceptor en Infrastructure, no como módulo de Application (ver sección 9) |
 | **Configuración** | (parámetros generales, series de comprobantes) | — |
 | **ParticipacionTemporal** | Vive dentro de Taller y Servicios de Campo (no es módulo propio) | Taller, Servicios de Campo |
+
+**Nota — Cobranzas separado de Caja (corrección 2026-07-19):** aunque ambos manejan dinero, son conceptos distintos: **Cobranzas** modela una obligación de pago pendiente (quién debe, cuánto, quién lo autorizó — RN-001/RN-031), mientras que **Caja** modela el movimiento físico de efectivo/medios de pago del negocio (RN-025). Ventas, Taller y Servicios de Campo dependen de Cobranzas para dejar un saldo pendiente; cuando ese saldo se cobra (UC-21), Cobranzas genera un `MovimientoCaja` — por eso Caja depende de Cobranzas, y no al revés. Antes se habían bundleado como un solo módulo ("Caja incluye Cobranzas"), lo cual mezclaba dos responsabilidades distintas dentro de la misma capa de Application.
 
 **Nota sobre "Catálogo e Inventario" como shared kernel:** dado que RN-006 exige un inventario único compartido entre Tienda, Taller y Campo, este módulo es intencionalmente compartido — Ventas, Taller y Servicios de Campo dependen de él para consumir stock, pero **nunca se duplica** la lógica de descuento de inventario en cada uno (violaría "no generes código duplicado" de `AI_INSTRUCTIONS.md`). El descuento de stock se expone como un servicio único de Application (`IServicioInventario.RegistrarMovimiento(...)`), invocado desde Ventas/Taller/Campo.
 
@@ -107,13 +124,14 @@ flowchart LR
     Inventario --> Compras
     Terceros --> Ventas
     Inventario --> Ventas
-    Caja --> Ventas
+    Cobranzas --> Ventas
     Terceros --> Taller
     Inventario --> Taller
-    Caja --> Taller
+    Cobranzas --> Taller
     Terceros --> Campo["Servicios de Campo"]
     Inventario --> Campo
-    Caja --> Campo
+    Cobranzas --> Campo
+    Cobranzas -.genera movimiento al cobrar.-> Caja
     Ventas -.adjunta.-> GestionDocumental
     Compras -.adjunta.-> GestionDocumental
     Taller -.adjunta.-> GestionDocumental
@@ -122,20 +140,37 @@ flowchart LR
 
 ## 7. Patrón de datos transversales — resolución concreta
 
-Siguiendo la directriz confirmada de evitar herencia/polimorfismo complejo y priorizar una solución simple compatible con PostgreSQL/EF Core:
+No todas las entidades transversales se resuelven igual. El criterio para elegir el patrón es: **¿es una relación de dominio activa que necesita integridad referencial fuerte (pocos orígenes posibles, consultada por su origen), o es fundamentalmente un registro histórico/log (muchos orígenes posibles, consultado casi siempre por su sujeto principal, no por su origen)?**
 
-### 7.1 SaldoPendiente
+### 7.1 SaldoPendiente (módulo Cobranzas) — FK opcionales
 Tabla única con **tres claves foráneas opcionales**: `VentaId`, `OrdenTrabajoId`, `ServicioCampoId`. Se garantiza que **exactamente una** esté presente mediante:
 - Una restricción `CHECK` a nivel de PostgreSQL (vía migración de EF Core con SQL crudo o `HasCheckConstraint`, disponible desde EF Core 7).
 - Validación adicional en Application (FluentValidation) antes de persistir, como capa de defensa adicional (no reemplaza el CHECK de base de datos).
 
-Esto evita `TPH`/`TPT` (herencia de tablas) y evita una tabla polimórfica genérica (`EntidadTipo` + `EntidadId` sin integridad referencial real) — mantiene las claves foráneas reales de PostgreSQL, más simple de mantener y consultar.
+Se justifica el FK fuerte aquí porque es una **obligación financiera activa** (se consulta, se actualiza, se cierra — RN-001/RN-031) con solo 3 orígenes posibles. Evita `TPH`/`TPT` (herencia de tablas) y evita una referencia polimórfica sin integridad real.
 
-### 7.2 MovimientoInventario, MovimientoCaja, DocumentoAdjunto
-**Misma solución, por consistencia** (resuelve la pregunta abierta en `Conceptual-Data-Model.md`): claves foráneas opcionales hacia cada posible origen (`VentaId`, `CompraId`, `OrdenTrabajoId`, `ServicioCampoId`, o ninguna para un ajuste manual/gasto operativo directo), en lugar de una referencia polimórfica genérica. Es el mismo patrón, aplicado uniformemente — cumple "no generes código duplicado" al reutilizar el mismo enfoque en vez de inventar uno distinto por entidad.
+### 7.2 MovimientoCaja y DocumentoAdjunto — mismo patrón de FK opcionales
+Igual razonamiento que SaldoPendiente, con un número de orígenes igualmente acotado (`VentaId`, `CompraId`, `OrdenTrabajoId`, `ServicioCampoId`, o ninguno para un gasto operativo directo). Se reconcilian (RN-015) y se consultan por su origen con frecuencia — justifica mantener la integridad referencial declarativa.
 
-### 7.3 Auditoria
-Caso distinto: por su volumen y por registrar **cualquier** entidad del sistema (no solo 3-4 posibles orígenes), se usa una referencia genérica (`EntidadTipo` como texto/enum + `EntidadId`), **sin integridad referencial declarativa** — es un log, no una relación de negocio, y este es el patrón estándar para bitácoras de auditoría (no se aplica el mismo criterio que a SaldoPendiente porque su propósito es distinto: trazabilidad histórica, no una relación de dominio activa).
+### 7.3 MovimientoInventario (Kardex) — referencia genérica, no FK por cada origen (corrección 2026-07-19)
+**Se descarta el patrón de FK opcionales para esta entidad.** El Kardex tiene hasta 6 motivos posibles (Compra, Venta, ConsumoTaller, ConsumoCampo, Ajuste, Devolución — CAT-013), lo que habría requerido demasiadas columnas nulas para un beneficio marginal. En su lugar:
+- **Única FK obligatoria y fuerte:** `ProductoId` — es la relación que realmente importa para el negocio (RN-002: todo movimiento debe quedar registrado *contra un producto*).
+- **Origen informativo, sin integridad declarativa:** `origen_tipo` (catálogo CAT-013) + `origen_id` (identificador simple, sin `FOREIGN KEY` en el esquema) — el mismo patrón que `Auditoria` (sección 7.4), porque el Kardex es, en esencia, **un log histórico del producto**, no una relación de dominio que se actualice o cierre como `SaldoPendiente`.
+- Si en el futuro se necesita trazar "todos los movimientos que generó la Venta X", se resuelve por consulta (`WHERE origen_tipo = 'Venta' AND origen_id = X`), igual que ya se hace con `Auditoria` — no requiere una FK declarativa para ser útil.
+
+### 7.4 Auditoria — referencia genérica (sin cambios)
+Por su volumen y por registrar **cualquier** entidad del sistema, usa una referencia genérica (`EntidadTipo` + `EntidadId`), **sin integridad referencial declarativa** — es un log, no una relación de negocio.
+
+### 7.5 Definición de códigos de producto (corrección 2026-07-19)
+
+Para evitar ambigüedad de aquí en adelante (ver también [Glossary.md](../01-Requirements/Glossary.md)):
+
+| Campo | Definición | Origen |
+|---|---|---|
+| **Código Interno** (`codigo_interno`) | Identificador propio que ISARMIN asigna a cada producto al registrarlo. **Obligatorio.** Se ingresa manualmente por el Administrador como parte del registro manual de productos (RF-023) — el sistema no lo autogenera en V1 (no se documentó esa necesidad; si se requiere autogeneración, es una mejora futura a validar). | RF-023 |
+| **Código de Barras Comercial** (`codigo_barras`) | Código de fábrica del producto (ej. EAN-13, UPC), tal como viene impreso en el empaque. **Opcional.** Se captura si el producto lo trae; no se genera desde el sistema. Preparado para una futura lectura por escáner (fuera de alcance de V1). | RF-023, BQ-056 (resuelta) |
+
+Ambos son atributos de `Producto` (`Catálogo e Inventario`), no catálogos ni entidades separadas.
 
 ## 8. Autenticación y Autorización
 
@@ -200,7 +235,9 @@ Estos puntos **sí** tienen un lugar reservado para conectarse después sin redi
 ## 13. Puntos que la Arquitectura decide ahora (no requieren volver a preguntar al negocio)
 
 Estas son decisiones de **implementación técnica**, no de negocio — quedan resueltas en este documento sin necesitar validación adicional del propietario:
-- Patrón de FKs opcionales para entidades transversales (sección 7).
+- Patrón de FKs opcionales para SaldoPendiente, MovimientoCaja y DocumentoAdjunto; referencia genérica (sin FK declarativa) para MovimientoInventario y Auditoria (sección 7).
+- Cobranzas como módulo independiente de Caja (sección 5).
+- CQRS ligero como patrón de Application, sin librería de mediación (sección 4.1).
 - Autorización basada en permisos, no en roles fijos (sección 8).
 - Auditoría vía interceptor, no manual (sección 9).
 - Abstracción de almacenamiento de archivos (sección 10).
