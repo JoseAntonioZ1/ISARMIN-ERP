@@ -67,8 +67,8 @@ Un evento de negocio es distinto de un requerimiento funcional: el requerimiento
 | EVT-027 | Técnico asignado y visita agendada | Supervisor | Solicitud pasa a **Agendado** | [PV] |
 | EVT-028 | Trabajo de campo ejecutado | Técnico de campo | Solicitud pasa a **En ejecución** | [I] |
 | EVT-029 | Material/repuesto consumido en campo | Técnico de campo | Descuento de inventario compartido | [C] |
-| EVT-030 | Conformidad del cliente registrada | Técnico de campo | Solicitud pasa a **Conforme** | [PV] |
-| EVT-031 | Cobro de servicio de campo registrado | Técnico/Cajero | Solicitud pasa a **Cerrado** | [PV] |
+| EVT-030 | Cierre de servicio de campo registrado (estado final, observaciones, usuario responsable) | Técnico | Solicitud pasa a **Cerrado** | [C] — resuelve BQ-039 |
+| EVT-031 | Cobro de servicio de campo registrado (completo, adelanto, o saldo pendiente autorizado por el Administrador) | Técnico, Ventas | No bloquea el cierre (análogo a RN-001/RN-031) | [C] |
 
 ## 7. Eventos de Compras — WF-004
 

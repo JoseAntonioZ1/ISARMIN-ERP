@@ -20,7 +20,7 @@ stateDiagram-v2
     Recibido --> Diagnosticado: EVT-008 Diagnóstico registrado
     Diagnosticado --> Cotizado: EVT-009 Cotización generada
     Cotizado --> Aprobado: EVT-010 Cliente aprueba
-    Cotizado --> Rechazado: EVT-011 Cliente rechaza
+    Cotizado --> Rechazado: EVT-011 Cliente rechaza (con cobro opcional de diagnóstico)
     Aprobado --> EnReparacion: EVT-012 Reparación iniciada
     EnReparacion --> EnPruebas: EVT-014 Pruebas realizadas
     EnPruebas --> ListoParaEntrega
@@ -35,14 +35,14 @@ stateDiagram-v2
 | Recibido | Diagnóstico registrado | Diagnosticado | — |
 | Diagnosticado | Cotización generada | Cotizado | — |
 | Cotizado | Cliente aprueba | Aprobado | RN-016 |
-| Cotizado | Cliente rechaza | Rechazado | **BQ-034** (¿qué ocurre con el diagnóstico ya realizado? ¿se cobra?) |
+| Cotizado | Cliente rechaza | Rechazado | RN-030 — **resuelta:** se permite cobro opcional del diagnóstico, decisión caso por caso (**BQ-034** resuelta) |
 | Aprobado | Reparación iniciada | En Reparación | RN-018 |
 | En Reparación | Pruebas realizadas | En Pruebas → Listo para Entrega | — |
 | Listo para Entrega | Equipo entregado al cliente | Entregado (final) | RN-001 (corregida) |
 
-**Resuelto (2026-07-18, respuesta a BQ-033):** el estado "Pagado" **se elimina como estado bloqueante independiente** de la máquina de estados de la OT. El pago ya no es un prerrequisito para pasar de "Listo para Entrega" a "Entregado" — en su lugar, la transición a **Entregado** registra simultáneamente un **estado de pago** como atributo del evento de entrega (no como estado previo obligatorio), con estas variantes válidas: pago completo antes de la entrega, pago completo al momento de la entrega, adelanto, o saldo pendiente autorizado. La entrega debe registrar: fecha/hora, usuario que entrega, estado del pago, monto pagado y saldo pendiente (si corresponde).
+**Resuelto (2026-07-18, respuesta a BQ-033):** el estado "Pagado" **se elimina como estado bloqueante independiente** de la máquina de estados de la OT. El pago ya no es un prerrequisito para pasar de "Listo para Entrega" a "Entregado" — en su lugar, la transición a **Entregado** registra simultáneamente un **estado de pago** como atributo del evento de entrega (no como estado previo obligatorio), con estas variantes válidas: pago completo antes de la entrega, pago completo al momento de la entrega, adelanto, o saldo pendiente autorizado.
 
-**Nueva pregunta derivada, no resuelta por asunción:** ¿quién puede autorizar que un equipo salga con saldo pendiente — cualquier usuario, o solo el Administrador/Propietario? → **BQ-093**.
+**Resuelto (2026-07-18, respuesta a BQ-093):** dejar saldo pendiente **requiere autorización del Administrador/Propietario** (no de cualquier usuario). La entrega debe registrar: fecha/hora, usuario que entrega, estado del pago, monto pagado, saldo pendiente y, si aplica, el usuario Administrador que autorizó el saldo pendiente.
 
 ---
 
@@ -101,23 +101,20 @@ stateDiagram-v2
 
 ## ST-005 — Servicio de Campo
 
-**Estado del diagrama:** [PV] — íntegramente propuesto por analogía con la OT.
+**Estado del diagrama:** [C] — confirmado por el propietario (2026-07-18, tres rondas de validación).
 
 ```mermaid
 stateDiagram-v2
     [*] --> Solicitado: EVT-026
     Solicitado --> Agendado: EVT-027 Técnico asignado
     Agendado --> EnEjecucion: EVT-028 Trabajo iniciado
-    EnEjecucion --> Conforme: EVT-030 Cliente conforme
-    EnEjecucion --> Observado: Cliente no conforme
-    Conforme --> Cerrado: EVT-031 Cobro registrado
-    Observado --> EnEjecucion: Se corrige el trabajo
+    EnEjecucion --> Cerrado: EVT-030 Cierre registrado (estado final + observaciones + usuario responsable)
     Cerrado --> [*]
 ```
 
-**Preguntas abiertas:** ¿existe la posibilidad de que el cliente no dé conformidad? ¿Cómo se resuelve? → **BQ-039**.
+**Resuelto (2026-07-18, respuesta a BQ-039):** el cierre del servicio se registra con tres campos: **estado final del servicio, observaciones, y usuario responsable del cierre**. Se descartan explícitamente para V1: firma digital, evidencias fotográficas avanzadas y confirmación desde dispositivos móviles (consistente con RF-071: V1 es 100% web). Esto simplifica el diagrama: ya no existen los estados intermedios "Conforme"/"Observado" propuestos originalmente por el analista — el estado final (ej. "Conforme", "Con observaciones") pasa a ser un **valor del campo "estado final"**, no un estado separado de la máquina de estados.
 
-**Actualización 2026-07-18:** el propietario confirmó el proceso general (solicitud → evaluación → cotización → materiales del inventario → ejecución → entrega de comprobante), validando que es análogo al de Taller. No se confirmó un paso explícito de "conformidad" formal (firma, foto) — BQ-039 sigue abierta. También se confirmó que, para el MVP, el registro de este proceso ocurre al volver a la red local (no en tiempo real desde el sitio del cliente) — ver `Business-Questions.md` BQ-052/BQ-053.
+**Actualización de contexto:** el propietario confirmó el proceso general (solicitud → evaluación → cotización → materiales del inventario → ejecución → cierre), validando que es análogo al de Taller, y que para el MVP el registro ocurre al volver a la red local (no en tiempo real desde el sitio del cliente) — ver `Business-Questions.md` BQ-052/BQ-053.
 
 ---
 

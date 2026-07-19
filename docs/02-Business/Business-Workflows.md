@@ -69,8 +69,8 @@ Corresponde a BP-003. **Confirmado por el propietario el 2026-07-18** (solicitud
 | 2 | Asignar técnico y fecha **[PV — BQ-037]** | Supervisor | Disponibilidad de técnicos | Asignación | **Agendado** | EVT-027 |
 | 3 | Trasladarse y ejecutar diagnóstico/trabajo | Técnico de campo | Equipo/instalación del cliente | Trabajo ejecutado | **En ejecución** | EVT-028 |
 | 4 | Registrar materiales consumidos | Técnico de campo | Repuestos usados | Consumo de inventario | — | EVT-029 |
-| 5 | Registrar conformidad del cliente **[PV — BQ-039]** | Técnico de campo | Trabajo finalizado | Conformidad | **Conforme / Observado** | EVT-030 |
-| 6 | Registrar cobro **[PV — BQ-040]** | Técnico/Cajero | Conformidad | Pago registrado | **Cerrado** | EVT-031 |
+| 5 | Registrar cierre del servicio (estado final, observaciones, usuario responsable) **[C — BQ-039 resuelta]** | Técnico | Trabajo finalizado | Cierre registrado | **Cerrado** | EVT-030 |
+| 6 | Registrar cobro (completo, adelanto, o saldo pendiente autorizado por el Administrador) **[C — BQ-040 parcial, RN-031]** | Técnico, Ventas | Cierre registrado | Pago registrado | (no cambia el estado, ya cerrado) | EVT-031 |
 
 ---
 

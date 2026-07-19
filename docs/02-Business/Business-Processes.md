@@ -115,7 +115,7 @@ flowchart TD
 
 ## BP-003 — Servicio Técnico de Campo
 
-- **Estado:** [C] — confirmado por el propietario (2026-07-18): "Cliente solicita servicio → se evalúa el trabajo → se realiza una cotización → se determinan materiales necesarios → los materiales salen del inventario de la tienda → se realiza el trabajo → se entrega comprobante/cotización final." No se confirmó un paso explícito de conformidad del cliente (BQ-039 sigue abierta).
+- **Estado:** [C] — confirmado por el propietario (2026-07-18): "Cliente solicita servicio → se evalúa el trabajo → se realiza una cotización → se determinan materiales necesarios → los materiales salen del inventario de la tienda → se realiza el trabajo → se entrega comprobante/cotización final." El cierre se registra con estado final, observaciones y usuario responsable (BQ-039 resuelta) — sin firma digital ni evidencias avanzadas en V1.
 - **Disparador:** Un cliente solicita un trabajo técnico fuera del local (instalación, mantenimiento, cambio de equipo).
 - **Actores:** Cliente, Recepcionista/Supervisor (agenda), Técnico de campo.
 - **Salida:** Trabajo ejecutado, materiales consumidos registrados, cobro realizado.
@@ -128,14 +128,14 @@ flowchart TD
 2. Se registra la solicitud y se agenda/asigna un técnico — **[PV] BQ-037**.
 3. El técnico se traslada y ejecuta el trabajo en el domicilio/local del cliente.
 4. El técnico registra materiales/repuestos consumidos, descontados del inventario compartido.
-5. Se registra la conformidad del cliente — **[PV] BQ-039**.
-6. Se cobra el servicio — **[PV] BQ-040**, posiblemente en el mismo lugar (requiere definir medio de cobro móvil).
+5. Se registra el cierre: estado final del servicio, observaciones y usuario responsable — **[C] BQ-039 resuelta**.
+6. Se cobra el servicio (completo, adelanto, o saldo pendiente autorizado por el Administrador) — **[C] RN-031**, con los medios de pago configurables de CAT-008.
 
 ```mermaid
 flowchart TD
     subgraph Cliente
         C0([Inicio: solicita servicio])
-        C6([Fin: conformidad y cobro])
+        C6([Fin: cierre y cobro])
     end
     subgraph Supervisor_Recepcionista[Supervisor / Recepcionista]
         C1[Registrar solicitud]
@@ -144,7 +144,7 @@ flowchart TD
     subgraph TecnicoCampo[Técnico de Campo]
         C3[Ejecutar trabajo en sitio]
         C4[Registrar materiales consumidos]
-        C5[Registrar conformidad del cliente]
+        C5[Registrar cierre: estado final, observaciones, responsable]
     end
     subgraph Sistema_Inventario3[Sistema - Inventario]
         C4b[Descontar del inventario compartido]

@@ -61,9 +61,10 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-008 — Formas / Medios de Pago
 
-- **Estado:** [PV] — no hay mención alguna en la documentación fuente sobre qué medios de pago acepta la empresa.
-- **Valores propuestos como referencia de mercado peruano (NO confirmados):** Efectivo, Tarjeta de Crédito, Tarjeta de Débito, Transferencia Bancaria, Billetera Digital (Yape/Plin), Depósito en Cuenta.
-- **Referencia:** BQ-012.
+- **Estado:** [C] — confirmado por el propietario (2026-07-18, tercera ronda). Catálogo **configurable**.
+- **Valores iniciales confirmados:** Efectivo, Yape, Plin, Transferencia bancaria.
+- **Ampliación futura prevista (no en V1):** Tarjeta de crédito/débito u otros medios, sin requerir cambios de arquitectura (el catálogo es configurable, no fijo en código).
+- **Referencia:** BQ-012 (resuelta).
 
 ## CAT-009 — Tipos de Cliente
 
@@ -94,7 +95,7 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 ## CAT-013 — Motivos de Movimiento de Inventario (Kardex)
 
 - **Estado:** [C] — confirmado por el propietario (2026-07-18): "Tipos de movimientos esperados: Compras, Ventas, Consumo en taller, Consumo en servicios de campo, Ajustes de inventario" — coincide exactamente con la propuesta inferida por el analista.
-- **Valores confirmados:** Compra, Venta, Consumo en Taller, Consumo en Servicio de Campo, Ajuste de Inventario. "Devolución" se mantiene como valor propuesto adicional, pendiente de **BQ-087** (¿existen devoluciones?).
+- **Valores confirmados:** Compra, Venta, Consumo en Taller, Consumo en Servicio de Campo, Ajuste de Inventario, **Devolución** (confirmado 2026-07-18, resuelve BQ-087: las devoluciones se manejan mediante este tipo de movimiento, sin módulo complejo adicional).
 - **Referencia:** RF-029.
 
 ## CAT-014 — Unidades de Medida
@@ -149,7 +150,7 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-005 Roles de Usuario | [C] | Usuarios |
 | CAT-006 Estados de OT | [PV] | Taller |
 | CAT-007 Estados de Cotización | [PV] | Ventas/Taller |
-| CAT-008 Formas de Pago | [PV] | Ventas/Caja |
+| CAT-008 Formas de Pago | [C] | Ventas/Caja |
 | CAT-009 Tipos de Cliente | [PV] | Clientes |
 | CAT-010 Estados de Servicio de Campo | [PV] | Servicios de Campo |
 | CAT-011 Estados de Orden de Compra | [PV] | Compras |
@@ -163,4 +164,4 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-019 Monedas | [PV] | Ventas/Caja |
 | CAT-020 Documentos de Identidad | [PV] | Clientes/Proveedores |
 
-**Conclusión (actualizada 2026-07-18, segunda ronda):** de los 20 catálogos identificados, **8 están resueltos** (CAT-001, CAT-003, CAT-004, CAT-005, CAT-013, CAT-016, CAT-017 —descartado para V1—, y CAT-002 con matiz de estructura pendiente). Los 12 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.
+**Conclusión (actualizada 2026-07-18, tercera ronda):** de los 20 catálogos identificados, **9 están resueltos** (CAT-001, CAT-003, CAT-004, CAT-005, CAT-008, CAT-013, CAT-016, CAT-017 —descartado para V1—, y CAT-002 con matiz de estructura pendiente). Los 11 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.

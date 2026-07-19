@@ -97,9 +97,9 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-025 | El sistema permitirá clasificar productos por categoría (herramientas eléctricas, manuales, materiales eléctricos/sanitarios, repuestos, accesorios, tecnología, etc.). | Alta | [C] | Almacenero | CAT-007 |
 | RF-026 | El sistema permitirá consultar el stock disponible de un producto en tiempo real. | Alta | [I] | Vendedor, Almacenero, Técnico | — |
 | RF-027 | El sistema deberá registrar automáticamente todo movimiento de inventario (ingreso, salida, ajuste) en el Kardex del producto. | Alta | [C] | — | RN-002 |
-| RF-028 | El sistema deberá impedir la venta o consumo de un producto sin stock disponible. | Alta | [C] | — | RN-003, BQ-001 |
+| RF-028 | El sistema deberá impedir la venta o consumo de un producto sin stock disponible, validando la disponibilidad al momento de confirmar la operación (sin stock negativo en operaciones normales). | Alta | [C] | — | RN-003, RN-007, BQ-001 (resuelta) |
 | RF-029 | El sistema permitirá diferenciar el motivo de cada movimiento de inventario (venta, consumo en taller, consumo en campo, compra, ajuste, devolución). | Alta | [I] | Almacenero | CAT-015 |
-| RF-030 | El sistema permitirá realizar ajustes manuales de inventario (conteos físicos), registrando usuario y motivo. | Media | [PV] | Almacenero | BQ-004 |
+| RF-030 | El sistema permitirá realizar ajustes manuales de inventario (conteos físicos, incluyendo la única excepción que permite dejar stock en un valor distinto al calculado por el Kardex), registrando usuario y motivo obligatorio. **Solo el Administrador/Propietario puede realizar este ajuste** (RN-008). | **Alta** | [C] | Administrador | BQ-004, BQ-001 (resuelta) |
 | RF-031 | El sistema permitirá definir un nivel mínimo de stock por producto y alertar cuando se alcance. | Media | [PV] | Almacenero | BQ-005 |
 | RF-032 | El sistema deberá soportar un inventario único compartido entre Tienda, Taller y Servicios de Campo. | **Alta — crítico** | [C] | — | BQ-001, BQ-003 |
 
@@ -123,10 +123,12 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-039 | El sistema permitirá emitir distintos tipos de comprobante de venta: cotización, boleta, factura, nota de venta y ticket. | Alta | [C] | Vendedor | CAT-004 |
 | RF-040 | El sistema permitirá convertir una cotización aprobada en una venta formal, sin duplicar el registro. | Alta | [I] | Vendedor | — |
 | RF-041 | El sistema deberá validar el stock disponible antes de confirmar una venta. | Alta | [C] | — | RN-003 |
-| RF-042 | El sistema permitirá registrar el o los medios de pago utilizados en una venta. | Alta | [PV] | Vendedor | BQ-012, CAT-005 |
+| RF-042 | El sistema permitirá registrar el o los medios de pago utilizados en una venta, seleccionando entre un catálogo **configurable** de medios de pago. Valores iniciales confirmados: Efectivo, Yape, Plin, Transferencia bancaria (ampliable a Tarjeta u otros sin cambios de arquitectura). | Alta | [C] | Ventas | BQ-012 (resuelta), Business-Catalogs.md (CAT-008) |
 | RF-043 | El sistema permitirá anular una venta, registrando auditoría y revirtiendo el movimiento de inventario asociado. | Alta | [PV] | Vendedor, Administrador | BQ-013 |
 | RF-044 | El sistema deberá emitir comprobantes electrónicos (boleta/factura) conforme a la normativa SUNAT vigente, si se determina obligatorio. | Alta (condicionado) | [PV] | — | BQ-050, BQ-051 |
 | RF-045 | El sistema permitirá aplicar descuentos a una venta, dentro de límites autorizados por rol. | Media | [PV] | Vendedor | BQ-014 |
+| RF-089 | El sistema permitirá registrar una venta con saldo pendiente autorizado por el Administrador/Propietario (RN-031), registrando usuario autorizante, monto pendiente y referencia de pago pendiente. | Alta | [C] | Administrador, Ventas | RN-031, BQ-019 (resuelta) |
+| RF-091 | El sistema permitirá registrar la devolución de un producto vendido mediante un movimiento de inventario de tipo "Devolución" (CAT-013), con trazabilidad al comprobante de venta original. | Alta | [C] | Administrador, Ventas | RN-032, BQ-087 (resuelta) |
 
 ### 4.8 Caja
 
@@ -136,7 +138,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-047 | El sistema permitirá registrar ingresos y egresos de caja asociados a ventas, cobros de OT y otros conceptos. | Alta | [PV] | Cajero/Vendedor | — |
 | RF-048 | El sistema permitirá realizar el cierre/arqueo de caja, comparando el monto teórico contra el físico declarado. | Alta | [PV] | Cajero/Vendedor, Contador | BQ-031 |
 | RF-049 | El sistema permitirá emitir un reporte de movimientos de caja por turno/jornada. | Media | [PV] | Contador | — |
-| RF-050 | El sistema permitirá registrar cobros de Taller con estado de pago completo, adelanto, o saldo pendiente autorizado — el pago **no** bloquea la entrega del equipo (RN-001, corregida el 2026-07-18). | Alta | [C] | Administrador, Ventas, Técnico | RN-001 |
+| RF-050 | El sistema permitirá registrar cobros de Taller con estado de pago completo, adelanto, o saldo pendiente autorizado — el pago **no** bloquea la entrega del equipo (RN-001, corregida el 2026-07-18). **Dejar un saldo pendiente requiere autorización explícita del Administrador/Propietario**, registrando el usuario que autorizó. | Alta | [C] | Administrador, Ventas, Técnico | RN-001, BQ-093 (resuelta) |
 
 ### 4.9 Taller (Recepción, Diagnóstico, Cotización, Reparación, Garantía, Entrega)
 
@@ -147,11 +149,11 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-053 | El sistema permitirá emitir un comprobante de recepción al momento de registrar el equipo. | Alta | [C] | Administrador, Técnico o Ventas (configurable) | — |
 | RF-054 | El sistema permitirá registrar el diagnóstico técnico de un equipo dentro de su OT. | Alta | [I] | Técnico | — |
 | RF-055 | El sistema permitirá generar una cotización de reparación a partir del diagnóstico registrado. | Alta | [I] | Técnico, Supervisor | — |
-| RF-056 | El sistema permitirá registrar la aprobación o el rechazo del cliente sobre una cotización de reparación. | Alta | [I] | Recepcionista | BQ-034 |
+| RF-056 | El sistema permitirá registrar la aprobación o el rechazo del cliente sobre una cotización de reparación. En caso de rechazo, el sistema permitirá opcionalmente registrar un cobro por el diagnóstico ya realizado, según decisión del usuario caso por caso (no se asume gratuidad ni costo fijo). | Alta | [C] | Administrador, Ventas o Técnico | RN-030, BQ-034 (resuelta) |
 | RF-057 | El sistema permitirá registrar los repuestos consumidos durante una reparación, descontándolos automáticamente del inventario. | Alta | [C] | Técnico | RN-002, RN-003 |
 | RF-058 | El sistema permitirá registrar el resultado de las pruebas realizadas antes de la entrega del equipo. | Media | [I] | Técnico | — |
-| RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, capturando: fecha y hora, usuario que realiza la entrega, estado del pago (completo antes de la entrega, completo al momento, adelanto, o saldo pendiente autorizado), monto pagado y saldo pendiente si corresponde. **El pago no es un prerrequisito bloqueante para la entrega** (RN-001, corregida el 2026-07-18). | Alta | [C] | Administrador, Ventas, Técnico | RN-001 |
-| RF-088 | El sistema permitirá registrar el cobro posterior de un saldo pendiente asociado a una OT ya entregada. | Alta | [I] | Administrador, Ventas | BQ-093 |
+| RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, capturando: fecha y hora, usuario que realiza la entrega, estado del pago (completo antes de la entrega, completo al momento, adelanto, o saldo pendiente autorizado), monto pagado y saldo pendiente si corresponde. **El pago no es un prerrequisito bloqueante para la entrega** (RN-001, corregida el 2026-07-18). Si se deja saldo pendiente, el sistema exigirá registrar el **usuario Administrador/Propietario que autorizó**, además del monto pendiente y una fecha o referencia de pago pendiente. | Alta | [C] | Administrador, Ventas, Técnico | RN-001, BQ-093 (resuelta) |
+| RF-088 | El sistema permitirá registrar el cobro posterior de un saldo pendiente asociado a una OT ya entregada. | Alta | [C] | Administrador, Ventas | RN-031, BQ-093 (resuelta) |
 | RF-060 | El sistema permitirá consultar el historial completo de cada equipo a través de sus distintos ingresos, incluyendo por cada uno: fecha de ingreso, diagnóstico, reparación realizada, repuestos utilizados, técnico responsable y garantía asociada. | Alta | [C] | Todos (consulta) | RN-005 |
 | RF-061 | El sistema permitirá registrar, para una reparación, si tiene garantía asociada, su período (fecha de inicio y fecha de finalización). **Alcance V1 confirmado y reducido (2026-07-18):** no incluye tipos de garantía, condiciones de cobertura ni gestión avanzada — eso queda para una versión futura. | Alta | [C] | Técnico, Administrador | BQ-035 (resuelta con alcance reducido) |
 | RF-062 | El sistema permitirá asociar una nueva Orden de Trabajo a una garantía existente vigente. | Alta | [C] | Administrador | BQ-036 (resuelta con alcance reducido) |
@@ -166,8 +168,9 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-066 | El sistema permitirá registrar el diagnóstico y/o trabajo realizado en un servicio de campo. | Alta | [I] | Técnico | — |
 | RF-067 | El sistema permitirá registrar los materiales/repuestos consumidos en un servicio de campo, descontándolos del inventario compartido. | Alta | [C] | Técnico | RN-002, RF-032 |
 | RF-068 | El sistema permitirá generar una cotización para un servicio de campo, de forma análoga al Taller. | Media | [PV] | Técnico, Supervisor | BQ-038 |
-| RF-069 | El sistema permitirá registrar la conformidad del cliente al finalizar un servicio de campo. | Media | [PV] | Técnico | BQ-039 |
-| RF-070 | El sistema permitirá registrar el cobro de un servicio de campo. | Alta | [PV] | Técnico, Cajero | BQ-040 |
+| RF-069 | El sistema permitirá registrar el cierre de un servicio de campo capturando: estado final del servicio, observaciones, y el usuario responsable del cierre. No incluye firma digital ni evidencias fotográficas en V1. | Alta | [C] | Técnico | RN-019, BQ-039 (resuelta) |
+| RF-070 | El sistema permitirá registrar el cobro de un servicio de campo, con los mismos medios de pago configurables de RF-042, y admitiendo saldo pendiente autorizado por el Administrador/Propietario (RN-031). | Alta | [C] | Técnico, Ventas | RN-031, BQ-040 |
+| RF-090 | El sistema permitirá registrar la participación de trabajadores temporales (ej. ayudantes de instalaciones) en una Orden de Trabajo o Servicio de Campo como dato de referencia (nombre, rol de apoyo), sin necesidad de crear una cuenta de usuario. | Media | [C] | Administrador, Técnico | RN-027 |
 | RF-071 | El registro de un servicio de campo (diagnóstico, materiales, conformidad, cobro) se realizará **desde el sistema web**, típicamente al volver a la red local. **Confirmado y acotado el 2026-07-18:** para V1 se retiran explícitamente la aplicación móvil dedicada y la sincronización offline; el sistema debe diseñarse con un punto de extensión para incorporarlas en una versión futura, sin requerir rediseño. | Alta | [C] | Técnico | BQ-052 (resuelta), BQ-053 (resuelta) |
 
 ### 4.11 Reportes
