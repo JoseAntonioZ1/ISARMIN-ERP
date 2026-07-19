@@ -29,6 +29,8 @@ public static class DependencyInjection
         services.AddScoped<IMedioPagoRepository, MedioPagoRepository>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
+        services.AddScoped<IUnidadMedidaRepository, UnidadMedidaRepository>();
+        services.AddScoped<IProductoRepository, ProductoRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
         services.AddSingleton<IGeneradorTokenJwt, GeneradorTokenJwt>();
         services.AddSingleton<IFechaHoraProvider, FechaHoraProvider>();

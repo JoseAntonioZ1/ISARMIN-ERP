@@ -12,6 +12,11 @@ export interface MedioPago {
   activo: boolean
 }
 
+export interface UnidadMedida {
+  id: string
+  nombre: string
+}
+
 export const categoriasApi = {
   listar: () => httpClient.get<Categoria[]>('/categorias'),
   crear: (datos: { nombre: string; categoriaPadreId: string | null }) =>
@@ -25,4 +30,10 @@ export const mediosPagoApi = {
   crear: (nombre: string) => httpClient.post<MedioPago>('/configuracion/medios-pago', { nombre }),
   cambiarEstado: (id: string, activo: boolean) =>
     httpClient.patch<void>(`/configuracion/medios-pago/${id}/estado`, { activo }),
+}
+
+export const unidadesMedidaApi = {
+  listar: () => httpClient.get<UnidadMedida[]>('/unidades-medida'),
+  crear: (nombre: string) => httpClient.post<UnidadMedida>('/unidades-medida', { nombre }),
+  editar: (id: string, nombre: string) => httpClient.put<UnidadMedida>(`/unidades-medida/${id}`, { nombre }),
 }

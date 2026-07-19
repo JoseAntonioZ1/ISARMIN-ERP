@@ -20,7 +20,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 | Total de preguntas | Resueltas | Parcialmente resueltas | Recomendación documentada (no confirmada) | Pendientes |
 |---|---|---|---|---|
-| 91 | 38 | 7 | 8 | 38 |
+| 91 | 39 | 8 | 8 | 36 |
 
 **Actualización 1 — 2026-07-18:** el propietario de ISARMIN PERÚ S.A.C. validó directamente el funcionamiento real del negocio (contexto de la empresa, usuarios reales, inventario compartido, operación de Taller y Servicios de Campo, conectividad de campo, roles y permisos, caja, compras/costos, migración inicial e infraestructura), resolviendo total o parcialmente 33 preguntas y añadiendo 5 nuevas (BQ-087 a BQ-091).
 
@@ -63,11 +63,15 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | BQ-002 | ✅ **RESUELTA.** ¿La empresa opera desde un único almacén/local, o existen (o se planean) múltiples almacenes o sucursales? | **Alta** | Actors.md (ACT-006), Business-Catalogs.md (CAT-016) |
 | BQ-003 | ✅ **RESUELTA.** Ante una posible concurrencia entre una venta en tienda y un consumo de repuesto en taller sobre el mismo producto, ¿debe existir un mecanismo de reserva de stock, o basta con validar disponibilidad al confirmar cada operación? | **Alta** | RN-007, Business-Processes.md (BP-001) |
 | BQ-004 | ¿Cómo se realizan hoy los ajustes/conteos físicos de inventario? ¿Quién los autoriza y con qué frecuencia? | Media | RF-030 |
-| BQ-005 | ¿Se requiere definir un stock mínimo por producto con alertas automáticas de reposición? | Media | RF-031, Business-States.md (ST-004) |
+| BQ-005 | 🟡 **PARCIALMENTE RESUELTA** (decisión funcional, módulo Productos, 2026-07-19). ¿Se requiere definir un stock mínimo por producto con alertas automáticas de reposición? | Media | RF-031, Business-States.md (ST-004) |
 | BQ-007 | La lista de categorías de producto declarada (herramientas, materiales, repuestos, etc.) ¿es exhaustiva o solo ilustrativa? ¿Se requiere una jerarquía de categorías y subcategorías? | Media | Business-Catalogs.md (CAT-002) |
-| BQ-008 | ¿Qué unidades de medida maneja el negocio (unidad, metro, kilogramo, rollo, etc.)? ¿Algún producto requiere conversión entre unidades (ej. cable por metro vendido también por rollo)? | Media | Business-Catalogs.md (CAT-014) |
+| BQ-008 | ✅ **RESUELTA** (decisión funcional, módulo Productos, 2026-07-19). ¿Qué unidades de medida maneja el negocio (unidad, metro, kilogramo, rollo, etc.)? ¿Algún producto requiere conversión entre unidades (ej. cable por metro vendido también por rollo)? | Media | Business-Catalogs.md (CAT-014) |
 
 > **Respuesta a BQ-001 y BQ-003 (fuente: validación con el propietario, 2026-07-18 — tercera ronda):** "El inventario no debe permitir stock negativo en operaciones normales. Si existe una situación excepcional, solamente el Administrador podrá realizar un ajuste manual autorizado indicando el motivo." Esto resuelve ambas preguntas: el mecanismo de concurrencia (BQ-003) es simplemente **validar disponibilidad al momento de confirmar cada operación y rechazarla si no hay stock suficiente** — no se requiere un sistema de reserva previa; y el stock negativo (BQ-001) queda prohibido salvo ajuste manual del Administrador con motivo obligatorio. `Business-Rules.md` (RN-007, RN-008) y `Functional-Requirements.md` (RF-028, RF-030) se actualizaron.
+
+> **Respuesta a BQ-008 (decisión funcional, módulo Productos, 2026-07-19):** la unidad de medida se maneja como **catálogo configurable** (misma mecánica que Categoría/Medio de Pago, RN-028: el Administrador puede ampliarlo con un `INSERT`, sin migración), sembrado con los valores ya propuestos en `Business-Catalogs.md` (CAT-014): Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego. La **conversión entre unidades** (ej. cable vendido por metro y también por rollo) queda **explícitamente fuera de alcance en V1** — no hay evidencia de que se necesite todavía y se documenta como mejora futura no bloqueante. `Business-Rules.md` (RN-040) y `Business-Catalogs.md` (CAT-014) se actualizaron.
+
+> **Respuesta a BQ-005 (decisión funcional, módulo Productos, 2026-07-19):** se agrega `stock_minimo` como campo **numérico opcional** en Producto, sin obligatoriedad, para no bloquear el dato a futuro. La **lógica de alerta automática de reposición** (RF-031) **no se implementa aún**: depende del módulo de Inventario/Kardex (aún no construido) y de un mecanismo de notificaciones inexistente en el sistema. Queda pendiente confirmar con el negocio si el feature de alertas en sí se requiere (por eso se marca parcialmente resuelta, no resuelta). `Business-Rules.md` (RN-041) se actualizó.
 
 > **Respuesta a BQ-002 (fuente: `PROJECT_SCOPE.md`, sección "Funcionalidades Fuera del Alcance Inicial"):** "Integración con múltiples sucursales" está explícitamente fuera del alcance de la primera versión. Se confirma **almacén/local único** para el MVP. Impacto: `Business-Catalogs.md` (CAT-016) puede fijarse en "Almacén Único" como valor confirmado [C]; no es necesario modelar multi-almacén en esta fase, aunque el diseño debería dejar el punto de extensión abierto dado que `PROJECT_CONTEXT.md` prevé "múltiples sucursales" como posible ampliación futura.
 

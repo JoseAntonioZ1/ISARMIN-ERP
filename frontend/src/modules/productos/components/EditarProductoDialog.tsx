@@ -1,0 +1,221 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import type { Categoria, UnidadMedida } from '@/modules/catalogos/api/catalogosApi'
+import type { DatosEditarProducto, Producto } from '@/modules/productos/api/productosApi'
+
+const numeroObligatorio = (mensaje: string) =>
+  z
+    .string()
+    .min(1, mensaje)
+    .refine((v) => !Number.isNaN(Number(v)), 'Debe ser un número.')
+    .refine((v) => Number(v) >= 0, 'No puede ser negativo.')
+
+const numeroOpcional = z
+  .string()
+  .optional()
+  .refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) >= 0), 'Debe ser un número mayor o igual a 0.')
+
+const esquemaEditarProducto = z.object({
+  codigoInterno: z.string().min(1, 'El código interno es obligatorio.').max(50),
+  nombre: z.string().min(1, 'El nombre es obligatorio.').max(200),
+  categoriaId: z.string().min(1, 'La categoría es obligatoria.'),
+  unidadMedidaId: z.string().min(1, 'La unidad de medida es obligatoria.'),
+  marca: z.string().max(100).optional(),
+  costoReferencia: numeroObligatorio('El costo es obligatorio.'),
+  precioVenta: numeroObligatorio('El precio es obligatorio.'),
+  codigoBarras: z.string().max(50).optional(),
+  stockMinimo: numeroOpcional,
+})
+
+type FormularioEditarProducto = z.infer<typeof esquemaEditarProducto>
+
+interface EditarProductoDialogProps {
+  producto: Producto
+  categorias: Categoria[]
+  unidadesMedida: UnidadMedida[]
+  onGuardar: (datos: DatosEditarProducto) => void
+  onCancelar: () => void
+  guardando?: boolean
+}
+
+export function EditarProductoDialog({
+  producto,
+  categorias,
+  unidadesMedida,
+  onGuardar,
+  onCancelar,
+  guardando,
+}: EditarProductoDialogProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormularioEditarProducto>({
+    resolver: zodResolver(esquemaEditarProducto),
+    defaultValues: {
+      codigoInterno: producto.codigoInterno,
+      nombre: producto.nombre,
+      categoriaId: producto.categoriaId,
+      unidadMedidaId: producto.unidadMedidaId,
+      marca: producto.marca ?? '',
+      costoReferencia: String(producto.costoReferencia),
+      precioVenta: String(producto.precioVenta),
+      codigoBarras: producto.codigoBarras ?? '',
+      stockMinimo: producto.stockMinimo === null ? '' : String(producto.stockMinimo),
+    },
+  })
+
+  const onSubmit = (datos: FormularioEditarProducto) =>
+    onGuardar({
+      codigoInterno: datos.codigoInterno,
+      nombre: datos.nombre,
+      categoriaId: datos.categoriaId,
+      unidadMedidaId: datos.unidadMedidaId,
+      marca: datos.marca || null,
+      costoReferencia: Number(datos.costoReferencia),
+      precioVenta: Number(datos.precioVenta),
+      codigoBarras: datos.codigoBarras || null,
+      stockMinimo: datos.stockMinimo ? Number(datos.stockMinimo) : null,
+    })
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800"
+      >
+        <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Editar producto</h2>
+
+        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Código interno</label>
+        <input
+          {...register('codigoInterno')}
+          className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+        />
+        {errors.codigoInterno && <p className="mb-2 text-sm text-red-600">{errors.codigoInterno.message}</p>}
+
+        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Nombre</label>
+        <input
+          {...register('nombre')}
+          className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+        />
+        {errors.nombre && <p className="mb-2 text-sm text-red-600">{errors.nombre.message}</p>}
+
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Categoría</label>
+            <select
+              {...register('categoriaId')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            >
+              <option value="">Seleccionar...</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+            {errors.categoriaId && <p className="mt-1 text-sm text-red-600">{errors.categoriaId.message}</p>}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Unidad de medida
+            </label>
+            <select
+              {...register('unidadMedidaId')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            >
+              <option value="">Seleccionar...</option>
+              {unidadesMedida.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.nombre}
+                </option>
+              ))}
+            </select>
+            {errors.unidadMedidaId && <p className="mt-1 text-sm text-red-600">{errors.unidadMedidaId.message}</p>}
+          </div>
+        </div>
+
+        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          Marca (opcional)
+        </label>
+        <input
+          {...register('marca')}
+          className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+        />
+
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Costo de adquisición
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              {...register('costoReferencia')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+            {errors.costoReferencia && <p className="mt-1 text-sm text-red-600">{errors.costoReferencia.message}</p>}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Precio de venta
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              {...register('precioVenta')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+            {errors.precioVenta && <p className="mt-1 text-sm text-red-600">{errors.precioVenta.message}</p>}
+          </div>
+        </div>
+
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Código de barras (opcional)
+            </label>
+            <input
+              {...register('codigoBarras')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Stock mínimo (opcional)
+            </label>
+            <input
+              type="number"
+              step="0.001"
+              {...register('stockMinimo')}
+              className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+          </div>
+        </div>
+
+        <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+          El stock actual ({producto.stockActual}) no se edita aquí — se ajusta desde el módulo de Inventario.
+        </p>
+
+        <div className="mt-5 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancelar}
+            className="rounded border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={guardando}
+            className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+          >
+            {guardando ? 'Guardando...' : 'Guardar'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}

@@ -145,6 +145,12 @@ erDiagram
 | nombre | varchar(100) | NOT NULL |
 | categoria_padre_id | uuid | NULL, FK → `categorias.id` — **[PV] BQ-007** (¿se requiere jerarquía?) |
 
+**`unidades_medida`** *(catálogo configurable — CAT-014, resuelto por RN-040)*
+| Columna | Tipo | Restricciones |
+|---|---|---|
+| id | uuid | PK |
+| nombre | varchar(50) | NOT NULL, UNIQUE |
+
 **`productos`**
 | Columna | Tipo | Restricciones |
 |---|---|---|
@@ -154,11 +160,11 @@ erDiagram
 | nombre | varchar(200) | NOT NULL |
 | categoria_id | uuid | NOT NULL, FK → `categorias.id` |
 | marca | varchar(100) | NULL |
-| unidad_medida | varchar(20) | NOT NULL — **[PV] BQ-008** (valores exactos sin confirmar) |
-| costo_referencia | numeric(12,2) | NOT NULL, default `0` — actualizado por costo promedio ponderado, RN-013 (tentativo) |
+| unidad_medida_id | uuid | NOT NULL, FK → `unidades_medida.id` — RN-040 (BQ-008 resuelta) |
+| costo_referencia | numeric(12,2) | NOT NULL, default `0` — costo de adquisición inicial; el recálculo por costo promedio ponderado (RN-013) se implementa en el módulo de Compras |
 | precio_venta | numeric(12,2) | NOT NULL |
-| stock_actual | numeric(12,3) | NOT NULL, default `0` — calculado/replicado desde `movimientos_inventario`; `CHECK (stock_actual >= 0)` salvo ajuste autorizado (RN-008; ver nota) |
-| stock_minimo | numeric(12,3) | NULL — **[PV] BQ-005** |
+| stock_actual | numeric(12,3) | NOT NULL, default `0` — stock inicial capturado al registrar; el recálculo automático desde `movimientos_inventario` se implementa en el módulo de Inventario; `CHECK (stock_actual >= 0)` salvo ajuste autorizado (RN-008; ver nota) |
+| stock_minimo | numeric(12,3) | NULL — RN-041 (BQ-005 parcialmente resuelta: campo capturado, sin lógica de alertas aún) |
 | estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Activo','Inactivo'))`, default `'Activo'` |
 
 > **Nota sobre `stock_actual` y RN-008:** se mantiene como columna redundante (desnormalizada) por rendimiento de lectura (evita sumar todo el Kardex en cada consulta de stock — UC-11), recalculada transaccionalmente en cada `movimientos_inventario` insertado. El `CHECK (stock_actual >= 0)` se **desactiva únicamente** dentro de la transacción de un ajuste manual autorizado por el Administrador (RF-030); esto se controla a nivel de `Application`, no es posible expresar "excepto para un usuario" en un `CHECK` de PostgreSQL.
@@ -431,7 +437,7 @@ Estas tres tablas comparten el mismo mecanismo — **exactamente un origen no nu
 ## 8. Estrategia de migraciones
 
 - Entity Framework Core Migrations (`dotnet ef migrations add ...`), una migración por cambio incremental de esquema, versionada en Git junto al código (`GIT_WORKFLOW.md`).
-- Datos semilla (*seed data*) solo para catálogos ya confirmados: `medios_pago` (Efectivo, Yape, Plin, Transferencia bancaria — CAT-008) y los 3 `roles` reales (Administrador, Ventas, Técnico — CAT-005). Ningún catálogo marcado **[PV]** en `Business-Catalogs.md` se precarga.
+- Datos semilla (*seed data*) solo para catálogos ya confirmados: `medios_pago` (Efectivo, Yape, Plin, Transferencia bancaria — CAT-008), `unidades_medida` (Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego — CAT-014) y los 3 `roles` reales (Administrador, Ventas, Técnico — CAT-005). Ningún catálogo marcado **[PV]** en `Business-Catalogs.md` se precarga.
 
 ## 9. Lo que este documento NO resuelve todavía
 

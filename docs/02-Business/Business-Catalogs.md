@@ -100,8 +100,9 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-014 — Unidades de Medida
 
-- **Estado:** [PV] — no se documenta si el sistema requiere manejar más de una unidad de medida por producto.
-- **Valores propuestos (a validar):** Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego.
+- **Estado:** [C] — resuelta (decisión funcional, módulo Productos, 2026-07-19, resuelve BQ-008). Catálogo configurable, ampliable por el Administrador sin migración (RN-040).
+- **Valores confirmados (semilla inicial, ampliable):** Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego.
+- **Fuera de alcance en V1:** conversión entre unidades (ej. cable por metro vendido también por rollo) — no confirmado como necesario, se difiere.
 - **Referencia:** BQ-008.
 
 ## CAT-015 — Prioridades (OT / Servicio de Campo)
@@ -156,7 +157,7 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-011 Estados de Orden de Compra | [PV] | Compras |
 | CAT-012 Estados de Comprobante | [PV] | Ventas |
 | CAT-013 Motivos de Movimiento de Inventario | [C] | Inventario |
-| CAT-014 Unidades de Medida | [PV] | Inventario |
+| CAT-014 Unidades de Medida | [C] | Inventario |
 | CAT-015 Prioridades | [PV] | Taller/Campo |
 | CAT-016 Almacenes/Sucursales | [C] | Inventario |
 | CAT-017 Tipos de Garantía | [C] — descartado para V1 | Taller |
@@ -164,4 +165,4 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-019 Monedas | [PV] | Ventas/Caja |
 | CAT-020 Documentos de Identidad | [PV] | Clientes/Proveedores |
 
-**Conclusión (actualizada 2026-07-18, tercera ronda):** de los 20 catálogos identificados, **9 están resueltos** (CAT-001, CAT-003, CAT-004, CAT-005, CAT-008, CAT-013, CAT-016, CAT-017 —descartado para V1—, y CAT-002 con matiz de estructura pendiente). Los 11 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.
+**Conclusión (actualizada 2026-07-19):** de los 20 catálogos identificados, **10 están resueltos** (CAT-001, CAT-003, CAT-004, CAT-005, CAT-008, CAT-013, CAT-014, CAT-016, CAT-017 —descartado para V1—, y CAT-002 con matiz de estructura pendiente). Los 10 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.

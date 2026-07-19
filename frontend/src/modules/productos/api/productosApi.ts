@@ -1,0 +1,59 @@
+import { httpClient } from '@/shared/api/httpClient'
+
+export interface Producto {
+  id: string
+  codigoInterno: string
+  codigoBarras: string | null
+  nombre: string
+  categoriaId: string
+  marca: string | null
+  unidadMedidaId: string
+  costoReferencia: number
+  precioVenta: number
+  margen: number
+  stockActual: number
+  stockMinimo: number | null
+  estado: 'Activo' | 'Inactivo'
+}
+
+export interface ListadoPaginado<T> {
+  datos: T[]
+  total: number
+  pagina: number
+  tamanoPagina: number
+}
+
+export interface DatosRegistrarProducto {
+  codigoInterno: string
+  nombre: string
+  categoriaId: string
+  unidadMedidaId: string
+  costoReferencia: number
+  precioVenta: number
+  stockInicial: number
+  marca: string | null
+  codigoBarras: string | null
+  stockMinimo: number | null
+}
+
+export interface DatosEditarProducto {
+  codigoInterno: string
+  nombre: string
+  categoriaId: string
+  unidadMedidaId: string
+  costoReferencia: number
+  precioVenta: number
+  marca: string | null
+  codigoBarras: string | null
+  stockMinimo: number | null
+}
+
+export const productosApi = {
+  buscar: (busqueda?: string, pagina = 1, tamanoPagina = 20) =>
+    httpClient.get<ListadoPaginado<Producto>>(
+      `/productos?busqueda=${encodeURIComponent(busqueda ?? '')}&pagina=${pagina}&tamanoPagina=${tamanoPagina}`,
+    ),
+  registrar: (datos: DatosRegistrarProducto) => httpClient.post<Producto>('/productos', datos),
+  editar: (id: string, datos: DatosEditarProducto) => httpClient.put<Producto>(`/productos/${id}`, datos),
+  cambiarEstado: (id: string, activo: boolean) => httpClient.patch<void>(`/productos/${id}/estado`, { activo }),
+}

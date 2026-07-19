@@ -6,6 +6,30 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.11.0] - 19/07/2026
+
+### Agregado
+
+- **Resolución de BQ-005 y BQ-008 (previas al módulo de Productos):**
+  - **BQ-008 (unidad de medida, RESUELTA):** la unidad de medida se maneja como catálogo configurable (misma mecánica que Categoría/Medio de Pago — RN-028), ampliable por el Administrador sin migración. Semilla inicial (CAT-014): Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego. La conversión entre unidades queda explícitamente fuera de alcance en V1 (RN-040 nueva).
+  - **BQ-005 (stock mínimo, PARCIALMENTE RESUELTA):** se agrega `stock_minimo` como campo numérico opcional en Producto, sin obligatoriedad. La lógica de alertas automáticas de reposición (RF-031) **no** se implementa aún — depende del módulo de Inventario/Kardex (aún no construido) y de un mecanismo de notificaciones inexistente (RN-041 nueva). El feature de alertas en sí sigue pendiente de confirmación con el negocio.
+- **Módulo de Productos (UC-10), backend + frontend (RF-023 a RF-026):**
+  - `Domain`: `Producto` (`Inventario`) — `CodigoInterno` obligatorio único, `CodigoBarras` opcional único, `Nombre`, `CategoriaId`/`UnidadMedidaId` (FK), `Marca` opcional, `CostoReferencia`/`PrecioVenta` (`Margen` calculado, no persistido), `StockActual` (inicializado al registrar), `StockMinimo` opcional, `Estado` (baja lógica, RN-023). `UnidadMedida` (catálogo configurable análogo a `Categoria`).
+  - **Decisión de diseño importante:** editar un producto (RF-024) nunca modifica `StockActual` — el stock solo cambia mediante el mecanismo de ajuste/Kardex exclusivo del Administrador (RN-008, UC-12), que se construirá en el próximo módulo (Inventario). `ActualizarDatos` lo deja intacto deliberadamente.
+  - `Application`: `RegistrarProductoCommand`, `EditarProductoCommand`, `CambiarEstadoProductoCommand` (baja lógica), `BuscarProductosQuery` (por nombre/código interno/código de barras, con filtro opcional de categoría — ya previsto en `API-Design.md` desde la fase de diseño). `CrearUnidadMedidaCommand`/`EditarUnidadMedidaCommand`/`ListarUnidadesMedidaQuery` análogos a Categoría.
+  - `Infrastructure`: `ProductoRepository`, `UnidadMedidaRepository`. Migración `ProductosYUnidadesMedida` (tablas `productos` y `unidades_medida`, semilla de las 7 unidades confirmadas, índices únicos en `codigo_interno`/`codigo_barras` filtrado/`nombre`).
+  - `API`: `ProductosController` y `UnidadesMedidaController`. Siguiendo el diseño ya documentado en `API-Design.md` desde Fase 3, los permisos de Producto son `Inventario.Crear`/`Inventario.Editar`/`Inventario.Eliminar`/`Inventario.Consultar` (no un módulo `Productos.*` nuevo) — consistente con que Producto es la entidad principal del contexto "Inventario" ya usado por Categoría; UnidadMedida reutiliza `Inventario.Consultar`/`Configuracion.Editar` igual que Categoría.
+  - Frontend: `ProductosPage` (búsqueda, crear/editar, activar/desactivar), enlazada desde el menú principal junto a Clientes/Proveedores. `UnidadesMedidaPage` bajo Configuración, junto a Categorías/Medios de Pago. Se usaron diálogos de creación y edición **separados** (`CrearProductoDialog`/`EditarProductoDialog`) porque sus formularios difieren genuinamente (`stockInicial` solo existe al crear) — mismo patrón ya usado en Usuarios.
+  - Pruebas unitarias: 55 Domain + 36 Application = 91/91 exitosas.
+
+Verificado end-to-end contra PostgreSQL real: registrar producto válido (margen calculado correctamente), validación de código interno obligatorio (400), código interno duplicado (409), categoría inexistente (400), búsqueda por nombre y por categoría, editar (confirma que el stock no se toca), baja lógica, crear/editar unidad de medida y rechazo de nombre duplicado (409). Permisos `Inventario.Crear/Editar/Eliminar` otorgados al Administrador vía `PUT /roles/{id}/permisos` (no por migración); `Inventario.Consultar` ya existía desde Catálogos y cubrió las lecturas sin cambios.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores y Productos completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Inventario.
+
+---
+
 ## [0.10.0] - 19/07/2026
 
 ### Agregado

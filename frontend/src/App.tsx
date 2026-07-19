@@ -2,7 +2,9 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { CategoriasPage } from '@/modules/catalogos/pages/CategoriasPage'
 import { MediosPagoPage } from '@/modules/catalogos/pages/MediosPagoPage'
+import { UnidadesMedidaPage } from '@/modules/catalogos/pages/UnidadesMedidaPage'
 import { ClientesPage } from '@/modules/clientes/pages/ClientesPage'
+import { ProductosPage } from '@/modules/productos/pages/ProductosPage'
 import { ProveedoresPage } from '@/modules/proveedores/pages/ProveedoresPage'
 import { RolesPage } from '@/modules/roles/pages/RolesPage'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
@@ -29,11 +31,13 @@ function App() {
             <Route path="/" element={<PaginaInicio />} />
             <Route path="/clientes" element={<ClientesPage />} />
             <Route path="/proveedores" element={<ProveedoresPage />} />
+            <Route path="/productos" element={<ProductosPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
             <Route path="/configuracion/roles" element={<RolesPage />} />
             <Route path="/configuracion/categorias" element={<CategoriasPage />} />
             <Route path="/configuracion/medios-pago" element={<MediosPagoPage />} />
+            <Route path="/configuracion/unidades-medida" element={<UnidadesMedidaPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

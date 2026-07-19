@@ -21,6 +21,8 @@ public class IsarminDbContext : DbContext
     public DbSet<MedioPago> MediosPago => Set<MedioPago>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Proveedor> Proveedores => Set<Proveedor>();
+    public DbSet<UnidadMedida> UnidadesMedida => Set<UnidadMedida>();
+    public DbSet<Producto> Productos => Set<Producto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -90,12 +90,12 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | nombre | Texto | Sí | — | [C] | RF-023 |
 | categoria_id | Referencia a Categoria | Sí | — | [C] | RF-023, RF-025 |
 | marca | Texto | No | — | [C] | RF-023 |
-| unidad_medida | Catálogo | Sí | **Valores exactos (unidad, metro, kg...) pendientes.** | [PV] | BQ-008, CAT-014 |
-| costo_referencia | Decimal | Sí | Actualizado por costo promedio ponderado (tentativo). | [PV] | RN-013 |
+| unidad_medida_id | Referencia a UnidadMedida | Sí | Catálogo configurable, ampliable por el Administrador sin migración (RN-040). Semilla: Unidad, Metro, Kilogramo, Litro, Rollo, Par, Juego. | [C] | RF-023, RN-040, BQ-008 (resuelta) |
+| costo_referencia | Decimal | Sí | Costo de adquisición inicial. La actualización automática por costo promedio ponderado (RN-013) se implementa en el módulo de Compras, aún no construido. | [C] | RF-023 |
 | precio_venta | Decimal | Sí | — | [C] | RF-023 |
 | margen | Decimal (calculado) | No | Derivado de costo y precio. | [C] | RF-023 |
-| stock_actual | Número (calculado del Kardex) | Sí | Nunca negativo salvo ajuste autorizado (RN-008). | [C] | RF-026, RN-008 |
-| stock_minimo | Número | No | **¿Se requiere? Aún sin confirmar.** | [PV] | BQ-005 |
+| stock_actual | Número | Sí | Stock inicial capturado al registrar el producto. El recálculo automático desde el Kardex (RF-027, movimientos) se implementa en el módulo de Inventario, aún no construido. Nunca negativo salvo ajuste autorizado (RN-008). | [C] | RF-026, RN-008 |
+| stock_minimo | Número | No | Campo opcional, sin lógica de alertas aún (RN-041). | [C] | BQ-005 (parcialmente resuelta), RN-041 |
 
 ### MovimientoInventario (Kardex)
 | Campo | Tipo | Obligatorio | Descripción | Estado | Origen |
@@ -343,10 +343,7 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | Campo/entidad | Pregunta pendiente |
 |---|---|
 | Cliente.tipo_documento, tipo_cliente | BQ-011 |
-| Cliente.telefono, direccion (obligatoriedad) | BQ-074 |
 | Categoria.categoria_padre_id | BQ-007 |
-| Producto.unidad_medida (valores) | BQ-008 |
-| Producto.stock_minimo | BQ-005 |
 | Venta.serie/correlativo | BQ-050 |
 | Venta.estado (reglas de anulación) | BQ-013 |
 | PagoVenta (combinación de medios) | BQ-012 (parcial) |
