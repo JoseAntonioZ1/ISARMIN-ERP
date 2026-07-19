@@ -14,6 +14,23 @@ const esquemaLogin = z.object({
 
 type FormularioLogin = z.infer<typeof esquemaLogin>
 
+/**
+ * Distingue el motivo real del fallo en vez de mostrar siempre "credenciales incorrectas":
+ * una API caída o un error del servidor no es lo mismo que una contraseña equivocada,
+ * y confundirlos hace perder tiempo a quien intenta diagnosticar el problema.
+ */
+function obtenerMensajeError(error: unknown): string | null {
+  if (!error) return null
+
+  if (error instanceof ApiError) {
+    if (error.status === 423) return error.message
+    if (error.status === 401) return 'Usuario o contraseña incorrectos.'
+    return 'Ocurrió un error inesperado al iniciar sesión. Intenta nuevamente.'
+  }
+
+  return 'No se pudo conectar con el servidor. Verifica que la API esté disponible.'
+}
+
 export function LoginPage() {
   const navigate = useNavigate()
   const establecerSesion = useSessionStore((s) => s.establecerSesion)
@@ -34,12 +51,7 @@ export function LoginPage() {
 
   const onSubmit = (datos: FormularioLogin) => mutacionLogin.mutate(datos)
 
-  const mensajeError =
-    mutacionLogin.error instanceof ApiError && mutacionLogin.error.status === 423
-      ? mutacionLogin.error.message
-      : mutacionLogin.isError
-        ? 'Usuario o contraseña incorrectos.'
-        : null
+  const mensajeError = obtenerMensajeError(mutacionLogin.error)
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
