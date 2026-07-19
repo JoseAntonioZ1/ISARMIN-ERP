@@ -6,6 +6,27 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.13.0] - 19/07/2026
+
+### Agregado
+
+- **Módulo de Compras (UC-13), backend + frontend (RF-033 a RF-036):** compra directa ya realizada, sin orden de compra ni aprobación previa (RN-024, confirmada). Sin edición ni anulación en este alcance — corregir una compra requeriría revertir Kardex y costo promedio, fuera de RF-033 a RF-036.
+  - **RN-013 (costo promedio ponderado) sigue `[PV]`** — recomendación técnica ya documentada y justificada (ver `[0.11.0]`/Business-Rules.md), pendiente de validación formal de un contador antes de producción. Se implementa la fórmula recomendada ahora porque el propio análisis dice explícitamente que "no bloquea el desarrollo"; queda registrado aquí como pendiente de confirmación, no como decisión cerrada.
+  - `Domain`: `Compra` (aggregate root) y `CompraDetalle` (entidad hija, mismo patrón que `Rol`/`Permiso`). `Producto.RegistrarCompra` aumenta el stock y recalcula `CostoReferencia` con la fórmula de costo promedio ponderado: `(stockActual*costoActual + cantidad*costoUnitario) / (stockActual+cantidad)`. `MovimientoInventario.CrearCompra` genera el movimiento de entrada con `OrigenTipo="Compra"`/`OrigenId=compra.Id`, completando el patrón de referencia genérica del Kardex (ADR-012) con su primer consumidor real (hasta ahora solo existía `CrearAjuste`).
+  - `Application`: `RegistrarCompraCommand` (valida proveedor y cada producto, aplica el costo promedio y genera el Kardex por cada línea de detalle), `BuscarComprasQuery` (filtro por proveedor y/o producto, RF-036), `ObtenerCompraQuery`.
+  - `Infrastructure`: `CompraRepository`. Migración `Compras` (tablas `compras` y `compra_detalle`, exactamente como se diseñaron en `Physical-Data-Model.md` desde Fase 3).
+  - `API`: `ComprasController` (`Compras.Consultar`, `Compras.Crear` — sin `Editar`/`Eliminar`, no están en el alcance). El usuario que registra la compra se extrae del claim `ClaimTypes.NameIdentifier` del JWT, mismo patrón introducido en el módulo de Inventario.
+  - Frontend: `ComprasPage` (listado, detalle de línea de compra) y `RegistrarCompraDialog` (formulario con lista dinámica de productos vía `useFieldArray` de React Hook Form — primer uso de este patrón en el proyecto, para líneas de detalle repetibles).
+  - Pruebas unitarias: 74 Domain + 44 Application = 118/118 exitosas.
+
+Verificado end-to-end contra PostgreSQL real: registro de compra con recálculo correcto de costo promedio ponderado (stock 20→30 a costo 260 con compra de 10 a costo 300 → costo resultante 273.33, verificado manualmente), Kardex con `origenId` correctamente vinculado a la compra, sin detalles (400), proveedor inexistente (404), producto inexistente (404), cantidad cero en detalle (400), búsqueda por proveedor y por producto, obtención por id y 404 para compra inexistente. Permisos `Compras.Consultar`/`Compras.Crear` otorgados al Administrador vía `PUT /roles/{id}/permisos` (esta vez sin necesitar ampliar ningún `CHECK`, a diferencia del módulo anterior).
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste) y Compras completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Caja.
+
+---
+
 ## [0.12.0] - 19/07/2026
 
 ### Agregado

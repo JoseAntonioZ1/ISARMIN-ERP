@@ -6,6 +6,10 @@ using ISARMIN.Application.Modulos.Clientes.Commands.EditarCliente;
 using ISARMIN.Application.Modulos.Clientes.Commands.RegistrarCliente;
 using ISARMIN.Application.Modulos.Clientes.DTOs;
 using ISARMIN.Application.Modulos.Clientes.Queries.BuscarClientes;
+using ISARMIN.Application.Modulos.Compras.Commands.RegistrarCompra;
+using ISARMIN.Application.Modulos.Compras.DTOs;
+using ISARMIN.Application.Modulos.Compras.Queries.BuscarCompras;
+using ISARMIN.Application.Modulos.Compras.Queries.ObtenerCompra;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CambiarEstadoMedioPago;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CrearMedioPago;
 using ISARMIN.Application.Modulos.Configuracion.DTOs;
@@ -90,6 +94,10 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<EditarProveedorCommand, ProveedorDto>, EditarProveedorCommandHandler>();
         services.AddScoped<ICommandHandler<CambiarEstadoProveedorCommand, Unit>, CambiarEstadoProveedorCommandHandler>();
         services.AddScoped<IQueryHandler<BuscarProveedoresQuery, ListadoPaginadoDto<ProveedorDto>>, BuscarProveedoresQueryHandler>();
+
+        services.AddScoped<ICommandHandler<RegistrarCompraCommand, CompraDto>, RegistrarCompraCommandHandler>();
+        services.AddScoped<IQueryHandler<BuscarComprasQuery, ListadoPaginadoDto<CompraDto>>, BuscarComprasQueryHandler>();
+        services.AddScoped<IQueryHandler<ObtenerCompraQuery, CompraDto>, ObtenerCompraQueryHandler>();
 
         return services;
     }

@@ -112,4 +112,44 @@ public class ProductoTests
 
         Assert.Throws<ArgumentException>(() => producto.AjustarStock(-11m));
     }
+
+    [Fact]
+    public void RegistrarCompra_CantidadCero_LanzaExcepcion()
+    {
+        var producto = CrearProductoValido();
+
+        Assert.Throws<ArgumentException>(() => producto.RegistrarCompra(0m, 100m));
+    }
+
+    [Fact]
+    public void RegistrarCompra_CostoNegativo_LanzaExcepcion()
+    {
+        var producto = CrearProductoValido();
+
+        Assert.Throws<ArgumentException>(() => producto.RegistrarCompra(5m, -1m));
+    }
+
+    [Fact]
+    public void RegistrarCompra_ActualizaStockYCostoPromedioPonderado()
+    {
+        // Producto con stock 10 a costo 100 (RN-013): comprar 10 más a costo 200
+        // debe dejar costo promedio = (10*100 + 10*200) / 20 = 150.
+        var producto = new Producto("COD-001", "Taladro", Guid.NewGuid(), Guid.NewGuid(), 100m, 150m, 10m);
+
+        producto.RegistrarCompra(10m, 200m);
+
+        Assert.Equal(20m, producto.StockActual);
+        Assert.Equal(150m, producto.CostoReferencia);
+    }
+
+    [Fact]
+    public void RegistrarCompra_ConStockInicialCero_TomaElCostoDeCompra()
+    {
+        var producto = new Producto("COD-001", "Taladro", Guid.NewGuid(), Guid.NewGuid(), 0m, 150m, 0m);
+
+        producto.RegistrarCompra(5m, 80m);
+
+        Assert.Equal(5m, producto.StockActual);
+        Assert.Equal(80m, producto.CostoReferencia);
+    }
 }

@@ -58,4 +58,15 @@ public class MovimientoInventario : Entity
 
         return new MovimientoInventario(productoId, TipoMovimientoInventario.Ajuste, cantidadAjuste, null, null, motivo, usuarioId, fecha);
     }
+
+    /// <summary>UC-13/RF-027 — movimiento de entrada generado automáticamente al registrar una Compra.</summary>
+    public static MovimientoInventario CrearCompra(Guid productoId, decimal cantidad, Guid compraId, Guid usuarioId, DateTime fecha)
+    {
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad comprada debe ser mayor a cero.", nameof(cantidad));
+        }
+
+        return new MovimientoInventario(productoId, TipoMovimientoInventario.Compra, cantidad, "Compra", compraId, null, usuarioId, fecha);
+    }
 }

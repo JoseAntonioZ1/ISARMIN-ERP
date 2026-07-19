@@ -130,8 +130,8 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 
 | Método y ruta | Command/Query | Permiso | UC |
 |---|---|---|---|
-| `GET /compras?proveedor=&pagina=` | `BuscarComprasQuery` | `Compras.Consultar` | RF-036 |
-| `POST /compras` | `RegistrarCompraCommand` | `Compras.Crear` | UC-13 |
+| `GET /compras?proveedor=&producto=&pagina=` | `BuscarComprasQuery` | `Compras.Consultar` | RF-036 (filtro por proveedor y/o por producto) |
+| `POST /compras` | `RegistrarCompraCommand` | `Compras.Crear` | UC-13 (RN-024: compra directa, sin orden de compra ni aprobación previa; actualiza stock/Kardex/costo promedio ponderado — RN-013, pendiente de validación formal del contador antes de producción) |
 | `GET /compras/{id}` | `ObtenerCompraQuery` | `Compras.Consultar` | UC-13 |
 
 ### 6.5 Ventas

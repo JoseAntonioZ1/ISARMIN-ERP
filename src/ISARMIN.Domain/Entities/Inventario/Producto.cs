@@ -100,6 +100,29 @@ public class Producto : Entity
         StockActual = nuevoStock;
     }
 
+    /// <summary>UC-13/RF-035 — registra una compra: aumenta el stock y recalcula el costo de
+    /// referencia mediante costo promedio ponderado (RN-013, recomendación técnica pendiente de
+    /// validación formal del contador de ISARMIN antes de producción).</summary>
+    public void RegistrarCompra(decimal cantidad, decimal costoUnitario)
+    {
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad comprada debe ser mayor a cero.", nameof(cantidad));
+        }
+
+        if (costoUnitario < 0)
+        {
+            throw new ArgumentException("El costo unitario no puede ser negativo.", nameof(costoUnitario));
+        }
+
+        var valorActual = StockActual * CostoReferencia;
+        var valorComprado = cantidad * costoUnitario;
+        var stockResultante = StockActual + cantidad;
+
+        CostoReferencia = (valorActual + valorComprado) / stockResultante;
+        StockActual = stockResultante;
+    }
+
     private static void ValidarCodigoInterno(string codigoInterno)
     {
         if (string.IsNullOrWhiteSpace(codigoInterno))

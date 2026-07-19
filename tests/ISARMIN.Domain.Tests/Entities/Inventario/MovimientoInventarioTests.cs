@@ -38,4 +38,29 @@ public class MovimientoInventarioTests
         Assert.Null(movimiento.OrigenTipo);
         Assert.Null(movimiento.OrigenId);
     }
+
+    [Fact]
+    public void CrearCompra_CantidadCero_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            MovimientoInventario.CrearCompra(Guid.NewGuid(), 0m, Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void CrearCompra_DatosValidos_CreaMovimientoDeTipoCompraConOrigen()
+    {
+        var productoId = Guid.NewGuid();
+        var compraId = Guid.NewGuid();
+        var usuarioId = Guid.NewGuid();
+        var fecha = DateTime.UtcNow;
+
+        var movimiento = MovimientoInventario.CrearCompra(productoId, 10m, compraId, usuarioId, fecha);
+
+        Assert.Equal(productoId, movimiento.ProductoId);
+        Assert.Equal(TipoMovimientoInventario.Compra, movimiento.TipoMovimiento);
+        Assert.Equal(10m, movimiento.Cantidad);
+        Assert.Equal("Compra", movimiento.OrigenTipo);
+        Assert.Equal(compraId, movimiento.OrigenId);
+        Assert.Null(movimiento.MotivoAjuste);
+    }
 }

@@ -1,3 +1,4 @@
+using ISARMIN.Domain.Entities.Compras;
 using ISARMIN.Domain.Entities.Configuracion;
 using ISARMIN.Domain.Entities.Identidad;
 using ISARMIN.Domain.Entities.Inventario;
@@ -24,6 +25,8 @@ public class IsarminDbContext : DbContext
     public DbSet<UnidadMedida> UnidadesMedida => Set<UnidadMedida>();
     public DbSet<Producto> Productos => Set<Producto>();
     public DbSet<MovimientoInventario> MovimientosInventario => Set<MovimientoInventario>();
+    public DbSet<Compra> Compras => Set<Compra>();
+    public DbSet<CompraDetalle> ComprasDetalle => Set<CompraDetalle>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
