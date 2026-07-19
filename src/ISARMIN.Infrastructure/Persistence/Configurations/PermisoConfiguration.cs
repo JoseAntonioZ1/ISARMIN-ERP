@@ -42,6 +42,8 @@ public class PermisoConfiguration : IEntityTypeConfiguration<Permiso>
             new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b2"), RolId = rolAdministradorId, Modulo = "Usuarios", Accion = AccionPermiso.Editar },
             new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b3"), RolId = rolAdministradorId, Modulo = "Usuarios", Accion = AccionPermiso.Eliminar },
             new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b4"), RolId = rolAdministradorId, Modulo = "Usuarios", Accion = AccionPermiso.Consultar },
-            new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b5"), RolId = rolAdministradorId, Modulo = "Roles", Accion = AccionPermiso.Consultar });
+            new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b5"), RolId = rolAdministradorId, Modulo = "Roles", Accion = AccionPermiso.Consultar },
+            new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b6"), RolId = rolAdministradorId, Modulo = "Roles", Accion = AccionPermiso.Crear },
+            new { Id = Guid.Parse("00000000-0000-0000-0000-0000000000b7"), RolId = rolAdministradorId, Modulo = "Roles", Accion = AccionPermiso.Editar });
     }
 }

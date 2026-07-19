@@ -1,9 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { RolesPage } from '@/modules/roles/pages/RolesPage'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
 import { UsuariosPage } from '@/modules/usuarios/pages/UsuariosPage'
 import { queryClient } from '@/shared/api/queryClient'
 import { AppLayout } from '@/shared/components/AppLayout'
+import { ConfiguracionPage } from '@/shared/components/ConfiguracionPage'
 import { PaginaInicio } from '@/shared/components/PaginaInicio'
 import { RutaProtegida } from '@/shared/components/RutaProtegida'
 
@@ -21,7 +23,9 @@ function App() {
             }
           >
             <Route path="/" element={<PaginaInicio />} />
+            <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
+            <Route path="/configuracion/roles" element={<RolesPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

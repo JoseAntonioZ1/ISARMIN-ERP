@@ -1,13 +1,17 @@
 using System.Reflection;
 using FluentValidation;
 using ISARMIN.Application.Common;
+using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
+using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearUsuario;
+using ISARMIN.Application.Modulos.Usuarios.Commands.EditarRol;
 using ISARMIN.Application.Modulos.Usuarios.Commands.EditarUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.IniciarSesion;
 using ISARMIN.Application.Modulos.Usuarios.Commands.RestablecerCredencial;
 using ISARMIN.Application.Modulos.Usuarios.DTOs;
 using ISARMIN.Application.Modulos.Usuarios.Queries.ListarRoles;
+using ISARMIN.Application.Modulos.Usuarios.Queries.ListarRolesConPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Queries.ListarUsuarios;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +33,10 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<RestablecerCredencialCommand, Unit>, RestablecerCredencialCommandHandler>();
         services.AddScoped<IQueryHandler<ListarUsuariosQuery, ListadoPaginadoDto<UsuarioDto>>, ListarUsuariosQueryHandler>();
         services.AddScoped<IQueryHandler<ListarRolesQuery, IReadOnlyCollection<RolResumenDto>>, ListarRolesQueryHandler>();
+        services.AddScoped<ICommandHandler<CrearRolCommand, RolDto>, CrearRolCommandHandler>();
+        services.AddScoped<ICommandHandler<EditarRolCommand, RolDto>, EditarRolCommandHandler>();
+        services.AddScoped<ICommandHandler<AsignarPermisosCommand, RolDto>, AsignarPermisosCommandHandler>();
+        services.AddScoped<IQueryHandler<ListarRolesConPermisosQuery, IReadOnlyCollection<RolDto>>, ListarRolesConPermisosQueryHandler>();
 
         return services;
     }

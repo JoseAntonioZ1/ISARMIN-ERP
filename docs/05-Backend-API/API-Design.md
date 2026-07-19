@@ -92,9 +92,11 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `PUT /usuarios/{id}` | `EditarUsuarioCommand` | `Usuarios.Editar` | UC-03 |
 | `PATCH /usuarios/{id}/estado` | `CambiarEstadoUsuarioCommand` | `Usuarios.Eliminar` | UC-03 (baja lógica, RN-021) |
 | `PATCH /usuarios/{id}/restablecer-credencial` | `RestablecerCredencialCommand` | `Usuarios.Editar` | RF-007 (RN-038, **[PV]** — exclusivo del Administrador, sin autoservicio) |
-| `GET /roles` | `ListarRolesQuery` | `Roles.Consultar` | UC-04 |
-| `POST /roles` | `CrearRolCommand` | `Roles.Crear` | UC-04 |
-| `PUT /roles/{id}/permisos` | `AsignarPermisosCommand` | `Roles.Editar` | UC-04 |
+| `GET /roles` | `ListarRolesQuery` | `Roles.Consultar` | UC-04 (listado liviano id/nombre, usado por el selector de roles de Usuarios) |
+| `GET /roles/detalle` | `ListarRolesConPermisosQuery` | `Roles.Consultar` | UC-04 (listado completo con permisos, para la pantalla de administración) |
+| `POST /roles` | `CrearRolCommand` | `Roles.Crear` | UC-04, paso 1 |
+| `PUT /roles/{id}` | `EditarRolCommand` | `Roles.Editar` | UC-04, paso 1 (nombre/descripción — completa la brecha detectada 2026-07-19: el paso 1 de UC-04 no tenía endpoint propio) |
+| `PUT /roles/{id}/permisos` | `AsignarPermisosCommand` | `Roles.Editar` | UC-04, paso 2 (reemplaza el conjunto completo de permisos del rol; `modulo` es texto libre — RN-028, no se fija en código) |
 
 ### 6.2 Clientes y Proveedores
 

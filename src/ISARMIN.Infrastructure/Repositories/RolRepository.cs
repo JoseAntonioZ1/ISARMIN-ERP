@@ -25,6 +25,22 @@ public class RolRepository : IRolRepository
 
     public async Task<IReadOnlyCollection<Rol>> ListarTodosAsync(CancellationToken cancellationToken = default) =>
         await _dbContext.Roles
+            .Include(r => r.Permisos)
             .OrderBy(r => r.Nombre)
             .ToListAsync(cancellationToken);
+
+    public Task<Rol?> ObtenerPorIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        _dbContext.Roles
+            .Include(r => r.Permisos)
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+    public Task<Rol?> ObtenerPorNombreAsync(string nombre, CancellationToken cancellationToken = default) =>
+        _dbContext.Roles.FirstOrDefaultAsync(r => r.Nombre == nombre, cancellationToken);
+
+    public void Agregar(Rol rol) => _dbContext.Roles.Add(rol);
+
+    public void AgregarPermisos(IEnumerable<Permiso> permisos) => _dbContext.Permisos.AddRange(permisos);
+
+    public Task GuardarCambiosAsync(CancellationToken cancellationToken = default) =>
+        _dbContext.SaveChangesAsync(cancellationToken);
 }

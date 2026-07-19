@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router'
+import { Link, Outlet, useNavigate } from 'react-router'
 import { authApi } from '@/modules/usuarios/api/authApi'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
@@ -19,7 +19,17 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-800">
-        <span className="font-semibold text-slate-800 dark:text-slate-100">ISARMIN ERP</span>
+        <div className="flex items-center gap-6">
+          <span className="font-semibold text-slate-800 dark:text-slate-100">ISARMIN ERP</span>
+          <nav className="flex gap-4 text-sm">
+            <Link to="/" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
+              Inicio
+            </Link>
+            <Link to="/configuracion" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
+              Configuración
+            </Link>
+          </nav>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-slate-600 dark:text-slate-300">{usuario?.nombre}</span>
           <button
