@@ -6,6 +6,27 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.10.0] - 19/07/2026
+
+### Agregado
+
+- **Módulo de Proveedores (UC-09), backend + frontend:** análogo a Clientes pero sin distinción Natural/Jurídica ni validación de formato de documento (RF-018 a RF-022, todos `[I]`, sin preguntas de negocio pendientes a diferencia de Clientes/BQ-074).
+  - `Domain`: `Proveedor` (`Terceros`) — solo `NombreRazonSocial` obligatorio; `Documento`/`Telefono`/`Direccion` opcionales, texto libre sin validación de formato.
+  - `Application`: `RegistrarProveedorCommand`, `EditarProveedorCommand`, `CambiarEstadoProveedorCommand` (baja lógica), `BuscarProveedoresQuery` (por nombre o documento).
+  - `Infrastructure`: `ProveedorRepository`. Migración de la tabla `proveedores`.
+  - `API`: `ProveedoresController`, permisos `Proveedores.*` asignados al Administrador vía el propio endpoint de Roles.
+  - Frontend: `ProveedoresPage`, enlazada desde el menú principal junto a Clientes.
+  - **Alcance:** `GET /proveedores/{id}/historial` (RF-022) queda fuera de este módulo — sin Compras todavía, no hay datos reales que mostrar.
+  - Pruebas unitarias: 72/72 exitosas.
+
+Verificado end-to-end contra PostgreSQL real: registrar (con y sin datos opcionales), validación de nombre obligatorio (400), buscar por nombre, editar, baja lógica.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes y Proveedores completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Productos.
+
+---
+
 ## [0.9.0] - 19/07/2026
 
 ### Agregado

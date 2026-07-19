@@ -20,6 +20,7 @@ public class IsarminDbContext : DbContext
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<MedioPago> MediosPago => Set<MedioPago>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
+    public DbSet<Proveedor> Proveedores => Set<Proveedor>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
