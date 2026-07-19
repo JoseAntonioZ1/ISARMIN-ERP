@@ -20,7 +20,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 | Total de preguntas | Resueltas | Parcialmente resueltas | Recomendación documentada (no confirmada) | Pendientes |
 |---|---|---|---|---|
-| 91 | 37 | 7 | 8 | 39 |
+| 91 | 38 | 7 | 8 | 38 |
 
 **Actualización 1 — 2026-07-18:** el propietario de ISARMIN PERÚ S.A.C. validó directamente el funcionamiento real del negocio (contexto de la empresa, usuarios reales, inventario compartido, operación de Taller y Servicios de Campo, conectividad de campo, roles y permisos, caja, compras/costos, migración inicial e infraestructura), resolviendo total o parcialmente 33 preguntas y añadiendo 5 nuevas (BQ-087 a BQ-091).
 
@@ -44,7 +44,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | BQ-011 | 🔵 **RECOMENDACIÓN DOCUMENTADA.** ¿Qué tipos de cliente maneja el negocio (persona natural / persona jurídica)? ¿Qué documento de identidad corresponde a cada uno (DNI, RUC, Carné de Extranjería, Pasaporte)? ¿Existe alguna segmentación comercial adicional (mayorista, minorista, cliente frecuente)? | Alta | RF-016, Business-Catalogs.md (CAT-009, CAT-020) |
 | BQ-024 | ¿Los proveedores requerirán algún tipo de acceso directo al sistema (ej. portal para confirmar una orden de compra), o toda la interacción se gestiona a través del Almacenero? | Media | Actors.md (ACT-010) |
 | BQ-064 | ✅ **RESUELTA.** Al "eliminar" un cliente (RF-014), ¿corresponde una baja lógica (recomendada por el analista para preservar trazabilidad) o debe permitirse eliminación física bajo ciertas condiciones? | Media | Business-Rules.md (RN-023) |
-| BQ-074 | ¿Qué datos son obligatorios para registrar un cliente (además de nombre y documento de identidad)? ¿Dirección, teléfono, correo son obligatorios u opcionales? | Media | RF-012 |
+| BQ-074 | ✅ **RESUELTA.** ¿Qué datos son obligatorios para registrar un cliente (además de nombre y documento de identidad)? ¿Dirección, teléfono, correo son obligatorios u opcionales? | Media | RF-012 |
 | BQ-075 | ¿Un mismo producto puede comprarse a más de un proveedor, o existe una relación de exclusividad producto-proveedor? | Baja | RF-018, RF-033 |
 
 > **Respuesta a BQ-006 (fuente: `PROJECT_SCOPE.md`, sección "Funcionalidades Fuera del Alcance Inicial"):** "Portal para clientes" y "Portal para técnicos" están explícitamente fuera del alcance de la primera versión. Se confirma que el actor Cliente **no** tendrá acceso directo al sistema en el MVP; es exclusivamente una entidad administrada por el personal interno (Recepcionista/Vendedor). Impacto: `Actors.md` (ACT-009) puede actualizarse de [PV] a [C]; el modelo de autenticación no necesita contemplar usuarios externos en esta fase.
@@ -52,6 +52,8 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 > **Recomendación técnica a BQ-011 (análisis 2026-07-19, no confirmado por ISARMIN):** soportar los 4 documentos de identidad peruanos (DNI, RUC, CE, Pasaporte) desde V1 — es el conjunto legal completo, barato de incluir ahora y costoso de ampliar después con datos ya cargados; derivar `tipo_cliente` automáticamente del documento (RN-034); validaciones de formato según norma RENIEC/SUNAT (RN-033). **Sigue pendiente confirmar con ISARMIN**: si existe facturación B2B real hoy y si existe alguna segmentación comercial (mayorista/frecuente).
 >
 > **Respuesta a BQ-064 (fuente: validación con el propietario, 2026-07-18):** "El sistema permitirá desactivar clientes manteniendo todo su historial asociado" (ventas, reparaciones, servicios, pagos, historial de equipos). **No existe eliminación física.** RF-014 se actualizó con esta redacción exacta.
+>
+> **Respuesta a BQ-074 (confirmado 2026-07-19, previo al módulo de Clientes):** el teléfono es obligatorio al registrar un cliente; el documento de identidad y la dirección quedan opcionales. `Business-Rules.md` (RN-039 nueva) y el esquema físico se actualizaron en consecuencia.
 
 ## 5. Inventario
 

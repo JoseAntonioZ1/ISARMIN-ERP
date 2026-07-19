@@ -1,6 +1,7 @@
 using ISARMIN.Domain.Entities.Configuracion;
 using ISARMIN.Domain.Entities.Identidad;
 using ISARMIN.Domain.Entities.Inventario;
+using ISARMIN.Domain.Entities.Terceros;
 using Microsoft.EntityFrameworkCore;
 
 namespace ISARMIN.Infrastructure.Persistence;
@@ -18,6 +19,7 @@ public class IsarminDbContext : DbContext
     public DbSet<UsuarioRol> UsuarioRoles => Set<UsuarioRol>();
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<MedioPago> MediosPago => Set<MedioPago>();
+    public DbSet<Cliente> Clientes => Set<Cliente>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

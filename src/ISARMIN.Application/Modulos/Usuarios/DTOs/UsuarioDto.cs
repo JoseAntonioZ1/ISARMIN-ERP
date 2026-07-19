@@ -8,5 +8,3 @@ public record UsuarioDto(
     string NombreUsuario,
     string Estado,
     IReadOnlyCollection<RolResumenDto> Roles);
-
-public record ListadoPaginadoDto<T>(IReadOnlyCollection<T> Datos, int Total, int Pagina, int TamanoPagina);

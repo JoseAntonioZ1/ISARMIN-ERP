@@ -6,6 +6,28 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.9.0] - 19/07/2026
+
+### Agregado
+
+- **Resolución de BQ-074 (previa al módulo de Clientes):** el teléfono es obligatorio al registrar un cliente; documento de identidad y dirección quedan opcionales — confirmado explícitamente antes de programar (RN-039 nueva en `Business-Rules.md`). El documento no se exige al registrar el cliente porque su obligatoriedad real se gobierna a nivel del comprobante (RN-009: la Factura exige RUC), no al crear el registro.
+- **Módulo de Clientes (UC-05), backend + frontend:**
+  - `Domain`: `Cliente` (`Terceros`), `TipoDocumento`/`TipoCliente` (enums fijos — RN-033/RN-034), `ValidadorDocumentoIdentidad` (algoritmo oficial de dígito verificador de RUC — módulo 11, SUNAT — verificado manualmente contra el RUC público de SUNAT 20100070970; DNI de 8 dígitos). `TipoCliente` se deriva automáticamente del documento (RN-034), nunca se captura manualmente.
+  - `Application`: `RegistrarClienteCommand`, `EditarClienteCommand`, `CambiarEstadoClienteCommand` (baja lógica, RF-014/RN-023), `BuscarClientesQuery` (por nombre o número de documento, UC-05 paso 3). `ListadoPaginadoDto<T>` se movió a `Application/Common` al necesitarlo ahora más de un módulo.
+  - `Infrastructure`: `ClienteRepository` (búsqueda con `ILIKE`). Migración de la tabla `clientes`.
+  - `API`: `ClientesController`, protegido por permisos `Clientes.*` — asignados al Administrador usando el propio endpoint de Roles, no por migración.
+  - Frontend: `ClientesPage` (búsqueda, crear/editar, activar/desactivar), enlazada directamente desde el menú principal (no bajo Configuración, a diferencia de Usuarios/Roles/Catálogos) — es un módulo operativo de uso diario, no una pantalla administrativa.
+  - **Alcance explícito:** `GET /clientes/{id}/historial` (RF-017) documentado en `API-Design.md` queda fuera de este módulo — sin Ventas/Taller/Servicios de Campo todavía, no hay datos reales que mostrar; se agrega cuando esos módulos existan.
+  - Pruebas unitarias: 66/66 exitosas (Domain.Tests + Application.Tests), incluyendo el algoritmo de validación de RUC/DNI.
+
+Verificado end-to-end contra PostgreSQL real: registrar cliente sin documento, registrar con RUC válido (deriva Jurídica), rechazar teléfono vacío y RUC con dígito verificador inválido (400), buscar por nombre y por documento, editar quitando el documento (limpia `tipo_cliente`), desactivar (baja lógica).
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos y Clientes completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Proveedores.
+
+---
+
 ## [0.8.0] - 19/07/2026
 
 ### Agregado

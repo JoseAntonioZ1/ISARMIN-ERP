@@ -1,4 +1,5 @@
 using ISARMIN.Application.Common;
+using ISARMIN.Application.Modulos.Clientes;
 using ISARMIN.Application.Modulos.Configuracion;
 using ISARMIN.Application.Modulos.Inventario;
 using ISARMIN.Application.Modulos.Usuarios;
@@ -25,6 +26,7 @@ public static class DependencyInjection
         services.AddScoped<IRolRepository, RolRepository>();
         services.AddScoped<ICategoriaRepository, CategoriaRepository>();
         services.AddScoped<IMedioPagoRepository, MedioPagoRepository>();
+        services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
         services.AddSingleton<IGeneradorTokenJwt, GeneradorTokenJwt>();
         services.AddSingleton<IFechaHoraProvider, FechaHoraProvider>();

@@ -57,8 +57,8 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | tipo_documento | Catálogo (DNI/RUC/CE/Pasaporte) | Sí | **Valores exactos y obligatoriedad pendientes** | [PV] | BQ-011 |
 | numero_documento | Texto | Sí | — | [PV] | BQ-011 |
 | tipo_cliente | Catálogo (Natural/Jurídica) | No | — | [PV] | BQ-011, CAT-009 |
-| telefono | Texto | Condicional | **¿Obligatorio u opcional?** | [PV] | BQ-074 |
-| direccion | Texto | Condicional | **¿Obligatorio u opcional?** | [PV] | BQ-074 |
+| telefono | Texto | Sí | Único dato de contacto obligatorio (RN-039). | [C] | BQ-074 |
+| direccion | Texto | No | Opcional. | [C] | BQ-074 |
 | estado | Catálogo (Activo/Inactivo) | Sí | Baja lógica confirmada; nunca eliminación física. | [C] | RF-014, RN-023 |
 
 ### Proveedor

@@ -1,6 +1,11 @@
 using System.Reflection;
 using FluentValidation;
 using ISARMIN.Application.Common;
+using ISARMIN.Application.Modulos.Clientes.Commands.CambiarEstadoCliente;
+using ISARMIN.Application.Modulos.Clientes.Commands.EditarCliente;
+using ISARMIN.Application.Modulos.Clientes.Commands.RegistrarCliente;
+using ISARMIN.Application.Modulos.Clientes.DTOs;
+using ISARMIN.Application.Modulos.Clientes.Queries.BuscarClientes;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CambiarEstadoMedioPago;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CrearMedioPago;
 using ISARMIN.Application.Modulos.Configuracion.DTOs;
@@ -52,6 +57,11 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<CrearMedioPagoCommand, MedioPagoDto>, CrearMedioPagoCommandHandler>();
         services.AddScoped<ICommandHandler<CambiarEstadoMedioPagoCommand, Unit>, CambiarEstadoMedioPagoCommandHandler>();
         services.AddScoped<IQueryHandler<ListarMediosPagoQuery, IReadOnlyCollection<MedioPagoDto>>, ListarMediosPagoQueryHandler>();
+
+        services.AddScoped<ICommandHandler<RegistrarClienteCommand, ClienteDto>, RegistrarClienteCommandHandler>();
+        services.AddScoped<ICommandHandler<EditarClienteCommand, ClienteDto>, EditarClienteCommandHandler>();
+        services.AddScoped<ICommandHandler<CambiarEstadoClienteCommand, Unit>, CambiarEstadoClienteCommandHandler>();
+        services.AddScoped<IQueryHandler<BuscarClientesQuery, ListadoPaginadoDto<ClienteDto>>, BuscarClientesQueryHandler>();
 
         return services;
     }

@@ -122,8 +122,8 @@ erDiagram
 | tipo_documento | varchar(20) | NULL — **[PV] BQ-011**, valores propuestos: `'DNI','RUC','CE','Pasaporte'` |
 | numero_documento | varchar(20) | NULL **[PV] BQ-011** |
 | tipo_cliente | varchar(20) | NULL, `CHECK (tipo_cliente IN ('Natural','Juridica'))` **[PV] BQ-011** |
-| telefono | varchar(30) | NULL **[PV] BQ-074** (obligatoriedad sin confirmar) |
-| direccion | varchar(255) | NULL **[PV] BQ-074** |
+| telefono | varchar(30) | NOT NULL — RN-039 (confirmado 2026-07-19) |
+| direccion | varchar(255) | NULL — opcional (RN-039) |
 | estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Activo','Inactivo'))`, default `'Activo'` — RN-023, baja lógica |
 
 **`proveedores`**
