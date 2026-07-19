@@ -1,0 +1,13 @@
+node_modules/
+bin/
+obj/
+dist/
+.vscode/settings.json
+
+.env
+.env.*
+
+*.log
+
+uploads/
+backups/
