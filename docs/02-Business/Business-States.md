@@ -44,6 +44,8 @@ stateDiagram-v2
 
 **Punto crítico sin confirmar:** el orden estricto entre "Pagado" y "Entregado" — RN-001 solo establece que no puede entregarse sin pago, no si ambos pueden ocurrir en el mismo acto. **BQ-033**.
 
+**Actualización 2026-07-18:** el propietario confirmó el flujo general (Recibido → Diagnosticado → Cotizado → Aprobado/Rechazado → En Reparación → En Pruebas → Pagado → Entregado), validando la secuencia de estados propuesta. Sin embargo, describió el cierre como *"Cliente recoge equipo → Se realiza cobro"*, narrando el recojo antes del cobro — una posible tensión con RN-001 que **no se resuelve por asunción** (ver la nota correspondiente en `Business-Rules.md`, sección 3). Hasta que se aclare puntualmente, este diagrama se mantiene sin cambios en el orden Pagado → Entregado, por ser la lectura más consistente con RN-001.
+
 ---
 
 ## ST-002 — Cotización (Ventas o Taller)
@@ -117,6 +119,8 @@ stateDiagram-v2
 
 **Preguntas abiertas:** ¿existe la posibilidad de que el cliente no dé conformidad? ¿Cómo se resuelve? → **BQ-039**.
 
+**Actualización 2026-07-18:** el propietario confirmó el proceso general (solicitud → evaluación → cotización → materiales del inventario → ejecución → entrega de comprobante), validando que es análogo al de Taller. No se confirmó un paso explícito de "conformidad" formal (firma, foto) — BQ-039 sigue abierta. También se confirmó que, para el MVP, el registro de este proceso ocurre al volver a la red local (no en tiempo real desde el sitio del cliente) — ver `Business-Questions.md` BQ-052/BQ-053.
+
 ---
 
 ## ST-006 — Orden de Compra
@@ -138,6 +142,8 @@ stateDiagram-v2
 ```
 
 **Preguntas abiertas:** ¿se requiere aprobación formal de las compras? ¿bajo qué monto? → **BQ-020**. ¿se acepta recepción parcial? → **BQ-023**.
+
+**Actualización 2026-07-18:** el propietario confirmó que las compras se realizan **directamente** a proveedores, sin flujo de aprobación previa (RN-024, `Business-Catalogs.md` CAT-011). Este diagrama se simplifica en la práctica a *Registrada → Recibida*; se conserva la versión completa por si el proceso se formaliza en el futuro.
 
 ---
 

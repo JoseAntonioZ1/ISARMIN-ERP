@@ -60,7 +60,7 @@ Corresponde a BP-001.
 
 ## WF-003 — Flujo operativo de Servicio de Campo
 
-Corresponde a BP-003. **Flujo íntegramente inferido por analogía con WF-001**; requiere validación completa.
+Corresponde a BP-003. **Confirmado por el propietario el 2026-07-18** (solicitud → evaluación → cotización → materiales → ejecución → comprobante final), con la excepción del paso de conformidad del cliente (BQ-039, sin confirmar) y la asignación formal de técnico (BQ-037, sin urgencia hoy porque el propietario realiza estos trabajos casi en exclusiva).
 
 | Paso | Actividad | Responsable | Entrada | Salida | Estado resultante | Evento generado |
 |---|---|---|---|---|---|---|
@@ -75,7 +75,7 @@ Corresponde a BP-003. **Flujo íntegramente inferido por analogía con WF-001**;
 
 ## WF-004 — Flujo operativo de Compra a Proveedor
 
-Corresponde a BP-004. Íntegramente **[PV]**.
+Corresponde a BP-004. **Simplificado y confirmado por el propietario el 2026-07-18**: no existe flujo de aprobación de OC (pasos 3 en la tabla original no aplican); las compras son directas.
 
 | Paso | Actividad | Responsable | Entrada | Salida | Estado resultante | Evento generado |
 |---|---|---|---|---|---|---|

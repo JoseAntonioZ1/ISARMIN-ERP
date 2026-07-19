@@ -31,6 +31,17 @@ La versión previa de este documento contenía únicamente seis requerimientos (
 | RF-005 | Registrar equipos para reparación | **RF-051** |
 | RF-006 | Generar una Orden de Trabajo | **RF-052** |
 
+## 3.1 Actualización de actores (validación con el propietario, 2026-07-18)
+
+La columna **Actor principal** de las tablas siguientes usa los nombres de rol especulados en la versión original de `Actors.md` (Recepcionista, Vendedor, Almacenero, Supervisor, Cajero, Contador). La validación directa con el propietario confirmó que la operación real tiene solo **3 roles**: **Administrador/Propietario**, **Ventas** y **Técnico** (ver `Actors.md`, sección 5). En lugar de reescribir las 82 filas de este documento, se deja esta tabla de equivalencia como referencia de lectura:
+
+| Actor citado en este documento | Rol real equivalente |
+|---|---|
+| Recepcionista, Cajero, Vendedor | **Ventas** (con la ambigüedad pendiente de BQ-089 sobre si Ventas cubre también la recepción de equipos de Taller) |
+| Almacenero, Supervisor, Gerente | **Administrador/Propietario** |
+| Contador | Sin rol interno confirmado en el MVP (ver `Actors.md`, ACT-008) |
+| Técnico | **Técnico** (sin cambios — único rol para Taller y Campo) |
+
 ## 4. Requerimientos funcionales por módulo
 
 ### 4.1 Usuarios y Autenticación
@@ -94,7 +105,7 @@ La versión previa de este documento contenía únicamente seis requerimientos (
 
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-033 | El sistema permitirá registrar órdenes de compra a proveedores. | Alta | [PV] | Almacenero | BQ-020 |
+| RF-033 | El sistema permitirá registrar compras a proveedores de forma directa (proveedor, fecha, productos, cantidad, costo), sin requerir un flujo de aprobación previa — confirmado por el propietario (RN-024). | Alta | [C] | Administrador | BQ-020 |
 | RF-034 | El sistema permitirá registrar la recepción de mercadería asociada a una orden de compra, actualizando el stock. | Alta | [I] | Almacenero | RF-027 |
 | RF-035 | El sistema permitirá registrar el costo de compra de cada producto, actualizando su costo de referencia. | Alta | [PV] | Almacenero | BQ-021 |
 | RF-036 | El sistema permitirá consultar el historial de compras por proveedor o por producto. | Media | [I] | Almacenero, Contador | — |
@@ -137,8 +148,8 @@ La versión previa de este documento contenía únicamente seis requerimientos (
 | RF-058 | El sistema permitirá registrar el resultado de las pruebas realizadas antes de la entrega del equipo. | Media | [I] | Técnico | — |
 | RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, validando el pago previo. | Alta | [C] | Recepcionista | RN-001 |
 | RF-060 | El sistema permitirá consultar el historial único de cada equipo a través de sus distintos ingresos. | Alta | [C] | Todos (consulta) | RN-005 |
-| RF-061 | El sistema permitirá registrar una garantía asociada a una reparación, con su período de cobertura. | Media | [PV] | Técnico, Supervisor | BQ-035, BQ-036 |
-| RF-062 | El sistema permitirá vincular una nueva OT a una garantía vigente, identificando si la falla está cubierta. | Media | [PV] | Recepcionista, Supervisor | BQ-036 |
+| RF-061 | El sistema permitirá registrar una garantía asociada a una reparación, con su período de cobertura. | **Alta** (elevada de Media — Garantías confirmado en el MVP el 2026-07-18) | [PV] | Técnico, Administrador | BQ-035, BQ-036 |
+| RF-062 | El sistema permitirá vincular una nueva OT a una garantía vigente, identificando si la falla está cubierta. | **Alta** (elevada de Media) | [PV] | Administrador | BQ-036 |
 | RF-063 | El sistema permitirá registrar y consultar el estado actual de una OT en todo momento. | Alta | [PV] | Todos (consulta) | Business-States.md, BQ-032 |
 
 ### 4.10 Servicios de Campo

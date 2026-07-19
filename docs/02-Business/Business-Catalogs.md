@@ -39,9 +39,11 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-005 — Roles de Usuario
 
-- **Estado:** [C]
-- **Valores confirmados:** Administrador, Gerente, Recepcionista, Vendedor, Almacenero, Técnico, Supervisor, Contador, Cliente.
-- **Pendiente de validar:** ¿"Técnico" se subdivide en Técnico de Taller y Técnico de Campo? → **BQ-041**
+- **Estado:** [C] — actualizado tras validación directa con el propietario (2026-07-18).
+- **Valores confirmados (operación real):** Administrador/Propietario, Ventas, Técnico.
+- **Valores descartados (especulados originalmente, no existen en la operación real):** Gerente, Recepcionista, Almacenero, Supervisor, Contador — ver `Actors.md` sección 5 para el detalle de por qué se descartó cada uno.
+- **Cliente** no es un rol de usuario del sistema (sin acceso, ver ACT-009).
+- **Resuelto:** "Técnico" es un único rol para Taller y Campo, no se subdivide. Resuelve **BQ-041**.
 - **Uso:** Usuarios y Roles (RF-008).
 
 ## CAT-006 — Estados de Orden de Trabajo
@@ -78,9 +80,10 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-011 — Estados de Orden de Compra
 
-- **Estado:** [PV]
-- **Valores propuestos (a validar):** Generada, Aprobada, Enviada, Recibida Parcial, Recibida Total, Cerrada, Anulada.
-- **Referencia:** BQ-020.
+- **Estado:** [PV] — simplificación sugerida tras validación.
+- **Valores propuestos originalmente:** Generada, Aprobada, Enviada, Recibida Parcial, Recibida Total, Cerrada, Anulada.
+- **Nota de simplificación (2026-07-18):** el propietario confirmó que las compras se realizan **directamente** a proveedores, sin un flujo formal de orden de compra con aprobación previa (RN-024). Esto sugiere que, para el MVP, este catálogo de estados puede reducirse a algo como *Registrada → Recibida* (un simple registro de compra), sin los estados "Aprobada"/"Enviada" propuestos originalmente. Se mantiene la propuesta completa documentada por si el negocio crece y formaliza el proceso de compras a futuro.
+- **Referencia:** BQ-020, BQ-022.
 
 ## CAT-012 — Estados de Comprobante de Venta
 
@@ -90,8 +93,8 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-013 — Motivos de Movimiento de Inventario (Kardex)
 
-- **Estado:** [I] — el catálogo en sí se infiere directamente de la exigencia de trazabilidad (RN-002); los valores son una deducción razonable de los procesos descritos.
-- **Valores inferidos:** Venta, Consumo en Taller, Consumo en Servicio de Campo, Ingreso por Compra, Ajuste de Inventario, Devolución.
+- **Estado:** [C] — confirmado por el propietario (2026-07-18): "Tipos de movimientos esperados: Compras, Ventas, Consumo en taller, Consumo en servicios de campo, Ajustes de inventario" — coincide exactamente con la propuesta inferida por el analista.
+- **Valores confirmados:** Compra, Venta, Consumo en Taller, Consumo en Servicio de Campo, Ajuste de Inventario. "Devolución" se mantiene como valor propuesto adicional, pendiente de **BQ-087** (¿existen devoluciones?).
 - **Referencia:** RF-029.
 
 ## CAT-014 — Unidades de Medida
@@ -108,13 +111,14 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 
 ## CAT-016 — Almacenes / Sucursales
 
-- **Estado:** [PV] — se asume, sin confirmación, que existe un único almacén/local.
-- **Valor asumido por defecto:** Almacén Único.
-- **Referencia:** BQ-002.
+- **Estado:** [C] — confirmado por el propietario (2026-07-18): un único local propio dividido en dos áreas físicas (Tienda/Recepción y Taller/Almacén), no dos almacenes ni dos sedes.
+- **Valor confirmado:** Almacén Único. Resuelve **BQ-002**.
+- **Nota:** aunque no se requiere modelar multi-almacén en el MVP, el diseño debería dejar el punto de extensión abierto, dado que `PROJECT_CONTEXT.md` prevé "nuevas sucursales" como posible ampliación futura (reafirmado por el propietario en la sección de Stack Tecnológico: "la solución debe estar preparada para... nuevas sucursales").
 
 ## CAT-017 — Tipos de Garantía
 
-- **Estado:** [PV] — el módulo "Garantías" está en el alcance declarado, pero sin ninguna definición.
+- **Estado:** [PV] — alcance confirmado, valores aún sin definir.
+- **Confirmado (2026-07-18):** Garantías **sí forma parte del MVP**, integrada a Taller/Órdenes de Trabajo (no como módulo independiente complejo).
 - **Valores propuestos (a validar):** Garantía de Repuesto, Garantía de Mano de Obra.
 - **Referencia:** BQ-035, BQ-036.
 
@@ -151,13 +155,13 @@ Identifica las **tablas maestras / catálogos** (listas de valores controlados y
 | CAT-010 Estados de Servicio de Campo | [PV] | Servicios de Campo |
 | CAT-011 Estados de Orden de Compra | [PV] | Compras |
 | CAT-012 Estados de Comprobante | [PV] | Ventas |
-| CAT-013 Motivos de Movimiento de Inventario | [I] | Inventario |
+| CAT-013 Motivos de Movimiento de Inventario | [C] | Inventario |
 | CAT-014 Unidades de Medida | [PV] | Inventario |
 | CAT-015 Prioridades | [PV] | Taller/Campo |
-| CAT-016 Almacenes/Sucursales | [PV] | Inventario |
+| CAT-016 Almacenes/Sucursales | [C] | Inventario |
 | CAT-017 Tipos de Garantía | [PV] | Taller |
 | CAT-018 Motivos de Rechazo/Anulación | [PV] | Ventas/Taller |
 | CAT-019 Monedas | [PV] | Ventas/Caja |
 | CAT-020 Documentos de Identidad | [PV] | Clientes/Proveedores |
 
-**Conclusión:** de los 20 catálogos identificados, solo 5 tienen valores totalmente confirmados por el cliente. Ningún catálogo marcado [PV] debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.
+**Conclusión (actualizada 2026-07-18):** de los 20 catálogos identificados, **7 tienen valores totalmente confirmados** por el propietario (CAT-001, CAT-003, CAT-004, CAT-005, CAT-013, CAT-016, y CAT-002 con matiz de estructura pendiente). Los 13 restantes siguen marcados [PV] y ningún catálogo en ese estado debe cargarse como dato "semilla" del sistema sin antes validarlo — hacerlo equivaldría a inventar reglas de negocio.

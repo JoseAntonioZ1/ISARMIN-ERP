@@ -52,8 +52,10 @@ La primera versión del sistema incluirá los siguientes módulos:
 - Diagnóstico
 - Cotizaciones
 - Órdenes de Trabajo
+- Garantías (integrada como funcionalidad de Taller/Órdenes de Trabajo, no como módulo independiente — confirmado con el propietario el 2026-07-18)
 - Servicios Técnicos de Campo
 - Reportes
+- Auditoría (capacidad transversal de bitácora de acciones críticas; no es un módulo con interfaz propia en esta versión — confirmado con el propietario el 2026-07-18)
 - Configuración General
 
 ---

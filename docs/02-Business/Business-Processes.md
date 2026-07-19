@@ -117,7 +117,7 @@ flowchart TD
 
 ## BP-003 — Servicio Técnico de Campo
 
-- **Estado:** [I] (se declaran los tipos de trabajo, pero el proceso actual es "formatos manuales" sin flujo descrito)
+- **Estado:** [C] — confirmado por el propietario (2026-07-18): "Cliente solicita servicio → se evalúa el trabajo → se realiza una cotización → se determinan materiales necesarios → los materiales salen del inventario de la tienda → se realiza el trabajo → se entrega comprobante/cotización final." No se confirmó un paso explícito de conformidad del cliente (BQ-039 sigue abierta).
 - **Disparador:** Un cliente solicita un trabajo técnico fuera del local (instalación, mantenimiento, cambio de equipo).
 - **Actores:** Cliente, Recepcionista/Supervisor (agenda), Técnico de campo.
 - **Salida:** Trabajo ejecutado, materiales consumidos registrados, cobro realizado.
@@ -162,7 +162,7 @@ flowchart TD
 
 ## BP-004 — Compras a Proveedores
 
-- **Estado:** [PV] (módulo declarado en el alcance; sin proceso descrito)
+- **Estado:** [C] — simplificado tras confirmación del propietario (2026-07-18): las compras se hacen directamente a proveedores u otras tiendas, sin flujo formal de orden de compra ni aprobación previa (RN-024). El diagrama de aprobación (compuerta D2) no aplica en el MVP; se conserva como referencia para un eventual proceso más formal si el negocio crece.
 - **Disparador:** Necesidad de reabastecer inventario (manual o por alerta de stock mínimo).
 - **Actores:** Almacenero, Proveedor (externo), Gerente (aprobación, **[PV]**).
 - **Salida:** Mercadería recibida e inventario actualizado.
@@ -185,7 +185,7 @@ flowchart TD
 
 ## BP-005 — Gestión de Caja (Apertura y Cierre)
 
-- **Estado:** [PV] (ningún documento fuente menciona el concepto de caja/arqueo; se propone por ser una práctica estándar dado que el sistema maneja cobros)
+- **Estado:** [C] — el propietario confirmó que el ERP debe implementar registro de ingresos/egresos, control diario y cierre de caja con reportes (RN-014, RN-025). El mecanismo exacto de arqueo (BQ-031) y el monto de apertura siguen sin definir en detalle.
 - **Disparador:** Inicio o fin de un turno de atención.
 - **Actores:** Cajero/Vendedor, Contador (conciliación).
 - **Salida:** Caja conciliada y reporte de movimientos.
