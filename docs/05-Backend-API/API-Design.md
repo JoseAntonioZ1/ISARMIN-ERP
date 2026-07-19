@@ -117,8 +117,8 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `POST /productos` | `RegistrarProductoCommand` | `Inventario.Crear` | UC-10 |
 | `PUT /productos/{id}` | `EditarProductoCommand` | `Inventario.Editar` | UC-10 |
 | `PATCH /productos/{id}/estado` | `CambiarEstadoProductoCommand` | `Inventario.Eliminar` | RN-023 (baja lógica, análogo a Cliente/Proveedor; completa una brecha del diseño original, que no contemplaba este endpoint) |
-| `GET /productos/{id}/movimientos?desde=&hasta=` | `ConsultarKardexQuery` | `Inventario.Consultar` | RF-073 — **pendiente**, módulo de Inventario (Kardex) |
-| `POST /productos/{id}/ajustes` | `AjustarInventarioCommand` | `Inventario.Ajustar` **(exclusivo Administrador, RN-008)** | UC-12 — **pendiente**, módulo de Inventario |
+| `GET /productos/{id}/movimientos?desde=&hasta=` | `ConsultarKardexQuery` | `Inventario.Consultar` | RF-073 (Kardex del producto) |
+| `POST /productos/{id}/ajustes` | `AjustarInventarioCommand` | `Inventario.Ajustar` **(otorgado solo al Administrador, RN-008)** | UC-12 (motivo obligatorio; rechaza si el resultado deja el stock negativo) |
 | `GET /categorias` | `ListarCategoriasQuery` | `Inventario.Consultar` | CAT-002 (consultada también al registrar/filtrar productos) |
 | `POST /categorias` | `CrearCategoriaCommand` | `Configuracion.Editar` | UC-37, CAT-002 |
 | `PUT /categorias/{id}` | `EditarCategoriaCommand` | `Configuracion.Editar` | UC-37, CAT-002 (completa una brecha detectada 2026-07-19: el catálogo no tenía endpoint de edición) |

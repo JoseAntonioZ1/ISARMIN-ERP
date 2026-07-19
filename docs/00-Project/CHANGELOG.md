@@ -6,6 +6,28 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.12.0] - 19/07/2026
+
+### Agregado
+
+- **Módulo de Inventario (Kardex y Ajuste, UC-11/UC-12), backend + frontend (RF-027, RF-030):**
+  - `Domain`: `MovimientoInventario` (Kardex, ADR-012/Architecture-Overview.md §7.3 — solo `ProductoId` es FK fuerte; `OrigenTipo`/`OrigenId` son informativos, sin integridad declarativa, porque el Kardex es en esencia un log histórico). `TipoMovimientoInventario` (CAT-013: Compra, Venta, ConsumoTaller, ConsumoCampo, Ajuste, Devolucion — catálogo completo ya confirmado, aunque por ahora solo `CrearAjuste` tiene fábrica propia). Nuevo método `Producto.AjustarStock`, único mecanismo autorizado para modificar `StockActual` fuera del registro inicial (RN-008).
+  - Nueva acción de permiso `Ajustar` (`AccionPermiso`), además de Crear/Editar/Eliminar/Consultar/Anular — requirió ampliar el `CHECK` de la tabla `permisos` (migración `AmpliarCheckAccionPermisoConAjustar`) y agregar `'Ajustar'` a la lista `ACCIONES` de la UI de Roles.
+  - **Alcance deliberado:** este módulo solo implementa el ajuste manual (UC-12, exclusivo del Administrador) y la consulta del Kardex por producto. El registro automático de movimientos por Venta/Compra/ConsumoTaller/ConsumoCampo/Devolución (RF-027 en su forma completa) lo disparará cada módulo futuro correspondiente (Compras, Ventas, Taller, Servicios de Campo) reutilizando esta misma entidad — no existe todavía un consumidor real para esos tipos de movimiento, así que no se construyó lógica especulativa para ellos.
+  - `Application`: `AjustarInventarioCommand` (motivo obligatorio, rechaza si el resultado deja el stock negativo — `AjusteInventarioInvalidoException`), `ConsultarKardexQuery` (historial por producto, filtro opcional de fechas).
+  - `Infrastructure`: `MovimientoInventarioRepository`. Migraciones `MovimientosInventario` (tabla con los `CHECK` de `tipo_movimiento` y `origen_tipo` documentados desde Fase 3) y `AmpliarCheckAccionPermisoConAjustar`.
+  - `API`: `POST /productos/{id}/ajustes` (`Inventario.Ajustar`) y `GET /productos/{id}/movimientos` (`Inventario.Consultar`, ya cubierto por el permiso existente) agregados a `ProductosController`. El usuario que ejecuta el ajuste se extrae del claim `ClaimTypes.NameIdentifier` del JWT (patrón nuevo en este controlador, no existía antes en ningún otro).
+  - Frontend: `AjustarInventarioDialog` y `KardexDialog` en `ProductosPage`, con botones "Ajustar" y "Kardex" por fila.
+  - Pruebas unitarias: 60 Domain + 40 Application = 100/100 exitosas.
+
+Verificado end-to-end contra PostgreSQL real: 403 antes de otorgar `Inventario.Ajustar`, ajuste válido (stock 15→20, movimiento registrado con usuario y fecha correctos), motivo vacío (400), cantidad cero (400), ajuste que dejaría stock negativo (400 `AJUSTE_INVENTARIO_INVALIDO`), producto inexistente en ajuste y en Kardex (404 en ambos). Permiso `Inventario.Ajustar` otorgado al Administrador vía `PUT /roles/{id}/permisos` tras ampliar el `CHECK` de la tabla `permisos` (un bloqueo real detectado solo en esta verificación E2E, no por las 100 pruebas unitarias).
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos e Inventario (Kardex/Ajuste) completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Compras.
+
+---
+
 ## [0.11.0] - 19/07/2026
 
 ### Agregado

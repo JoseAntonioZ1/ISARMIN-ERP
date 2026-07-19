@@ -94,4 +94,22 @@ public class ProductoTests
         producto.Activar();
         Assert.True(producto.EstaActivo);
     }
+
+    [Fact]
+    public void AjustarStock_ResultadoPositivo_ActualizaElStock()
+    {
+        var producto = CrearProductoValido();
+
+        producto.AjustarStock(-4m);
+
+        Assert.Equal(6m, producto.StockActual);
+    }
+
+    [Fact]
+    public void AjustarStock_ResultadoNegativo_LanzaExcepcion()
+    {
+        var producto = CrearProductoValido();
+
+        Assert.Throws<ArgumentException>(() => producto.AjustarStock(-11m));
+    }
 }

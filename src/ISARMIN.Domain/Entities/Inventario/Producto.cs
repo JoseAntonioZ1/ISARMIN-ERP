@@ -87,6 +87,19 @@ public class Producto : Entity
 
     public void Desactivar() => Estado = EstadoRegistro.Inactivo;
 
+    /// <summary>UC-12/RN-008 — único mecanismo autorizado para modificar el stock fuera del Kardex
+    /// automático; exclusivo del Administrador, aplicado por <c>AjustarInventarioCommandHandler</c>.</summary>
+    public void AjustarStock(decimal cantidadAjuste)
+    {
+        var nuevoStock = StockActual + cantidadAjuste;
+        if (nuevoStock < 0)
+        {
+            throw new ArgumentException("El ajuste dejaría el stock en un valor negativo.", nameof(cantidadAjuste));
+        }
+
+        StockActual = nuevoStock;
+    }
+
     private static void ValidarCodigoInterno(string codigoInterno)
     {
         if (string.IsNullOrWhiteSpace(codigoInterno))

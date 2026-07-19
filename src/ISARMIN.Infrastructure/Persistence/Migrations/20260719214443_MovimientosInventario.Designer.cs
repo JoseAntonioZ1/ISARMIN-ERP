@@ -3,6 +3,7 @@ using System;
 using ISARMIN.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ISARMIN.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(IsarminDbContext))]
-    partial class IsarminDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719214443_MovimientosInventario")]
+    partial class MovimientosInventario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +112,7 @@ namespace ISARMIN.Infrastructure.Persistence.Migrations
 
                     b.ToTable("permisos", null, t =>
                         {
-                            t.HasCheckConstraint("ck_permisos_accion", "accion IN ('Crear','Editar','Eliminar','Consultar','Anular','Ajustar')");
+                            t.HasCheckConstraint("ck_permisos_accion", "accion IN ('Crear','Editar','Eliminar','Consultar','Anular')");
                         });
 
                     b.HasData(

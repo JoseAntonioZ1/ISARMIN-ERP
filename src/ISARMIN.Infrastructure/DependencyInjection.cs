@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IProveedorRepository, ProveedorRepository>();
         services.AddScoped<IUnidadMedidaRepository, UnidadMedidaRepository>();
         services.AddScoped<IProductoRepository, ProductoRepository>();
+        services.AddScoped<IMovimientoInventarioRepository, MovimientoInventarioRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
         services.AddSingleton<IGeneradorTokenJwt, GeneradorTokenJwt>();
         services.AddSingleton<IFechaHoraProvider, FechaHoraProvider>();

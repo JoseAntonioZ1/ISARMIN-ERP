@@ -6,5 +6,6 @@ public enum AccionPermiso
     Editar,
     Eliminar,
     Consultar,
-    Anular
+    Anular,
+    Ajustar
 }

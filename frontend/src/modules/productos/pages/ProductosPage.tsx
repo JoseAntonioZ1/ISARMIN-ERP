@@ -1,8 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { categoriasApi, unidadesMedidaApi } from '@/modules/catalogos/api/catalogosApi'
+import { AjustarInventarioDialog } from '@/modules/productos/components/AjustarInventarioDialog'
 import { CrearProductoDialog } from '@/modules/productos/components/CrearProductoDialog'
 import { EditarProductoDialog } from '@/modules/productos/components/EditarProductoDialog'
+import { KardexDialog } from '@/modules/productos/components/KardexDialog'
 import { type Producto, productosApi } from '@/modules/productos/api/productosApi'
 import { ApiError } from '@/shared/api/httpClient'
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog'
@@ -13,6 +15,8 @@ export function ProductosPage() {
   const [creando, setCreando] = useState(false)
   const [editando, setEditando] = useState<Producto | null>(null)
   const [cambiandoEstado, setCambiandoEstado] = useState<Producto | null>(null)
+  const [ajustando, setAjustando] = useState<Producto | null>(null)
+  const [verKardex, setVerKardex] = useState<Producto | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const { data: listado, isLoading } = useQuery({
@@ -51,6 +55,16 @@ export function ProductosPage() {
       setCambiandoEstado(null)
     },
     onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo cambiar el estado del producto.'),
+  })
+
+  const mutacionAjustar = useMutation({
+    mutationFn: ({ id, cantidadAjuste, motivo }: { id: string; cantidadAjuste: number; motivo: string }) =>
+      productosApi.ajustarInventario(id, cantidadAjuste, motivo),
+    onSuccess: () => {
+      invalidar()
+      setAjustando(null)
+    },
+    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo ajustar el inventario.'),
   })
 
   const nombreCategoria = (id: string) => categorias?.find((c) => c.id === id)?.nombre ?? '—'
@@ -114,6 +128,20 @@ export function ProductosPage() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => setAjustando(producto)}
+                    className="mr-3 text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                  >
+                    Ajustar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVerKardex(producto)}
+                    className="mr-3 text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                  >
+                    Kardex
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setCambiandoEstado(producto)}
                     className="text-red-600 underline hover:text-red-800"
                   >
@@ -164,6 +192,20 @@ export function ProductosPage() {
           onCancelar={() => setCambiandoEstado(null)}
         />
       )}
+
+      {ajustando && (
+        <AjustarInventarioDialog
+          producto={ajustando}
+          onGuardar={(datos) => {
+            setError(null)
+            mutacionAjustar.mutate({ id: ajustando.id, ...datos })
+          }}
+          onCancelar={() => setAjustando(null)}
+          guardando={mutacionAjustar.isPending}
+        />
+      )}
+
+      {verKardex && <KardexDialog producto={verKardex} onCerrar={() => setVerKardex(null)} />}
     </div>
   )
 }

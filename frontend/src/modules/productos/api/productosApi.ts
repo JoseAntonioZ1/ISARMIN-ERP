@@ -48,6 +48,18 @@ export interface DatosEditarProducto {
   stockMinimo: number | null
 }
 
+export interface MovimientoInventario {
+  id: string
+  productoId: string
+  tipoMovimiento: string
+  cantidad: number
+  origenTipo: string | null
+  origenId: string | null
+  motivoAjuste: string | null
+  usuarioId: string
+  fecha: string
+}
+
 export const productosApi = {
   buscar: (busqueda?: string, pagina = 1, tamanoPagina = 20) =>
     httpClient.get<ListadoPaginado<Producto>>(
@@ -56,4 +68,7 @@ export const productosApi = {
   registrar: (datos: DatosRegistrarProducto) => httpClient.post<Producto>('/productos', datos),
   editar: (id: string, datos: DatosEditarProducto) => httpClient.put<Producto>(`/productos/${id}`, datos),
   cambiarEstado: (id: string, activo: boolean) => httpClient.patch<void>(`/productos/${id}/estado`, { activo }),
+  ajustarInventario: (id: string, cantidadAjuste: number, motivo: string) =>
+    httpClient.post<Producto>(`/productos/${id}/ajustes`, { cantidadAjuste, motivo }),
+  consultarKardex: (id: string) => httpClient.get<MovimientoInventario[]>(`/productos/${id}/movimientos`),
 }
