@@ -55,6 +55,45 @@ public class Usuario : Entity
 
     public void Activar() => Estado = EstadoRegistro.Activo;
 
+    /// <summary>RF-002 — editar datos de un usuario existente.</summary>
+    public void ActualizarNombre(string nombre)
+    {
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            throw new ArgumentException("El nombre del usuario es obligatorio.", nameof(nombre));
+        }
+
+        Nombre = nombre;
+    }
+
+    public void AsignarRol(Guid rolId)
+    {
+        if (_roles.Any(r => r.RolId == rolId))
+        {
+            return;
+        }
+
+        _roles.Add(new UsuarioRol(Id, rolId));
+    }
+
+    public void QuitarRol(Guid rolId) => _roles.RemoveAll(r => r.RolId == rolId);
+
+    /// <summary>RF-002 — reemplaza los roles asignados por el conjunto indicado.</summary>
+    public void ReemplazarRoles(IEnumerable<Guid> rolIds)
+    {
+        var idsDeseados = rolIds.ToHashSet();
+
+        foreach (var rolId in _roles.Select(r => r.RolId).ToList().Where(rolId => !idsDeseados.Contains(rolId)))
+        {
+            QuitarRol(rolId);
+        }
+
+        foreach (var rolId in idsDeseados)
+        {
+            AsignarRol(rolId);
+        }
+    }
+
     /// <summary>RN-021 — un usuario desactivado no puede autenticarse.</summary>
     public bool PuedeAutenticarse(DateTime ahora) => EstaActivo && !EstaBloqueado(ahora);
 

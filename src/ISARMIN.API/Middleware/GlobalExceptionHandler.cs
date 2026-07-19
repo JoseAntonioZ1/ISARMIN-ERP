@@ -1,4 +1,5 @@
 using FluentValidation;
+using ISARMIN.Application.Common.Excepciones;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace ISARMIN.API.Middleware;
@@ -27,6 +28,21 @@ public class GlobalExceptionHandler : IExceptionHandler
                     codigo = "VALIDACION_FALLIDA",
                     mensaje = "La solicitud contiene datos inválidos.",
                     detalles = validationException.Errors.Select(e => new { campo = e.PropertyName, error = e.ErrorMessage })
+                }
+            }, cancellationToken);
+            return true;
+        }
+
+        if (exception is ExcepcionAplicacion excepcionAplicacion)
+        {
+            httpContext.Response.StatusCode = excepcionAplicacion.CodigoHttp;
+            await httpContext.Response.WriteAsJsonAsync(new
+            {
+                error = new
+                {
+                    codigo = excepcionAplicacion.Codigo,
+                    mensaje = excepcionAplicacion.Message,
+                    detalles = (object?)null
                 }
             }, cancellationToken);
             return true;

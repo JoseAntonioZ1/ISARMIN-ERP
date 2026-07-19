@@ -55,7 +55,7 @@ Estado: ✅ Completada — Arquitectura del sistema (`03-Architecture/Architectu
 - Base de datos
 - Integraciones
 
-Estado: 🔵 En curso — estructura profesional inicial creada (2026-07-19): solución .NET 9 con Clean Architecture (`ISARMIN.Domain`/`Application`/`Infrastructure`/`API` + proyectos de test xUnit), configuración base (EF Core + PostgreSQL vía Npgsql/EFCore.NamingConventions, JWT, Swagger, Serilog, CORS, manejo global de excepciones), y proyecto frontend React 19 + TypeScript + Vite (Tailwind CSS, React Router, TanStack Query, Zustand, React Hook Form + Zod). Módulo de **Autenticación** (UC-01/UC-02) implementado y probado con pruebas unitarias — siguiente módulo: Usuarios (CRUD, UC-03).
+Estado: 🔵 En curso — estructura profesional inicial creada (2026-07-19): solución .NET 9 con Clean Architecture (`ISARMIN.Domain`/`Application`/`Infrastructure`/`API` + proyectos de test xUnit), configuración base (EF Core + PostgreSQL vía Npgsql/EFCore.NamingConventions, JWT, Swagger, Serilog, CORS, manejo global de excepciones), y proyecto frontend React 19 + TypeScript + Vite (Tailwind CSS, React Router, TanStack Query, Zustand, React Hook Form + Zod). Módulos **Autenticación** (UC-01/UC-02) y **Usuarios** (UC-03) completos — backend y frontend, verificados end-to-end contra PostgreSQL real. Siguiente módulo: Roles y Permisos (UC-04).
 
 ---
 

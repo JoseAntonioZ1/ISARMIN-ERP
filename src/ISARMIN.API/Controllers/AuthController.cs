@@ -1,5 +1,4 @@
 using ISARMIN.Application.Common;
-using ISARMIN.Application.Common.Excepciones;
 using ISARMIN.Application.Modulos.Usuarios.Commands.IniciarSesion;
 using ISARMIN.Application.Modulos.Usuarios.DTOs;
 using Microsoft.AspNetCore.Authorization;
@@ -18,35 +17,16 @@ public class AuthController : ControllerBase
         _iniciarSesionHandler = iniciarSesionHandler;
     }
 
-    /// <summary>UC-01 — Iniciar Sesión.</summary>
+    /// <summary>
+    /// UC-01 — Iniciar Sesión. Errores esperados (credenciales inválidas, cuenta bloqueada)
+    /// se traducen a la respuesta HTTP correspondiente en GlobalExceptionHandler.
+    /// </summary>
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<ActionResult<SesionDto>> Login(IniciarSesionCommand comando, CancellationToken cancellationToken)
     {
-        try
-        {
-            var sesion = await _iniciarSesionHandler.ManejarAsync(comando, cancellationToken);
-            return Ok(sesion);
-        }
-        catch (CredencialesInvalidasException)
-        {
-            return Unauthorized(new
-            {
-                error = new { codigo = "CREDENCIALES_INVALIDAS", mensaje = "El nombre de usuario o la credencial son incorrectos.", detalles = (object?)null }
-            });
-        }
-        catch (CuentaBloqueadaException ex)
-        {
-            return StatusCode(StatusCodes.Status423Locked, new
-            {
-                error = new
-                {
-                    codigo = "CUENTA_BLOQUEADA_TEMPORALMENTE",
-                    mensaje = $"Cuenta bloqueada por intentos fallidos. Intente nuevamente después de las {ex.BloqueadoHastaUtc:HH:mm}.",
-                    detalles = (object?)null
-                }
-            });
-        }
+        var sesion = await _iniciarSesionHandler.ManejarAsync(comando, cancellationToken);
+        return Ok(sesion);
     }
 
     /// <summary>

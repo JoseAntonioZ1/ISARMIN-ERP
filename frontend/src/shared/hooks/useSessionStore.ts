@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface UsuarioSesion {
   id: string
@@ -14,10 +15,15 @@ interface SessionState {
   tienePermiso: (permiso: string) => boolean
 }
 
-export const useSessionStore = create<SessionState>((set, get) => ({
-  usuario: null,
-  token: null,
-  establecerSesion: (usuario, token) => set({ usuario, token }),
-  cerrarSesion: () => set({ usuario: null, token: null }),
-  tienePermiso: (permiso) => get().usuario?.permisos.includes(permiso) ?? false,
-}))
+export const useSessionStore = create<SessionState>()(
+  persist(
+    (set, get) => ({
+      usuario: null,
+      token: null,
+      establecerSesion: (usuario, token) => set({ usuario, token }),
+      cerrarSesion: () => set({ usuario: null, token: null }),
+      tienePermiso: (permiso) => get().usuario?.permisos.includes(permiso) ?? false,
+    }),
+    { name: 'isarmin-sesion' },
+  ),
+)
