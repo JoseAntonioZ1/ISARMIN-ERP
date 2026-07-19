@@ -6,6 +6,21 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.3.0] - 19/07/2026
+
+### Agregado
+
+- `Architecture-Overview.md`: correcciones del propietario — Cobranzas separado de Caja como módulo propio, `MovimientoInventario` sin FKs opcionales múltiples (referencia genérica igual que Auditoría), patrón CQRS ligero para `Application`, definición formal de código interno/código de barras comercial (ADR-011, ADR-012).
+- `04-Database/Physical-Data-Model.md`: modelo entidad-relación físico completo (26 tablas PostgreSQL, convenciones `snake_case`/`uuid`, catálogos configurables vs. fijos, constraints de exclusividad, índices, estrategia de migraciones) — ADR-013.
+- `05-Backend-API/API-Design.md`: contratos REST por módulo (rutas, Commands/Queries, permisos requeridos, formato de error y paginación).
+- `06-UI-UX/UX-Design.md`: navegación por rol, flujos de pantalla principales y componentes UI compartidos.
+
+Estado del proyecto:
+
+🟢 Fase de Diseño (Fase 3) completada.
+
+---
+
 ## [0.2.0] - 18/07/2026
 
 ### Agregado

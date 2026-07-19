@@ -4,7 +4,7 @@
 
 ## Estado Actual
 
-🔵 Fase de Diseño (Fase 3) — Análisis (Fase 2) completado y validado directamente con el propietario
+🟢 Fase de Diseño (Fase 3) completada — lista para iniciar Fase 4 (Desarrollo)
 
 ---
 
@@ -44,7 +44,7 @@ Estado: ✅ Completada (91 preguntas registradas, 37 resueltas y 9 parciales tra
 - Diseño de APIs
 - Diseño UI/UX
 
-Estado: 🔄 En progreso (Arquitectura del sistema: ver `03-Architecture/Architecture-Overview.md`, ADR-006 a ADR-013 en `DECISIONS.md`; Modelo de dominio y conceptual: `01-Requirements/Conceptual-Data-Model.md` y `Data-Dictionary.md`; Modelo entidad-relación físico: `04-Database/Physical-Data-Model.md`. Pendiente: Diseño de APIs, Diseño UI/UX)
+Estado: ✅ Completada — Arquitectura del sistema (`03-Architecture/Architecture-Overview.md`, ADR-006 a ADR-013 en `DECISIONS.md`), Modelo de dominio y conceptual (`01-Requirements/Conceptual-Data-Model.md`, `Data-Dictionary.md`), Modelo entidad-relación físico (`04-Database/Physical-Data-Model.md`), Diseño de APIs (`05-Backend-API/API-Design.md`) y Diseño UI/UX (`06-UI-UX/UX-Design.md`)
 
 ---
 
