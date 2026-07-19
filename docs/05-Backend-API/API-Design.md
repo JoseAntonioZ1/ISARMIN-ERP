@@ -118,7 +118,9 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `PUT /productos/{id}` | `EditarProductoCommand` | `Inventario.Editar` | UC-10 |
 | `GET /productos/{id}/movimientos?desde=&hasta=` | `ConsultarKardexQuery` | `Inventario.Consultar` | RF-073 |
 | `POST /productos/{id}/ajustes` | `AjustarInventarioCommand` | `Inventario.Ajustar` **(exclusivo Administrador, RN-008)** | UC-12 |
-| `GET /categorias`, `POST /categorias` | — | `Inventario.Consultar` / `Configuracion.Editar` | — |
+| `GET /categorias` | `ListarCategoriasQuery` | `Inventario.Consultar` | CAT-002 (consultada también al registrar/filtrar productos) |
+| `POST /categorias` | `CrearCategoriaCommand` | `Configuracion.Editar` | UC-37, CAT-002 |
+| `PUT /categorias/{id}` | `EditarCategoriaCommand` | `Configuracion.Editar` | UC-37, CAT-002 (completa una brecha detectada 2026-07-19: el catálogo no tenía endpoint de edición) |
 
 ### 6.4 Compras
 
@@ -210,7 +212,9 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 |---|---|---|---|
 | `GET /configuracion/empresa` | `ObtenerConfiguracionEmpresaQuery` | `Configuracion.Consultar` | UC-37 |
 | `PUT /configuracion/empresa` | `ActualizarConfiguracionEmpresaCommand` | `Configuracion.Editar` | UC-37 |
-| `GET /configuracion/medios-pago`, `POST`, `PATCH /{id}/estado` | — | `Configuracion.Editar` | UC-37 (CAT-008, configurable) |
+| `GET /configuracion/medios-pago` | `ListarMediosPagoQuery` | `Configuracion.Consultar` | UC-37 (CAT-008, configurable — refinado 2026-07-19: se separó lectura de escritura, igual que en el resto de la API) |
+| `POST /configuracion/medios-pago` | `CrearMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
+| `PATCH /configuracion/medios-pago/{id}/estado` | `CambiarEstadoMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
 
 ## 7. DTOs representativos
 

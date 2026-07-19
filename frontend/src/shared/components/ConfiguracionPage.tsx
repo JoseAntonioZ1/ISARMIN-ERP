@@ -11,6 +11,12 @@ export function ConfiguracionPage() {
         <Link to="/configuracion/roles" className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300">
           Roles y Permisos
         </Link>
+        <Link to="/configuracion/categorias" className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300">
+          Categorías de Producto
+        </Link>
+        <Link to="/configuracion/medios-pago" className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300">
+          Medios de Pago
+        </Link>
       </div>
     </div>
   )

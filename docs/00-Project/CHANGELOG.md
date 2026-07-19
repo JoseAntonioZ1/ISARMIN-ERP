@@ -6,6 +6,25 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.8.0] - 19/07/2026
+
+### Agregado
+
+- **Módulo de Catálogos, backend + frontend:** de los 20 catálogos identificados en `Business-Catalogs.md`, se implementaron los dos únicos confirmados ([C]) y marcados como "catálogo configurable" en `Physical-Data-Model.md`: **Categorías de Producto (CAT-002, RF-025)** y **Medios de Pago (CAT-008, RF-042)**. El resto sigue `[PV]` sin sembrarse, conforme al principio ya establecido de no inventar valores de catálogo sin confirmación.
+  - `Domain`: `Categoria` (con referencia opcional a categoría padre, autoreferencia con guarda anti-autopadre — esquema ya previsto para BQ-007 aunque la jerarquía no esté confirmada), `MedioPago` (activar/desactivar).
+  - `Application`: `CrearCategoriaCommand`, `EditarCategoriaCommand`, `ListarCategoriasQuery`; `CrearMedioPagoCommand`, `CambiarEstadoMedioPagoCommand`, `ListarMediosPagoQuery`.
+  - `Infrastructure`: `CategoriaRepository`, `MedioPagoRepository`. Migración con semilla de los 4 medios de pago confirmados (Efectivo, Yape, Plin, Transferencia bancaria — CAT-008).
+  - `API`: `CategoriasController`, `MediosPagoController`. Se refinó `API-Design.md`: se separó permiso de lectura (`Configuracion.Consultar`) de escritura (`Configuracion.Editar`) para medios de pago, y se agregó `PUT /categorias/{id}` (faltaba el endpoint de edición).
+  - Frontend: `CategoriasPage`, `MediosPagoPage`, enlazadas desde `ConfiguracionPage`.
+  - Pruebas unitarias: 40/40 exitosas (Domain.Tests + Application.Tests).
+- **Validación real del módulo de Roles y Permisos:** los permisos `Inventario.Consultar` y `Configuracion.{Consultar,Editar}` que este módulo necesitaba se asignaron al rol Administrador **usando el propio endpoint de Roles** construido en la sesión anterior (`PUT /roles/{id}/permisos`), no por migración — confirmando en la práctica que ese módulo cumple su propósito: los módulos siguientes ya no requieren sembrar permisos por código.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos y Catálogos completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Clientes.
+
+---
+
 ## [0.7.0] - 19/07/2026
 
 ### Agregado

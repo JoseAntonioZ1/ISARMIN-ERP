@@ -1,6 +1,14 @@
 using System.Reflection;
 using FluentValidation;
 using ISARMIN.Application.Common;
+using ISARMIN.Application.Modulos.Configuracion.Commands.CambiarEstadoMedioPago;
+using ISARMIN.Application.Modulos.Configuracion.Commands.CrearMedioPago;
+using ISARMIN.Application.Modulos.Configuracion.DTOs;
+using ISARMIN.Application.Modulos.Configuracion.Queries.ListarMediosPago;
+using ISARMIN.Application.Modulos.Inventario.Commands.CrearCategoria;
+using ISARMIN.Application.Modulos.Inventario.Commands.EditarCategoria;
+using ISARMIN.Application.Modulos.Inventario.DTOs;
+using ISARMIN.Application.Modulos.Inventario.Queries.ListarCategorias;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
@@ -37,6 +45,13 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<EditarRolCommand, RolDto>, EditarRolCommandHandler>();
         services.AddScoped<ICommandHandler<AsignarPermisosCommand, RolDto>, AsignarPermisosCommandHandler>();
         services.AddScoped<IQueryHandler<ListarRolesConPermisosQuery, IReadOnlyCollection<RolDto>>, ListarRolesConPermisosQueryHandler>();
+
+        services.AddScoped<ICommandHandler<CrearCategoriaCommand, CategoriaDto>, CrearCategoriaCommandHandler>();
+        services.AddScoped<ICommandHandler<EditarCategoriaCommand, CategoriaDto>, EditarCategoriaCommandHandler>();
+        services.AddScoped<IQueryHandler<ListarCategoriasQuery, IReadOnlyCollection<CategoriaDto>>, ListarCategoriasQueryHandler>();
+        services.AddScoped<ICommandHandler<CrearMedioPagoCommand, MedioPagoDto>, CrearMedioPagoCommandHandler>();
+        services.AddScoped<ICommandHandler<CambiarEstadoMedioPagoCommand, Unit>, CambiarEstadoMedioPagoCommandHandler>();
+        services.AddScoped<IQueryHandler<ListarMediosPagoQuery, IReadOnlyCollection<MedioPagoDto>>, ListarMediosPagoQueryHandler>();
 
         return services;
     }
