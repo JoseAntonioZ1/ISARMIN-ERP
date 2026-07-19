@@ -136,7 +136,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-047 | El sistema permitirá registrar ingresos y egresos de caja asociados a ventas, cobros de OT y otros conceptos. | Alta | [PV] | Cajero/Vendedor | — |
 | RF-048 | El sistema permitirá realizar el cierre/arqueo de caja, comparando el monto teórico contra el físico declarado. | Alta | [PV] | Cajero/Vendedor, Contador | BQ-031 |
 | RF-049 | El sistema permitirá emitir un reporte de movimientos de caja por turno/jornada. | Media | [PV] | Contador | — |
-| RF-050 | El sistema deberá impedir la entrega de un equipo reparado sin el registro previo del pago correspondiente. | Alta | [C] | Recepcionista | RN-001 |
+| RF-050 | El sistema permitirá registrar cobros de Taller con estado de pago completo, adelanto, o saldo pendiente autorizado — el pago **no** bloquea la entrega del equipo (RN-001, corregida el 2026-07-18). | Alta | [C] | Administrador, Ventas, Técnico | RN-001 |
 
 ### 4.9 Taller (Recepción, Diagnóstico, Cotización, Reparación, Garantía, Entrega)
 
@@ -150,7 +150,8 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 | RF-056 | El sistema permitirá registrar la aprobación o el rechazo del cliente sobre una cotización de reparación. | Alta | [I] | Recepcionista | BQ-034 |
 | RF-057 | El sistema permitirá registrar los repuestos consumidos durante una reparación, descontándolos automáticamente del inventario. | Alta | [C] | Técnico | RN-002, RN-003 |
 | RF-058 | El sistema permitirá registrar el resultado de las pruebas realizadas antes de la entrega del equipo. | Media | [I] | Técnico | — |
-| RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, validando el pago previo. | Alta | [C] | Recepcionista | RN-001 |
+| RF-059 | El sistema permitirá registrar la entrega del equipo al cliente, capturando: fecha y hora, usuario que realiza la entrega, estado del pago (completo antes de la entrega, completo al momento, adelanto, o saldo pendiente autorizado), monto pagado y saldo pendiente si corresponde. **El pago no es un prerrequisito bloqueante para la entrega** (RN-001, corregida el 2026-07-18). | Alta | [C] | Administrador, Ventas, Técnico | RN-001 |
+| RF-088 | El sistema permitirá registrar el cobro posterior de un saldo pendiente asociado a una OT ya entregada. | Alta | [I] | Administrador, Ventas | BQ-093 |
 | RF-060 | El sistema permitirá consultar el historial completo de cada equipo a través de sus distintos ingresos, incluyendo por cada uno: fecha de ingreso, diagnóstico, reparación realizada, repuestos utilizados, técnico responsable y garantía asociada. | Alta | [C] | Todos (consulta) | RN-005 |
 | RF-061 | El sistema permitirá registrar, para una reparación, si tiene garantía asociada, su período (fecha de inicio y fecha de finalización). **Alcance V1 confirmado y reducido (2026-07-18):** no incluye tipos de garantía, condiciones de cobertura ni gestión avanzada — eso queda para una versión futura. | Alta | [C] | Técnico, Administrador | BQ-035 (resuelta con alcance reducido) |
 | RF-062 | El sistema permitirá asociar una nueva Orden de Trabajo a una garantía existente vigente. | Alta | [C] | Administrador | BQ-036 (resuelta con alcance reducido) |

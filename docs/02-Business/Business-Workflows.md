@@ -28,13 +28,14 @@ Corresponde a BP-002. Es el flujo mejor documentado del proyecto.
 | 7b | Registrar rechazo **[PV — BQ-034]** | Recepcionista | Decisión negativa | Cierre sin reparar | **Rechazado / Cerrado** | EVT-011 |
 | 8 | Reparar equipo, consumir repuestos | Técnico | Autorización | Consumo de inventario (RN-002, RN-018) | **En reparación** | EVT-012, EVT-013 |
 | 9 | Realizar pruebas | Técnico | Equipo reparado | Resultado de pruebas | **En pruebas → Listo para entrega** | EVT-014 |
-| 10 | Registrar pago **(RN-001, orden exacto respecto al paso 11 a confirmar — BQ-033)** | Recepcionista/Cajero | Monto de la cotización | Pago registrado | **Pagado** | EVT-015 |
-| 11 | Entregar equipo | Recepcionista | Pago registrado | Equipo entregado | **Entregado / Cerrado** | EVT-016 |
-| 12 (condicional) | Registrar garantía **[PV — BQ-035]** | Técnico/Supervisor | OT cerrada | Garantía asociada | (no aplica a la OT; nueva entidad) | EVT-017 |
+| 10 | Cliente retorna a recoger el equipo | Cliente | Aviso de equipo listo | Visita de recojo | **Listo para entrega** | — |
+| 11 | Entregar equipo y registrar estado de pago (completo, adelanto, o saldo pendiente autorizado — **RN-001, corregida el 2026-07-18**) | Administrador, Ventas o Técnico (configurable) | Monto de la cotización | Equipo entregado + estado de pago | **Entregado / Cerrado** | EVT-015, EVT-016 |
+| 11b (condicional) | Cobrar saldo pendiente (si quedó autorizado en el paso 11) | Administrador, Ventas | Saldo pendiente de una OT ya entregada | Saldo cobrado | (no cambia el estado de la OT, ya cerrada) | EVT-046 |
+| 12 (condicional) | Registrar garantía **[C — alcance V1 acotado, BQ-035/BQ-036 resueltas]** | Técnico/Administrador | OT cerrada | Garantía asociada (período de cobertura) | (no aplica a la OT; nueva entidad) | EVT-017 |
 
 **Puntos de decisión (gateways) documentados:**
 - ¿El cliente aprueba la cotización? → Sí: paso 8. No: cierre sin reparación **[PV: ¿se cobra el diagnóstico en este caso? BQ-034]**.
-- ¿El pago se registra antes o después de la entrega física? → Documentado como "no puede entregarse sin pago" (RN-001), lo cual sugiere que el pago es un prerrequisito estricto, pero no se aclara si puede ser simultáneo al acto de entrega. **BQ-033**.
+- ¿El pago se registra antes o después de la entrega física? → **Resuelto (BQ-033):** el pago **no** es un prerrequisito bloqueante; se registra en el mismo acto de la entrega, permitiendo saldo pendiente autorizado. Queda abierta **BQ-093** (¿quién autoriza ese saldo pendiente?).
 
 ---
 

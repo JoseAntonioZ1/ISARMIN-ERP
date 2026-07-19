@@ -10,17 +10,21 @@ Toda regla debe tener una **justificación** que explique su origen: o bien est�
 
 Igual que en los demás documentos: **[C]** Confirmado, **[I]** Inferido, **[PV]** Pendiente de Validación.
 
-## 3. Reglas confirmadas originalmente (preservadas sin cambios)
+## 3. Reglas confirmadas originalmente
 
 | ID | Regla | Estado | Módulo | Justificación |
 |---|---|---|---|---|
-| RN-001 | No puede entregarse un equipo sin registrar el pago. | [C] | Taller / Caja | Declarada explícitamente en la documentación fuente. |
+| RN-001 | Un equipo puede pasar a estado **"Listo para Entrega" con el pago pendiente** — el pago **no** es un prerrequisito bloqueante para la entrega. Al momento de entregar el equipo se debe registrar: fecha y hora, usuario que realiza la entrega, estado del pago, monto pagado y saldo pendiente (si corresponde). El sistema debe permitir cuatro variantes de pago: pago completo antes de la entrega, pago completo al momento de la entrega, adelanto, o saldo pendiente autorizado. | [C] — **corregida el 2026-07-18** (ver nota de corrección) | Taller / Caja | Corrección explícita del propietario al resolver **BQ-033**, reemplazando la regla original. |
 | RN-002 | Todo movimiento de inventario debe quedar registrado. | [C] | Inventario | Declarada explícitamente; fundamento de la trazabilidad exigida al proyecto. |
 | RN-003 | No puede venderse un producto sin stock. | [C] | Ventas / Inventario | Declarada explícitamente. |
 | RN-004 | Una Orden de Trabajo debe pertenecer a un cliente. | [C] | Taller | Declarada explícitamente. |
 | RN-005 | Cada equipo tendrá un historial único. | [C] | Taller | Declarada explícitamente. |
 
-> ⚠️ **Nota de validación (2026-07-18) sobre RN-001:** el propietario describió el proceso real de entrega como *"Cliente recoge equipo → Se realiza cobro"*, es decir, narrando el recojo antes del cobro. Esto no se interpreta como una derogación de RN-001 (que sigue vigente y confirmada), sino que probablemente describe el inicio de la visita de recojo, con el cobro ocurriendo antes de la entrega física real dentro de esa misma visita. **Se mantiene RN-001 sin cambios, pero el orden exacto de los pasos debe confirmarse puntualmente (ver BQ-033) antes de fijar la máquina de estados de la Orden de Trabajo.**
+> ⚠️ **Historial de corrección de RN-001 (importante para trazabilidad de decisiones, no se oculta el cambio):**
+> - **Texto original** (declarado en la documentación fuente del proyecto): "No puede entregarse un equipo sin registrar el pago."
+> - **Primera validación (2026-07-18):** el propietario describió el proceso como *"Cliente recoge equipo → Se realiza cobro"*, lo que generó la duda BQ-033 sobre si el pago era estrictamente previo a la entrega o podía ocurrir en el mismo acto. Se dejó la regla original sin cambios a la espera de aclaración puntual.
+> - **Segunda validación (2026-07-18, respuesta directa a BQ-033):** el propietario corrigió explícitamente la regla — el flujo real es: *equipo listo → cliente retorna a recogerlo → en ese momento se cobra y se entrega*, y el sistema **debe permitir explícitamente** que el equipo salga con saldo pendiente autorizado (no solo pago completo). Esto **reemplaza** la regla original, no es una simple aclaración de orden.
+> - **Nueva pregunta derivada (no resuelta por asunción):** ¿quién puede autorizar que un equipo salga con saldo pendiente — cualquier usuario que realiza la entrega, o requiere aprobación específica del Administrador/Propietario? → **BQ-093**.
 
 ## 4. Reglas de Inventario (compartido entre líneas de negocio)
 

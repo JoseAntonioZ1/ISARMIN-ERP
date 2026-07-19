@@ -39,8 +39,9 @@ Un evento de negocio es distinto de un requerimiento funcional: el requerimiento
 | EVT-012 | Reparación iniciada | Técnico | OT pasa a **En reparación** | [I] |
 | EVT-013 | Repuesto consumido en reparación | Técnico | Descuento de inventario compartido (RN-002, RN-018) | [C] |
 | EVT-014 | Pruebas realizadas | Técnico | OT pasa a **Listo para entrega** | [I] |
-| EVT-015 | Pago de reparación registrado | Recepcionista/Cajero | Habilita entrega (RN-001) | [C] |
-| EVT-016 | Equipo entregado | Recepcionista | OT pasa a **Entregado/Cerrado** | [C] |
+| EVT-015 | Estado de pago de reparación registrado (completo, adelanto, o saldo pendiente autorizado) | Administrador, Ventas o Técnico | Se registra junto con la entrega, no antes (RN-001, corregida 2026-07-18) | [C] |
+| EVT-016 | Equipo entregado | Administrador, Ventas o Técnico | OT pasa a **Entregado/Cerrado** | [C] |
+| EVT-046 | Saldo pendiente de una OT cobrado | Administrador, Ventas | No cambia el estado de la OT (ya cerrada); cierra la cuenta por cobrar | [I] |
 | EVT-017 | Garantía registrada sobre una reparación | Técnico/Supervisor | Cobertura activa por período definido | [PV] |
 | EVT-044 | Garantía vencida | Sistema (por fecha) | Cobertura ya no aplicable | [PV] |
 | EVT-045 | Equipo reingresado bajo garantía | Recepcionista | Nueva OT vinculada a garantía previa | [PV] |

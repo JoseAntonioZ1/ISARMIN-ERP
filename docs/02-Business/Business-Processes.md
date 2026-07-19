@@ -66,8 +66,8 @@ flowchart TD
 
 - **Estado:** [C] (proceso descrito explícitamente en la documentación fuente)
 - **Disparador:** Un cliente entrega un equipo para reparación.
-- **Actores:** Cliente, Recepcionista, Técnico, Supervisor (validación, [PV]), Cajero/Recepcionista (cobro).
-- **Salida:** Equipo reparado y entregado, pago registrado, historial del equipo actualizado.
+- **Actores:** Cliente, y Administrador/Ventas/Técnico de forma configurable para la recepción y entrega (confirmado 2026-07-18, ver Actors.md).
+- **Salida:** Equipo reparado y entregado, estado de pago registrado (completo, adelanto, o saldo pendiente), historial del equipo actualizado.
 - **Reglas de negocio aplicables:** RN-001, RN-002, RN-003, RN-004, RN-005, RN-016, RN-017, RN-018.
 - **Preguntas abiertas:** BQ-032 a BQ-036.
 
@@ -81,8 +81,8 @@ flowchart TD
 6. El cliente aprueba (o rechaza — **[PV] BQ-034**, no documentado qué ocurre en caso de rechazo).
 7. Se realiza la reparación, consumiendo repuestos del almacén compartido.
 8. Se realizan pruebas.
-9. Se entrega el equipo al cliente.
-10. Se registra el pago (RN-001: no puede entregarse sin pago — el orden entre los pasos 9 y 10 debe validarse: **BQ-033**).
+9. El cliente retorna a recoger el equipo listo.
+10. En ese momento se entrega el equipo y se registra el estado del pago (completo, adelanto, o saldo pendiente autorizado — **RN-001, corregida el 2026-07-18, resuelve BQ-033**; el pago ya no bloquea la entrega).
 
 ```mermaid
 flowchart TD
@@ -90,11 +90,11 @@ flowchart TD
         B0([Inicio: entrega equipo])
         B10([Fin: recibe equipo])
     end
-    subgraph Recepcionista
+    subgraph Recepcionista[Administrador / Ventas / Técnico]
         B1[Registrar equipo y generar OT]
         B2[Emitir comprobante de recepción]
         B7{Cliente aprueba cotización?}
-        B9[Registrar pago]
+        B9[Entregar equipo y registrar estado de pago]
     end
     subgraph Tecnico[Técnico]
         B3[Diagnosticar equipo]
@@ -108,9 +108,7 @@ flowchart TD
 
     B0 --> B1 --> B2 --> B3 --> B4 --> B7
     B7 -- No --> B7x[Registrar rechazo / cierre sin reparación] --> B10
-    B7 -- Sí --> B5 --> B5b --> B6 --> B8{Pago registrado?}
-    B8 -- No --> B9 --> B8
-    B8 -- Sí --> B10
+    B7 -- Sí --> B5 --> B5b --> B6 --> B8[Cliente retorna a recoger] --> B9 --> B10
 ```
 
 ---

@@ -20,13 +20,13 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 | Total de preguntas | Resueltas | Parcialmente resueltas | Pendientes |
 |---|---|---|---|
-| 90 | 27 | 10 | 53 |
+| 91 | 28 | 9 | 54 |
 
 **Actualización 1 — 2026-07-18:** el propietario de ISARMIN PERÚ S.A.C. validó directamente el funcionamiento real del negocio (contexto de la empresa, usuarios reales, inventario compartido, operación de Taller y Servicios de Campo, conectividad de campo, roles y permisos, caja, compras/costos, migración inicial e infraestructura), resolviendo total o parcialmente 33 preguntas y añadiendo 5 nuevas (BQ-087 a BQ-091).
 
 **Actualización 2 — 2026-07-18 (segunda ronda):** el propietario respondió BQ-089 (recepción de equipos: rol configurable entre Administrador, Técnico y Ventas, no exclusivo) y entregó correcciones de alcance que resolvieron o acotaron: BQ-064 (clientes: baja lógica confirmada), BQ-035/BQ-036 (Garantías: alcance V1 reducido a registro simple de cobertura), BQ-049 (Auditoría: detalle exacto confirmado), BQ-068 (usuarios concurrentes: 2 hoy, 5 diseño inicial, 20 a futuro), BQ-070 (respaldos: modelo local + externo confirmado, frecuencia pendiente), y BQ-060 (Recepcionista: absorbido por el modelo de roles configurables). Se agregó **Gestión Documental** como módulo nuevo del MVP y la pregunta **BQ-092**.
 
-**Único hallazgo que aún requiere aclaración puntual con el propietario antes de fijar la máquina de estados de la Orden de Trabajo:** **BQ-033** — posible tensión entre el orden "recojo → cobro" narrado por el cliente y la regla ya confirmada RN-001 (no entregar equipo sin pago).
+**Actualización 3 — 2026-07-18 (tercera ronda):** el propietario resolvió **BQ-033** con una corrección explícita de RN-001 (el pago ya no bloquea la entrega del equipo; se permite saldo pendiente autorizado). `Business-Rules.md`, `Business-States.md` (ST-001) y `Functional-Requirements.md` (RF-050, RF-059, RF-088 nuevo) se actualizaron. Esta respuesta originó la nueva pregunta **BQ-093** (¿quién autoriza el saldo pendiente?).
 
 ---
 
@@ -114,13 +114,16 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | ID | Pregunta | Prioridad | Relacionado con |
 |---|---|---|---|
 | BQ-032 | ✅ **RESUELTA (flujo general).** ¿Cuáles son los estados reales por los que pasa una Orden de Trabajo en la operación actual? (la propuesta en Business-States.md ST-001 es una hipótesis a confirmar o corregir). | **Alta** | RF-063, Business-States.md (ST-001) |
-| BQ-033 | 🟡 **PARCIALMENTE RESUELTA — REQUIERE ACLARACIÓN PUNTUAL.** ¿El pago debe registrarse estrictamente antes de la entrega física del equipo, o pueden ocurrir en el mismo acto (ej. el cliente paga al recibir)? | Alta | RN-001, Business-States.md (ST-001) |
+| BQ-033 | ✅ **RESUELTA.** ¿El pago debe registrarse estrictamente antes de la entrega física del equipo, o pueden ocurrir en el mismo acto (ej. el cliente paga al recibir)? | Alta | RN-001, Business-States.md (ST-001) |
 | BQ-034 | Si el cliente rechaza la cotización de reparación, ¿qué ocurre con el equipo y con el diagnóstico ya realizado? ¿Se cobra algún concepto (ej. revisión técnica) aunque no se repare? ¿Cómo se evidencia formalmente la aprobación del cliente (firma física, digital, verbal)? | **Alta** | RF-056, Business-Rules.md (RN-016) |
 | BQ-035 | ✅ **RESUELTA — ALCANCE V1 ACOTADO.** ¿La empresa ofrece garantía sobre las reparaciones? ¿Cuál es su duración estándar? ¿Cubre solo el repuesto reemplazado, la mano de obra, o ambos? | Media | RF-061, Business-Catalogs.md (CAT-017) |
 | BQ-036 | ✅ **RESUELTA — ALCANCE V1 ACOTADO.** Si un equipo reingresa por la misma falla dentro del período de garantía, ¿cómo se vincula la nueva OT a la reparación original? ¿Se cobra o es gratuito? | Media | RF-062 |
 | BQ-077 | ¿Existen tiempos de atención esperados o comprometidos (SLA) para el diagnóstico y la reparación? | Baja | — |
 | BQ-078 | ¿Qué ocurre si el cliente no recoge su equipo tras ser notificado de que está listo? ¿Existe un plazo o política de almacenamiento/abandono? | Media | — |
 | BQ-091 | *(Nueva)* ¿Qué datos exactos contienen hoy los recibos/notas de recepción manuales de equipos (nombre, DNI, equipo, falla reportada, fecha, firma, etc.)? | Media | RF-053 |
+| BQ-093 | *(Nueva)* ¿Quién puede autorizar que un equipo salga con saldo pendiente (cualquier usuario que realiza la entrega, o solo el Administrador/Propietario)? ¿Existe un límite de monto o de plazo para ese saldo? | **Alta** | RN-001, RF-088, Business-States.md (ST-001) |
+
+> **Respuesta a BQ-033 (fuente: validación con el propietario, 2026-07-18 — tercera ronda):** confirmado el flujo real completo: *cliente entrega equipo → se registra recepción y comprobante → diagnóstico y reparación → cuando el equipo está listo, el cliente retorna a recogerlo → en ese momento se cobra y se entrega*. El propietario corrigió explícitamente la regla: **el pago NO debe ser obligatorio antes de la entrega.** Un equipo puede pasar a "Listo para Entrega" con el pago pendiente; al momento de la entrega se registra el estado del pago (completo antes, completo al momento, adelanto, o **saldo pendiente autorizado**), junto con fecha/hora, usuario que entrega, monto pagado y saldo pendiente. **RN-001, RF-050, RF-059 y `Business-States.md` (ST-001) se actualizaron** para reflejar esta corrección — no fue una simple aclaración de orden, sino un cambio real de la regla de negocio, documentado con su historial de corrección en `Business-Rules.md`. Esta respuesta introduce la nueva pregunta **BQ-093** (autorización del saldo pendiente), que no se resuelve por asunción.
 
 > **Respuesta a BQ-032 (fuente: validación con el propietario):** el propietario confirmó el flujo real: *entrega del equipo → registro manual de datos → comprobante de recepción → diagnóstico → informe de costo/reparación estimada → aprobación del cliente → reparación (con repuestos del inventario) → pruebas → recojo del equipo → cobro*. Esto coincide, en general, con la hipótesis de `Business-States.md` (ST-001), y permite fijar los nombres de estado definitivos en la próxima actualización de ese documento.
 >

@@ -12,7 +12,7 @@ Formaliza, mediante **diagramas de estado UML** (State Machine Diagrams), el cic
 
 ## ST-001 — Orden de Trabajo (OT)
 
-**Estado del diagrama:** [I] — secuencia de estados inferida directamente del proceso narrado en la documentación fuente; los nombres exactos de los estados son propuesta del analista.
+**Estado del diagrama:** [C] — confirmado por el propietario en dos rondas de validación (2026-07-18); el cierre del flujo (Listo para Entrega → Entregado) fue corregido explícitamente al resolver **BQ-033** (ver `Business-Rules.md`, RN-001).
 
 ```mermaid
 stateDiagram-v2
@@ -24,8 +24,7 @@ stateDiagram-v2
     Aprobado --> EnReparacion: EVT-012 Reparación iniciada
     EnReparacion --> EnPruebas: EVT-014 Pruebas realizadas
     EnPruebas --> ListoParaEntrega
-    ListoParaEntrega --> Pagado: EVT-015 Pago registrado
-    Pagado --> Entregado: EVT-016 Equipo entregado
+    ListoParaEntrega --> Entregado: EVT-016 Equipo entregado (con estado de pago registrado)
     Entregado --> [*]
     Rechazado --> [*]
 ```
@@ -39,12 +38,11 @@ stateDiagram-v2
 | Cotizado | Cliente rechaza | Rechazado | **BQ-034** (¿qué ocurre con el diagnóstico ya realizado? ¿se cobra?) |
 | Aprobado | Reparación iniciada | En Reparación | RN-018 |
 | En Reparación | Pruebas realizadas | En Pruebas → Listo para Entrega | — |
-| Listo para Entrega | Pago registrado | Pagado | RN-001 |
-| Pagado | Equipo entregado | Entregado (final) | RN-001 |
+| Listo para Entrega | Equipo entregado al cliente | Entregado (final) | RN-001 (corregida) |
 
-**Punto crítico sin confirmar:** el orden estricto entre "Pagado" y "Entregado" — RN-001 solo establece que no puede entregarse sin pago, no si ambos pueden ocurrir en el mismo acto. **BQ-033**.
+**Resuelto (2026-07-18, respuesta a BQ-033):** el estado "Pagado" **se elimina como estado bloqueante independiente** de la máquina de estados de la OT. El pago ya no es un prerrequisito para pasar de "Listo para Entrega" a "Entregado" — en su lugar, la transición a **Entregado** registra simultáneamente un **estado de pago** como atributo del evento de entrega (no como estado previo obligatorio), con estas variantes válidas: pago completo antes de la entrega, pago completo al momento de la entrega, adelanto, o saldo pendiente autorizado. La entrega debe registrar: fecha/hora, usuario que entrega, estado del pago, monto pagado y saldo pendiente (si corresponde).
 
-**Actualización 2026-07-18:** el propietario confirmó el flujo general (Recibido → Diagnosticado → Cotizado → Aprobado/Rechazado → En Reparación → En Pruebas → Pagado → Entregado), validando la secuencia de estados propuesta. Sin embargo, describió el cierre como *"Cliente recoge equipo → Se realiza cobro"*, narrando el recojo antes del cobro — una posible tensión con RN-001 que **no se resuelve por asunción** (ver la nota correspondiente en `Business-Rules.md`, sección 3). Hasta que se aclare puntualmente, este diagrama se mantiene sin cambios en el orden Pagado → Entregado, por ser la lectura más consistente con RN-001.
+**Nueva pregunta derivada, no resuelta por asunción:** ¿quién puede autorizar que un equipo salga con saldo pendiente — cualquier usuario, o solo el Administrador/Propietario? → **BQ-093**.
 
 ---
 
