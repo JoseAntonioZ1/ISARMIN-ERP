@@ -1,7 +1,11 @@
+using ISARMIN.Application.Common;
+using ISARMIN.Application.Modulos.Usuarios;
+using ISARMIN.Infrastructure.Auth;
+using ISARMIN.Infrastructure.Persistence;
+using ISARMIN.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ISARMIN.Infrastructure.Persistence;
 
 namespace ISARMIN.Infrastructure;
 
@@ -14,6 +18,11 @@ public static class DependencyInjection
 
         services.AddDbContext<IsarminDbContext>(options =>
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
+        services.AddSingleton<IGeneradorTokenJwt, GeneradorTokenJwt>();
+        services.AddSingleton<IFechaHoraProvider, FechaHoraProvider>();
 
         return services;
     }

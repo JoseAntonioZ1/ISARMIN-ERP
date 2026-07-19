@@ -1,8 +1,10 @@
 using System.Text;
+using ISARMIN.API.Authorization;
 using ISARMIN.API.Middleware;
 using ISARMIN.Application;
 using ISARMIN.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
@@ -39,6 +41,8 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermisoAuthorizationPolicyProvider>();
+builder.Services.AddSingleton<IAuthorizationHandler, PermisoAuthorizationHandler>();
 
 var origenesPermitidos = builder.Configuration.GetSection("Cors:OrigenesPermitidos").Get<string[]>() ?? [];
 builder.Services.AddCors(options =>

@@ -1,5 +1,5 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ISARMIN.API.Middleware;
 
@@ -17,18 +17,33 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (exception is ValidationException validationException)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(new
+            {
+                error = new
+                {
+                    codigo = "VALIDACION_FALLIDA",
+                    mensaje = "La solicitud contiene datos inválidos.",
+                    detalles = validationException.Errors.Select(e => new { campo = e.PropertyName, error = e.ErrorMessage })
+                }
+            }, cancellationToken);
+            return true;
+        }
+
         _logger.LogError(exception, "Excepción no controlada: {Mensaje}", exception.Message);
 
-        var problemDetails = new ProblemDetails
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await httpContext.Response.WriteAsJsonAsync(new
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Ocurrió un error inesperado al procesar la solicitud.",
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1"
-        };
-
-        httpContext.Response.StatusCode = problemDetails.Status.Value;
-
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+            error = new
+            {
+                codigo = "ERROR_INTERNO",
+                mensaje = "Ocurrió un error inesperado al procesar la solicitud.",
+                detalles = (object?)null
+            }
+        }, cancellationToken);
 
         return true;
     }
