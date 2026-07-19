@@ -22,7 +22,13 @@ Este proyecto no debe considerarse un simple sistema administrativo ni un CRUD. 
 
 ISARMIN PERÚ S.A.C. desarrolla diversas actividades comerciales y técnicas.
 
-Actualmente la empresa cuenta con tres grandes áreas de negocio que comparten recursos e inventario.
+Actualmente la empresa integra tres actividades principales dentro de un mismo establecimiento y operación:
+
+- Venta comercial de productos.
+- Servicio técnico de reparación y mantenimiento.
+- Servicios técnicos realizados fuera de las instalaciones.
+
+Estas actividades comparten clientes, personal, inventario y recursos.
 
 ## 1. Tienda Comercial
 
