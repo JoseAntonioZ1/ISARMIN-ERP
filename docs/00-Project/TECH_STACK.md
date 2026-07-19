@@ -20,6 +20,8 @@
 
 - ASP.NET Core 9 Web API
 - Entity Framework Core
+- Npgsql (proveedor EF Core para PostgreSQL)
+- EFCore.NamingConventions (snake_case — ver ADR-013)
 - AutoMapper
 - FluentValidation
 - JWT Authentication

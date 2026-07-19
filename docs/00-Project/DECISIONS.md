@@ -195,3 +195,23 @@ Se separan dos correcciones al diseño de datos transversales registrado en ADR-
 - El criterio general para decidir entre "FK opcionales" y "referencia genérica sin FK" queda documentado en `Architecture-Overview.md` (sección 7): depende de si la entidad es una relación de dominio activa con pocos orígenes (FK fuerte) o un registro histórico/log con muchos orígenes posibles (referencia informativa).
 
 Estado: ✅ Aceptada
+
+---
+
+## ADR-013
+
+### Decisión
+
+Convenciones físicas del esquema PostgreSQL (`04-Database/Physical-Data-Model.md`):
+- Nombres de tablas/columnas en `snake_case`, traducidos automáticamente desde las clases `PascalCase` de C# mediante el paquete `EFCore.NamingConventions`.
+- Claves primarias `uuid` (`gen_random_uuid()`), no `serial`/`bigserial`.
+- Catálogos configurables (roles, medios de pago, categorías) como tablas de referencia; catálogos fijos de una máquina de estados (estado de OT, de Venta, de Servicio de Campo, motivo de movimiento de inventario) como `varchar` + `CHECK`, no `ENUM` nativo de PostgreSQL.
+
+### Justificación
+
+- `snake_case`: evita tener que citar identificadores en SQL manual; convención estándar de PostgreSQL.
+- `uuid`: permite generar IDs en el cliente sin depender del servidor, lo cual es relevante para el punto de extensión ya documentado de una futura app móvil/offline para Servicios de Campo (RF-071) — no es una complejidad añadida sin motivo, responde a un requerimiento futuro ya identificado.
+- Catálogos configurables vs. fijos: coherente con RN-028 (roles configurables) y con la distinción ya usada en ADR-007/ADR-012 entre relaciones activas y registros controlados por la máquina de estados de `Application`.
+- `CHECK` en vez de `ENUM` nativo: más simple de modificar en una migración futura, consistente con el criterio de simplicidad ya aplicado en ADR-007/ADR-012.
+
+Estado: ✅ Aceptada

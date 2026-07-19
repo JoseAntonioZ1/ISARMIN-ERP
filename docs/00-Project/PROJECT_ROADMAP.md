@@ -44,7 +44,7 @@ Estado: ✅ Completada (91 preguntas registradas, 37 resueltas y 9 parciales tra
 - Diseño de APIs
 - Diseño UI/UX
 
-Estado: 🔄 En progreso (Arquitectura del sistema: ver `03-Architecture/Architecture-Overview.md`, ADR-006 a ADR-010 en `DECISIONS.md`; Modelo de dominio y conceptual: ver `01-Requirements/Conceptual-Data-Model.md` y `Data-Dictionary.md`. Pendiente: Modelo entidad-relación físico, Diseño de APIs, Diseño UI/UX)
+Estado: 🔄 En progreso (Arquitectura del sistema: ver `03-Architecture/Architecture-Overview.md`, ADR-006 a ADR-013 en `DECISIONS.md`; Modelo de dominio y conceptual: `01-Requirements/Conceptual-Data-Model.md` y `Data-Dictionary.md`; Modelo entidad-relación físico: `04-Database/Physical-Data-Model.md`. Pendiente: Diseño de APIs, Diseño UI/UX)
 
 ---
 
