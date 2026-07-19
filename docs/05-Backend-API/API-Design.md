@@ -22,8 +22,10 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 
 | Método y ruta | Descripción | Permiso | Caso de uso |
 |---|---|---|---|
-| `POST /api/v1/auth/login` | Recibe `{ usuario, credencial }`, devuelve `{ token, expiraEn, permisos[] }`. | Público | UC-01 |
+| `POST /api/v1/auth/login` | Recibe `{ nombreUsuario, credencial }`, devuelve `{ token, expiraEn, permisos[] }`. | Público | UC-01 |
 | `POST /api/v1/auth/logout` | Invalida la sesión activa. | Autenticado | UC-02 |
+
+`nombreUsuario` corresponde a la columna `nombre_usuario` (RN-036, **[PV]** — recomendación técnica documentada, pendiente de validación con ISARMIN), distinta de `nombre` (nombre completo, solo para mostrar).
 
 ```json
 // Response 200 — POST /auth/login
@@ -32,6 +34,17 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
   "expiraEn": "2026-07-19T22:00:00Z",
   "usuario": { "id": "...", "nombre": "..." },
   "permisos": ["Ventas.Crear", "Caja.Consultar", "..."]
+}
+```
+
+```json
+// Response 423 Locked — POST /auth/login (RN-037, [PV])
+{
+  "error": {
+    "codigo": "CUENTA_BLOQUEADA_TEMPORALMENTE",
+    "mensaje": "Cuenta bloqueada por intentos fallidos. Intente nuevamente después de las 22:15.",
+    "detalles": null
+  }
 }
 ```
 
@@ -54,6 +67,7 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `403` | Usuario autenticado sin el permiso lógico requerido. |
 | `404` | Recurso no encontrado. |
 | `409` | Conflicto de regla de negocio (ej. `STOCK_INSUFICIENTE` — RN-007, `SALDO_PENDIENTE_SIN_AUTORIZACION` — RN-001/RN-031). |
+| `423` | Cuenta bloqueada temporalmente por intentos fallidos (RN-037, **[PV]**). |
 | `500` | Error no controlado (registrado por Serilog, nunca expone detalles internos al cliente). |
 
 ## 5. Formato estándar de listado paginado
@@ -77,6 +91,7 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `POST /usuarios` | `CrearUsuarioCommand` | `Usuarios.Crear` | UC-03 |
 | `PUT /usuarios/{id}` | `EditarUsuarioCommand` | `Usuarios.Editar` | UC-03 |
 | `PATCH /usuarios/{id}/estado` | `CambiarEstadoUsuarioCommand` | `Usuarios.Eliminar` | UC-03 (baja lógica, RN-021) |
+| `PATCH /usuarios/{id}/restablecer-credencial` | `RestablecerCredencialCommand` | `Usuarios.Editar` | RF-007 (RN-038, **[PV]** — exclusivo del Administrador, sin autoservicio) |
 | `GET /roles` | `ListarRolesQuery` | `Roles.Consultar` | UC-04 |
 | `POST /roles` | `CrearRolCommand` | `Roles.Crear` | UC-04 |
 | `PUT /roles/{id}/permisos` | `AsignarPermisosCommand` | `Roles.Editar` | UC-04 |

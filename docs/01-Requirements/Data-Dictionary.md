@@ -16,8 +16,11 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | Campo | Tipo | Obligatorio | Descripción | Estado | Origen |
 |---|---|---|---|---|---|
 | id | Identificador | Sí | Identificador único. | [C] | RF-001 |
-| nombre | Texto | Sí | Nombre completo del usuario. | [C] | RF-001 |
+| nombre | Texto | Sí | Nombre completo del usuario (solo para mostrar, no es el campo de acceso). | [C] | RF-001 |
+| nombre_usuario | Texto | Sí | Identificador único de acceso (login), distinto del nombre completo. | [PV] — recomendación técnica documentada | RN-036, BQ-047 |
 | credencial_acceso | Texto (hash) | Sí | Contraseña almacenada con hash seguro, nunca texto plano. | [C] | RF-004, RNF-011 |
+| intentos_fallidos | Número | Sí | Contador de intentos de autenticación fallidos consecutivos; se reinicia al autenticarse con éxito. | [PV] — recomendación técnica documentada | RN-037, BQ-047 |
+| bloqueado_hasta | Fecha y hora | No | Momento hasta el cual la cuenta queda bloqueada tras superar el máximo de intentos fallidos; nulo si no está bloqueada. | [PV] — recomendación técnica documentada | RN-037, BQ-047 |
 | estado | Catálogo (Activo/Inactivo) | Sí | Baja lógica; nunca eliminación física (RN-021). | [C] | RF-003 |
 | fecha_creacion | Fecha | Sí | — | [I] | RF-001 |
 

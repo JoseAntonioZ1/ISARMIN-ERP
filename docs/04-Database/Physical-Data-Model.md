@@ -82,8 +82,11 @@ erDiagram
 | Columna | Tipo | Restricciones |
 |---|---|---|
 | id | uuid | PK, default `gen_random_uuid()` |
-| nombre | varchar(150) | NOT NULL |
+| nombre | varchar(150) | NOT NULL — nombre completo, solo para mostrar |
+| nombre_usuario | varchar(50) | NOT NULL, UNIQUE — campo de acceso (login), distinto de `nombre` (RN-036, **[PV]**) |
 | credencial_hash | varchar(255) | NOT NULL — hash seguro (RNF-011), nunca texto plano |
+| intentos_fallidos | int | NOT NULL, default `0` — RN-037, **[PV]** |
+| bloqueado_hasta | timestamptz | NULL — RN-037, **[PV]** |
 | estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Activo','Inactivo'))`, default `'Activo'` |
 | fecha_creacion | timestamptz | NOT NULL, default `now()` |
 
