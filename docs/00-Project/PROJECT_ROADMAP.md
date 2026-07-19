@@ -4,7 +4,7 @@
 
 ## Estado Actual
 
-🟡 Fase de Análisis
+🔵 Fase de Diseño (Fase 3) — Análisis (Fase 2) completado y validado directamente con el propietario
 
 ---
 
@@ -31,7 +31,7 @@ Estado: ✅ Completada
 - Riesgos
 - Preguntas al cliente
 
-Estado: 🔄 En progreso
+Estado: ✅ Completada (91 preguntas registradas, 37 resueltas y 9 parciales tras 4 rondas de validación directa con el propietario; 45 pendientes de detalle no bloqueante, seguimiento continuo en `Business-Questions.md`)
 
 ---
 
@@ -44,7 +44,7 @@ Estado: 🔄 En progreso
 - Diseño de APIs
 - Diseño UI/UX
 
-Estado: ⏳ Pendiente
+Estado: 🔄 En progreso (Arquitectura del sistema: ver `03-Architecture/Architecture-Overview.md`, ADR-006 a ADR-010 en `DECISIONS.md`; Modelo de dominio y conceptual: ver `01-Requirements/Conceptual-Data-Model.md` y `Data-Dictionary.md`. Pendiente: Modelo entidad-relación físico, Diseño de APIs, Diseño UI/UX)
 
 ---
 
