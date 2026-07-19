@@ -14,13 +14,13 @@ Cada pregunta referenciada como `[PV]` en `01-Requirements/` y `02-Business/` ti
 | **Prioridad** | **Alta**: bloquea decisiones de arquitectura/modelo de datos si no se responde. **Media**: afecta el detalle funcional pero no bloquea el diseño general. |
 | **Relacionado con** | Documento(s) y sección donde esta pregunta ya fue citada. |
 
-Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE RESUELTA** al inicio de su celda "Pregunta", seguidas de una nota con la fuente de la respuesta.
+Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE RESUELTA** al inicio de su celda "Pregunta", seguidas de una nota con la fuente de la respuesta. Las preguntas con una **recomendación técnica documentada pero aún sin confirmación real de ISARMIN** se marcan **🔵 RECOMENDACIÓN DOCUMENTADA** — no se consideran resueltas; la recomendación queda registrada en `Business-Rules.md` para no bloquear el desarrollo, pero sigue pendiente de validación explícita.
 
 ## 3. Estado del levantamiento
 
-| Total de preguntas | Resueltas | Parcialmente resueltas | Pendientes |
-|---|---|---|---|
-| 91 | 37 | 9 | 45 |
+| Total de preguntas | Resueltas | Parcialmente resueltas | Recomendación documentada (no confirmada) | Pendientes |
+|---|---|---|---|---|
+| 91 | 37 | 7 | 6 | 41 |
 
 **Actualización 1 — 2026-07-18:** el propietario de ISARMIN PERÚ S.A.C. validó directamente el funcionamiento real del negocio (contexto de la empresa, usuarios reales, inventario compartido, operación de Taller y Servicios de Campo, conectividad de campo, roles y permisos, caja, compras/costos, migración inicial e infraestructura), resolviendo total o parcialmente 33 preguntas y añadiendo 5 nuevas (BQ-087 a BQ-091).
 
@@ -30,6 +30,8 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 **Actualización 4 — 2026-07-18 (cuarta ronda, previa a Etapa 3):** el propietario resolvió las 7 dudas críticas identificadas como necesarias antes de los Casos de Uso: **BQ-093** (autorización de saldo pendiente: solo Administrador/Propietario), **BQ-012** (medios de pago: Efectivo, Yape, Plin, Transferencia — configurable), **BQ-034** (rechazo de cotización: cobro de diagnóstico opcional, decisión caso por caso), **BQ-019** (sin módulo de crédito formal; solo saldo pendiente autorizado, generalizado a Ventas y Campo vía RN-031), **BQ-087** (devoluciones vía movimiento de inventario, sin módulo complejo), **BQ-001/BQ-003** (sin stock negativo salvo ajuste manual autorizado por el Administrador), y **BQ-039** (conformidad de campo: estado final + observaciones + usuario responsable, sin firma/evidencia avanzada). El propietario reconfirmó además el catálogo de 3 roles reales (Administrador/Propietario, Ventas, Técnico) y que los trabajadores temporales no tendrán usuario pero sí deben poder registrarse como referencia. **Con esto se da por cerrada la validación de negocio previa a la Etapa 3** (Casos de Uso UML, Modelo Conceptual de Datos y Diccionario de Datos preliminar).
 
+**Actualización 5 — 2026-07-19 (previa a Fase 4, Desarrollo):** análisis técnico profesional de los 5 puntos "Nivel 1" identificados como críticos antes de programar (**BQ-011, BQ-010, BQ-013, BQ-021, BQ-030, BQ-088**), distinguiendo explícitamente qué es decisión de negocio real (aún pendiente de confirmar) y qué es norma externa objetiva (RENIEC/SUNAT) o buena práctica de diseño de ERP (recomendación técnica, no arbitraria). Ninguna se marca como resuelta — quedan como **🔵 recomendación documentada**, registrada en `Business-Rules.md` (RN-010, RN-013, RN-026, RN-033 a RN-035 nuevas/actualizadas) para no bloquear el desarrollo, explícitamente pendientes de confirmación real de ISARMIN (y, en el caso de BQ-021, del contador).
+
 ---
 
 ## 4. Clientes y Proveedores
@@ -37,13 +39,15 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | ID | Pregunta | Prioridad | Relacionado con |
 |---|---|---|---|
 | BQ-006 | ✅ **RESUELTA.** ¿El actor "Cliente" accederá alguna vez directamente al sistema (portal web o app) para aprobar cotizaciones o consultar el estado de su equipo/servicio? ¿O es exclusivamente una entidad administrada por el personal interno? | **Alta** | Actors.md (ACT-009), Functional-Requirements.md |
-| BQ-011 | ¿Qué tipos de cliente maneja el negocio (persona natural / persona jurídica)? ¿Qué documento de identidad corresponde a cada uno (DNI, RUC, Carné de Extranjería, Pasaporte)? ¿Existe alguna segmentación comercial adicional (mayorista, minorista, cliente frecuente)? | Alta | RF-016, Business-Catalogs.md (CAT-009, CAT-020) |
+| BQ-011 | 🔵 **RECOMENDACIÓN DOCUMENTADA.** ¿Qué tipos de cliente maneja el negocio (persona natural / persona jurídica)? ¿Qué documento de identidad corresponde a cada uno (DNI, RUC, Carné de Extranjería, Pasaporte)? ¿Existe alguna segmentación comercial adicional (mayorista, minorista, cliente frecuente)? | Alta | RF-016, Business-Catalogs.md (CAT-009, CAT-020) |
 | BQ-024 | ¿Los proveedores requerirán algún tipo de acceso directo al sistema (ej. portal para confirmar una orden de compra), o toda la interacción se gestiona a través del Almacenero? | Media | Actors.md (ACT-010) |
 | BQ-064 | ✅ **RESUELTA.** Al "eliminar" un cliente (RF-014), ¿corresponde una baja lógica (recomendada por el analista para preservar trazabilidad) o debe permitirse eliminación física bajo ciertas condiciones? | Media | Business-Rules.md (RN-023) |
 | BQ-074 | ¿Qué datos son obligatorios para registrar un cliente (además de nombre y documento de identidad)? ¿Dirección, teléfono, correo son obligatorios u opcionales? | Media | RF-012 |
 | BQ-075 | ¿Un mismo producto puede comprarse a más de un proveedor, o existe una relación de exclusividad producto-proveedor? | Baja | RF-018, RF-033 |
 
 > **Respuesta a BQ-006 (fuente: `PROJECT_SCOPE.md`, sección "Funcionalidades Fuera del Alcance Inicial"):** "Portal para clientes" y "Portal para técnicos" están explícitamente fuera del alcance de la primera versión. Se confirma que el actor Cliente **no** tendrá acceso directo al sistema en el MVP; es exclusivamente una entidad administrada por el personal interno (Recepcionista/Vendedor). Impacto: `Actors.md` (ACT-009) puede actualizarse de [PV] a [C]; el modelo de autenticación no necesita contemplar usuarios externos en esta fase.
+>
+> **Recomendación técnica a BQ-011 (análisis 2026-07-19, no confirmado por ISARMIN):** soportar los 4 documentos de identidad peruanos (DNI, RUC, CE, Pasaporte) desde V1 — es el conjunto legal completo, barato de incluir ahora y costoso de ampliar después con datos ya cargados; derivar `tipo_cliente` automáticamente del documento (RN-034); validaciones de formato según norma RENIEC/SUNAT (RN-033). **Sigue pendiente confirmar con ISARMIN**: si existe facturación B2B real hoy y si existe alguna segmentación comercial (mayorista/frecuente).
 >
 > **Respuesta a BQ-064 (fuente: validación con el propietario, 2026-07-18):** "El sistema permitirá desactivar clientes manteniendo todo su historial asociado" (ventas, reparaciones, servicios, pagos, historial de equipos). **No existe eliminación física.** RF-014 se actualizó con esta redacción exacta.
 
@@ -68,9 +72,9 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | ID | Pregunta | Prioridad | Relacionado con |
 |---|---|---|---|
 | BQ-009 | ¿La empresa opera en una única moneda (Soles), o en algún caso maneja precios/compras en moneda extranjera? | Media | Business-Catalogs.md (CAT-019) |
-| BQ-010 | ¿Bajo qué criterio se decide emitir boleta, factura, nota de venta o ticket para una misma venta? | Alta | Business-Processes.md (BP-001) |
+| BQ-010 | 🔵 **RECOMENDACIÓN DOCUMENTADA.** ¿Bajo qué criterio se decide emitir boleta, factura, nota de venta o ticket para una misma venta? | Alta | Business-Processes.md (BP-001) |
 | BQ-012 | ✅ **RESUELTA.** ¿Qué medios de pago acepta la empresa en Ventas (efectivo, tarjeta, transferencia, billeteras digitales)? ¿Se aceptan pagos combinados en una misma venta? | Alta | RF-042, Business-Catalogs.md (CAT-008) |
-| BQ-013 | ¿Bajo qué reglas puede anularse una venta ya emitida? ¿Existe un plazo límite? ¿Qué rol lo autoriza? | Alta | RF-043, Business-States.md (ST-007) |
+| BQ-013 | 🔵 **RECOMENDACIÓN DOCUMENTADA.** ¿Bajo qué reglas puede anularse una venta ya emitida? ¿Existe un plazo límite? ¿Qué rol lo autoriza? | Alta | RF-043, Business-States.md (ST-007) |
 | BQ-014 | ¿Existen límites de descuento por rol? ¿Quién autoriza descuentos mayores a ese límite? | Media | RF-045 |
 | BQ-015 | ¿Las cotizaciones de venta tienen un plazo de vigencia? ¿Cuál? | Media | Business-States.md (ST-002) |
 | BQ-016 | ¿Una cotización de venta vencida puede reactivarse, o debe generarse una nueva? | Baja | Business-States.md (ST-002) |
@@ -84,13 +88,17 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 > **Respuesta a BQ-019 (fuente: validación con el propietario):** "En V1 no se implementará un módulo formal de créditos, cuentas por cobrar o cobranzas. Solo se permitirá registrar saldos pendientes autorizados asociados a ventas, reparaciones o servicios." Esto generaliza la regla de saldo pendiente ya definida para Taller (RN-001) a Ventas y Servicios de Campo (nueva regla RN-031). No existe crédito formal en V1.
 >
 > **Respuesta a BQ-087 (fuente: validación con el propietario):** "Las devoluciones deben contemplarse mediante movimientos de inventario y trazabilidad correspondiente. No se requiere un módulo complejo de devoluciones en V1." Se confirma el valor "Devolución" en `Business-Catalogs.md` (CAT-013) y se agrega RN-032 y RF-091.
+>
+> **Recomendación técnica a BQ-010 (análisis 2026-07-19, no confirmado por ISARMIN):** reglas legales (Factura exige RUC — RN-009) van en código; series/correlativos y el monto umbral que exige documento en una Boleta van en configuración (RN-035), porque SUNAT los actualiza periódicamente. **Sigue pendiente confirmar**: el criterio operativo real (¿la Encargada de Ventas pregunta siempre si el cliente quiere factura, o solo si lo pide?).
+>
+> **Recomendación técnica a BQ-013 (análisis 2026-07-19, no confirmado por ISARMIN):** política de anulación con motivo obligatorio, reversión de stock y auditoría siempre; ventana de tiempo corta para anulación libre por Ventas, autorización del Administrador fuera de esa ventana (mismo principio ya validado en RN-001/RN-031); ver detalle completo en RN-010. **Sigue pendiente confirmar**: el plazo exacto de esa ventana (¿mismo día? ¿24 horas?). BQ-018 (nota de crédito SUNAT) queda ligada a la integración SUNAT, ya diferida.
 
 ## 7. Compras
 
 | ID | Pregunta | Prioridad | Relacionado con |
 |---|---|---|---|
 | BQ-020 | ✅ **RESUELTA.** ¿Las órdenes de compra requieren aprobación formal? ¿A partir de qué monto y por parte de qué rol? | Media | RF-033, Business-States.md (ST-006) |
-| BQ-021 | 🟡 **PARCIALMENTE RESUELTA.** ¿Qué método de valorización de inventario utiliza (o debería utilizar) la empresa: PEPS, promedio ponderado, costo estándar u otro? | **Alta** | RN-013, RF-035 |
+| BQ-021 | 🔵 **RECOMENDACIÓN DOCUMENTADA — requiere validación del contador.** ¿Qué método de valorización de inventario utiliza (o debería utilizar) la empresa: PEPS, promedio ponderado, costo estándar u otro? | **Alta** | RN-013, RF-035 |
 | BQ-022 | ✅ **RESUELTA.** ¿Se realizan compras directas sin orden de compra previa (compras menores o urgentes)? ¿Bajo qué condiciones? | Media | RF-037 |
 | BQ-023 | 🟡 **CONTEXTUALIZADA.** ¿Se acepta la recepción parcial de una orden de compra, o toda la mercadería debe recibirse en un solo evento? | Media | Business-States.md (ST-006) |
 | BQ-025 | ¿Existen plazos de pago pactados con proveedores (crédito, contado)? | Baja | — |
@@ -98,7 +106,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 > **Respuesta a BQ-020 y BQ-022 (fuente: validación con el propietario):** "Actualmente las compras se realizan directamente a proveedores u otras tiendas." No se describió ningún proceso de aprobación formal ni de orden de compra (OC) previa — el propietario es quien decide y ejecuta la compra directamente, siendo el único que las realiza. Se confirma que **no existe (ni se requiere para el MVP) un flujo formal de aprobación de OC**; el modelo de compra directa es el modo normal de operar. **Impacto:** el estado "Aprobada" de `Business-States.md` (ST-006) puede simplificarse u omitirse en el MVP; `Functional-Requirements.md` (RF-033) debe re-priorizarse como registro simple de compra, no como flujo de aprobación. BQ-023 queda **contextualizada, no eliminada**: como no hay OC formal, la recepción parcial no aplica hoy, pero podría necesitarse si el negocio crece y formaliza compras a proveedores mayores.
 >
-> **Respuesta parcial a BQ-021 (fuente: validación con el propietario):** el propietario no confirmó un método exacto, pero se adoptó como **propuesta técnica tentativa: costo promedio ponderado**, sujeta a confirmación final antes de fijarse en el modelo de datos. `Business-Rules.md` (RN-013) debe reflejar esto como decisión tentativa, no definitiva.
+> **Recomendación técnica a BQ-021 (análisis 2026-07-19):** se evaluaron Promedio Ponderado, PEPS/FIFO y Costo Estándar; se recomienda **Promedio Ponderado** por ser el más simple de implementar/mantener para el volumen e inventario de ISARMIN, y por ser tributariamente aceptado en Perú junto con PEPS. **No se cierra como decisión definitiva**: cambiar de método una vez que existan movimientos reales tiene impacto tributario alto, por lo que **requiere confirmación explícita de un contador antes de operar en producción**. `Business-Rules.md` (RN-013) actualizada con esta recomendación y su justificación completa.
 
 ## 8. Caja
 
@@ -107,13 +115,15 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | BQ-027 | ✅ **RESUELTA.** ¿Cuántas cajas o puntos de cobro operan (u operarán) simultáneamente? | Media | Business-Processes.md (BP-005) |
 | BQ-028 | ✅ **RESUELTA.** ¿Los cobros de Taller y Servicios de Campo pasan por la misma caja que las ventas de tienda, o se manejan de forma separada? | Media | RF-050, RF-070 |
 | BQ-029 | ¿El arqueo de caja debe cuadrar por cada medio de pago por separado (efectivo, tarjeta, transferencia), o solo el total general? | Media | RF-048 |
-| BQ-030 | 🟡 **PARCIALMENTE RESUELTA.** ¿Existe el concepto formal de "caja" con apertura y cierre de turno, o los cobros se registran sin ese control? | **Alta** | RF-046, Business-Rules.md (RN-014) |
+| BQ-030 | 🔵 **RECOMENDACIÓN DOCUMENTADA (parcial).** ¿Existe el concepto formal de "caja" con apertura y cierre de turno, o los cobros se registran sin ese control? | **Alta** | RF-046, Business-Rules.md (RN-014) |
 | BQ-031 | En caso de existir arqueo de caja, ¿qué ocurre operativamente cuando el monto físico no coincide con el monto teórico del sistema? | Media | RF-048, Business-Rules.md (RN-015) |
-| BQ-088 | *(Nueva)* ¿Se requiere separar explícitamente el dinero personal del propietario del dinero del negocio dentro del control de caja del sistema? | **Alta** | RF-046, Business-Rules.md (RN-014) |
+| BQ-088 | 🔵 **RECOMENDACIÓN DOCUMENTADA.** ¿Se requiere separar explícitamente el dinero personal del propietario del dinero del negocio dentro del control de caja del sistema? | **Alta** | RF-046, Business-Rules.md (RN-014) |
 
 > **Respuesta a BQ-027 y BQ-028 (fuente: validación con el propietario):** existe una única caja física (2 usuarios, un solo local); los ingresos de venta de productos, reparaciones y servicios técnicos se manejan todos como una sola caja, sin separación por línea de negocio.
 >
-> **Respuesta parcial a BQ-030 (fuente: validación con el propietario):** se confirma que el ERP **debe implementar** registro de ingresos, registro de egresos, control diario y cierre de caja con reportes — es decir, sí se requiere el concepto formal de caja. Lo que **queda explícitamente pendiente** (reconocido así por el propio propietario): el monto de apertura inicial, la frecuencia exacta de los cierres, y la pregunta recién incorporada **BQ-088** sobre la separación entre dinero personal y del negocio — un riesgo real y frecuente en negocios familiares pequeños que debe resolverse antes de diseñar el módulo de Caja, ya que afecta directamente su modelo de datos (¿existe un solo "fondo" o dos fondos lógicos separados?).
+> **Respuesta parcial a BQ-030 (fuente: validación con el propietario):** se confirma que el ERP **debe implementar** registro de ingresos, registro de egresos, control diario y cierre de caja con reportes — es decir, sí se requiere el concepto formal de caja.
+>
+> **Recomendación técnica a BQ-030 y BQ-088 (análisis 2026-07-19, no confirmado por ISARMIN):** monto de apertura **fijo y configurable** (práctica de "fondo fijo", facilita la conciliación) en vez de variable cada día; los retiros del propietario se registran con un **tipo de movimiento explícito** (`RetiroPropietario`/`AporteCapital`), nunca mezclados con gasto operativo — principio contable de separación de entidad económica, no una preferencia. `Business-Rules.md` (RN-026) actualizada. **Sigue pendiente confirmar con ISARMIN**: el monto exacto de apertura, si existen hoy retiros reales y con qué frecuencia, y qué ocurre operativamente cuando el arqueo no cuadra (BQ-031, aún totalmente abierta).
 
 ## 9. Taller
 

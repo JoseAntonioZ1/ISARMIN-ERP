@@ -215,3 +215,19 @@ Convenciones físicas del esquema PostgreSQL (`04-Database/Physical-Data-Model.m
 - `CHECK` en vez de `ENUM` nativo: más simple de modificar en una migración futura, consistente con el criterio de simplicidad ya aplicado en ADR-007/ADR-012.
 
 Estado: ✅ Aceptada
+
+---
+
+## ADR-014
+
+### Decisión
+
+Principio general para reglas ligadas a normativa peruana (SUNAT/RENIEC): las **reglas legales duras** (ej. una Factura exige RUC) se implementan en `Domain`, porque son ley, no una preferencia de ISARMIN. Los **valores que la norma puede cambiar periódicamente** (montos umbral, series/correlativos) se implementan como **datos de configuración** administrables por el Administrador, nunca como constantes en el código.
+
+### Justificación
+
+- Evita que un cambio normativo (ej. SUNAT actualiza el monto que exige documento de identidad en una Boleta) obligue a una recompilación del sistema.
+- Establece un criterio consistente y reutilizable para cualquier regla futura de este tipo (ej. al implementar la integración SUNAT diferida, BQ-050), en vez de decidir caso por caso sin un principio declarado.
+- Aplicado por primera vez en RN-009 (regla dura) y RN-035 (configuración) de `Business-Rules.md`, análisis del 2026-07-19.
+
+Estado: ✅ Aceptada
