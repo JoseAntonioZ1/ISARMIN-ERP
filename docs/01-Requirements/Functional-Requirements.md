@@ -92,7 +92,7 @@ La columna **Actor principal** de las tablas siguientes usa los nombres de rol e
 
 | ID | Descripción | Prioridad | Estado | Actor principal | Referencia |
 |---|---|---|---|---|---|
-| RF-023 | El sistema permitirá registrar productos con al menos los siguientes atributos: código, nombre, categoría, marca, unidad de medida, costo de adquisición, precio de venta, margen y stock. | Alta | [C] | Administrador | — |
+| RF-023 | El sistema permitirá registrar productos **manualmente** (sin importación masiva en V1) con al menos los siguientes atributos: **código interno (obligatorio)**, nombre, categoría, marca, unidad de medida, costo de adquisición, precio de venta, margen, stock, y **código de barras comercial (opcional)**. | Alta | [C] | Administrador | BQ-056 (resuelta) |
 | RF-024 | El sistema permitirá editar productos. | Alta | [I] | Almacenero | — |
 | RF-025 | El sistema permitirá clasificar productos por categoría (herramientas eléctricas, manuales, materiales eléctricos/sanitarios, repuestos, accesorios, tecnología, etc.). | Alta | [C] | Almacenero | CAT-007 |
 | RF-026 | El sistema permitirá consultar el stock disponible de un producto en tiempo real. | Alta | [I] | Vendedor, Almacenero, Técnico | — |
@@ -228,6 +228,7 @@ Confirmados como fuera de alcance por el propietario / `PROJECT_SCOPE.md` (2026-
 - Flujo formal de Orden de Compra con aprobación previa (RF-037, **BQ-020**, **BQ-022**).
 - Gestión avanzada de garantías (tipos de garantía, condiciones de cobertura detalladas) — V1 solo registra si tiene garantía, período y asociación a nueva OT (RF-061, RF-062).
 - Integración con comercio electrónico / venta online.
+- Lectura de código de barras mediante escáner (RF-023, confirmado 2026-07-18): el producto debe permitir almacenar un código de barras comercial opcional, pero la funcionalidad de escaneo no es obligatoria en V1. La arquitectura no debe impedir incorporarla después.
 
 ## 6. Siguiente paso
 

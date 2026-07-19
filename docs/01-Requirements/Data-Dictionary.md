@@ -82,7 +82,8 @@ Detalla, campo por campo, cada entidad definida en [Conceptual-Data-Model.md](Co
 | Campo | Tipo | Obligatorio | Descripción | Estado | Origen |
 |---|---|---|---|---|---|
 | id | Identificador | Sí | — | [C] | RF-023 |
-| codigo | Texto | Sí | — | [C] | RF-023 |
+| codigo_interno | Texto | Sí | Código propio del sistema; registro manual en V1 (sin importación masiva). | [C] | RF-023 |
+| codigo_barras | Texto | No | Código de barras comercial. Opcional en V1; el campo debe existir desde el inicio para no bloquear la incorporación futura de lectura por escáner (BQ-056 resuelta). | [C] | RF-023 |
 | nombre | Texto | Sí | — | [C] | RF-023 |
 | categoria_id | Referencia a Categoria | Sí | — | [C] | RF-023, RF-025 |
 | marca | Texto | No | — | [C] | RF-023 |

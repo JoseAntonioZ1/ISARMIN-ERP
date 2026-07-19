@@ -20,7 +20,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 
 | Total de preguntas | Resueltas | Parcialmente resueltas | Pendientes |
 |---|---|---|---|
-| 91 | 36 | 9 | 46 |
+| 91 | 37 | 9 | 45 |
 
 **Actualización 1 — 2026-07-18:** el propietario de ISARMIN PERÚ S.A.C. validó directamente el funcionamiento real del negocio (contexto de la empresa, usuarios reales, inventario compartido, operación de Taller y Servicios de Campo, conectividad de campo, roles y permisos, caja, compras/costos, migración inicial e infraestructura), resolviendo total o parcialmente 33 preguntas y añadiendo 5 nuevas (BQ-087 a BQ-091).
 
@@ -214,7 +214,7 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | ID | Pregunta | Prioridad | Relacionado con |
 |---|---|---|---|
 | BQ-055 | ¿Qué modelo(s) de impresora se usará para comprobantes/tickets? ¿Formato térmico (58/80mm) o A4? ¿Ya existen equipos comprados? | Media | Actors.md (ACT-012) |
-| BQ-056 | ¿Los productos actuales ya tienen codificación de barras, o debe generarse desde el sistema? | Media | Actors.md (ACT-013) |
+| BQ-056 | ✅ **RESUELTA (para efectos de diseño).** ¿Los productos actuales ya tienen codificación de barras, o debe generarse desde el sistema? | Media | Actors.md (ACT-013) |
 | BQ-065 | ¿Bajo qué carga concurrente debe cumplirse el tiempo de respuesta objetivo (< 3 segundos, RNF-001)? | Media | Non-Functional-Requirements.md |
 | BQ-066 | ¿Qué versiones mínimas de navegador deben soportarse? ¿Se requiere soporte para dispositivos móviles/tablets? | Media | Non-Functional-Requirements.md (RNF-003) |
 | BQ-067 | ¿Se requiere que el sistema sea utilizable desde tablets o celulares (relevante especialmente para Técnicos de Campo)? | Alta | Non-Functional-Requirements.md (RNF-004) |
@@ -224,6 +224,8 @@ Las preguntas ya resueltas se marcan con **✅ RESUELTA** o **🟡 PARCIALMENTE 
 | BQ-071 | Dado que el servidor inicial es una PC de escritorio sin redundancia declarada, ¿qué nivel de tolerancia a fallas (corte eléctrico, falla de disco) es aceptable para el negocio? | Alta | Non-Functional-Requirements.md (RNF-009) |
 | BQ-073 | ¿Cuál es el nivel de familiaridad con sistemas informáticos del personal que usará el sistema (vendedores, recepcionistas, técnicos)? | Media | Non-Functional-Requirements.md (RNF-023) |
 | BQ-090 | *(Nueva)* ¿Cuáles son las características del equipo que se usará como servidor (procesador, RAM, almacenamiento, sistema operativo)? | Media | Non-Functional-Requirements.md (RNF-009) |
+
+> **Respuesta a BQ-056 (fuente: validación con el propietario, previa a Arquitectura, 2026-07-18):** el registro de productos en V1 es manual; el producto tendrá un **código interno obligatorio** y un **código de barras comercial opcional**. La lectura por escáner no es obligatoria en V1, pero el diseño no debe impedir agregarla después. Esto resuelve la pregunta **para efectos de diseño** (el sistema no depende de que existan códigos de barras hoy), aunque no se confirmó explícitamente si los productos físicos actuales ya los tienen impresos — dato irrelevante para el diseño mientras el campo sea opcional.
 | BQ-092 | *(Nueva)* Para la Gestión Documental (RF-084 a RF-087): ¿existe algún límite esperado de tamaño/cantidad de archivos adjuntos (fotos, documentos) por registro, y cuánto tiempo deben conservarse? | Media | RF-087, RNF-025 |
 
 > **Respuesta a BQ-068 (fuente: validación con el propietario, segunda ronda, 2026-07-18):** confirmado con números concretos — **2 usuarios principales hoy**; diseño inicial para **5 usuarios concurrentes**; crecimiento esperado a **20 usuarios concurrentes sin cambiar de arquitectura**. `Non-Functional-Requirements.md` (RNF-005) actualizado.

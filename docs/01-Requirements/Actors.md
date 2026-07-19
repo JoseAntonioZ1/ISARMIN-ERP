@@ -115,8 +115,7 @@ ISARMIN PERÚ S.A.C. es una empresa pequeña que opera en **un único local prop
 
 ### ACT-013 — Lector de Código de Barras
 - **Tipo:** Secundario / Sistema externo (hardware)
-- **Estado:** [I]
-- **Pendiente de validar:** ¿Ya existe codificación de barras en los productos actuales? No mencionado en la validación del propietario (que describe la operación actual basada en recibos manuales, lo que sugiere que probablemente no exista aún, pero no se asume). → **BQ-056**
+- **Estado:** [C] — resuelto para efectos de diseño (2026-07-18). El producto tendrá un código interno obligatorio y un código de barras comercial opcional; **la lectura por escáner no es obligatoria en V1**, pero el diseño debe dejar el campo y el punto de extensión listos para no bloquear su incorporación futura. Resuelve **BQ-056**.
 
 ## 8. Matriz real de permisos (confirmada por el propietario — reemplaza la hipótesis anterior)
 

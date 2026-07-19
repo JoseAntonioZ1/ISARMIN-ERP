@@ -14,11 +14,14 @@ Cada entidad y relación aquí definida se deriva de un Requerimiento Funcional 
 
 Estas son interpretaciones del analista sobre **cómo estructurar** información ya confirmada, no reglas de negocio nuevas. Se marcan aparte porque la fase de Arquitectura deberá confirmarlas o ajustarlas:
 
-1. **Saldo Pendiente como entidad transversal** (`SaldoPendiente`): dado que RN-001/RN-031 permiten saldo pendiente autorizado en Ventas, OT y Servicios de Campo por igual, se modela una única entidad transversal en lugar de repetir los mismos campos en tres tablas. Vincula a su origen (Venta, OrdenTrabajo o ServicioCampo) — en la fase de Arquitectura esto se resuelve típicamente con una referencia polimórfica o con tres claves foráneas opcionales.
+1. **Saldo Pendiente como entidad transversal** (`SaldoPendiente`): dado que RN-001/RN-031 permiten saldo pendiente autorizado en Ventas, OT y Servicios de Campo por igual, se modela una única entidad transversal en lugar de repetir los mismos campos en tres tablas. **Directriz confirmada para la fase de Arquitectura (2026-07-18):** evitar herencia (TPH/TPT) o polimorfismo complejo; priorizar una solución simple y mantenible, compatible con PostgreSQL/Entity Framework Core — por ejemplo, tres claves foráneas opcionales (`VentaId`, `OrdenTrabajoId`, `ServicioCampoId`), exactamente una no nula por registro. La forma exacta de garantizar esa exclusividad (restricción a nivel de base de datos vs. validación a nivel de aplicación) queda como decisión de la fase de Arquitectura, no de este documento.
 2. **Movimiento de Inventario como entidad transversal** (`MovimientoInventario`, el Kardex): un único registro de movimientos con un campo "motivo" (catálogo CAT-013: Compra, Venta, Consumo en Taller, Consumo en Campo, Ajuste, Devolución) y una referencia a su origen, en vez de duplicar la lógica de descuento de stock en cada módulo.
 3. **Documento Adjunto y Auditoría como entidades transversales**, cada una con referencia genérica a la entidad que documentan/auditan (Venta, Compra, OrdenTrabajo, ServicioCampo).
 4. **Usuario–Rol como relación N:M** (tabla `UsuarioRol`), no 1:N, para no bloquear a futuro la posibilidad de multi-rol (BQ-042, parcialmente resuelta — hoy no es necesario, pero no cuesta modelarlo flexible desde el inicio).
 5. **Participación de Trabajador Temporal** como dato de referencia (no un actor con cuenta), asociado a una OT o Servicio de Campo (RN-027, RF-090).
+6. **Código de producto** (2026-07-18): el registro de productos en V1 es manual; cada producto tiene un **código interno obligatorio** y un **código de barras comercial opcional** — el campo debe existir desde el inicio aunque la lectura por escáner no sea obligatoria en V1 (BQ-056 resuelta).
+
+> **Nota:** el mismo principio de simplicidad aplicado a `SaldoPendiente` (decisión #1) debería evaluarse análogamente para `MovimientoInventario`, `MovimientoCaja`, `DocumentoAdjunto` y `Auditoria` durante la fase de Arquitectura — no se asume aquí, queda como pregunta a resolver en ese momento.
 
 ## 4. Diagrama conceptual — Núcleo Comercial (Usuarios, Clientes, Inventario, Compras, Ventas, Caja)
 
