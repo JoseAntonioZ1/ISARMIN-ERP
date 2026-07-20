@@ -6,6 +6,28 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.17.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Ventas (UC-14, UC-16, UC-17), backend + frontend (RF-038 a RF-043, RF-089, RF-091):**
+  - `Domain`: `Venta` (aggregate root) con `VentaDetalle` y `PagoVenta` (hijos 1:muchos, permiten combinar varios medios de pago en una misma venta — RF-042). El registro es atómico: valida y descuenta stock, calcula el total, y determina el estado según haya o no saldo pendiente, todo en un único `POST /ventas` (no hay paso de "confirmar" separado, tal como ya lo definía `API-Design.md`). `Emitida` existe en el catálogo de estados confirmado pero no se persiste como paso real en V1 (no hay integración SUNAT, RF-044/UC-15 diferido).
+  - `MovimientoInventario.CrearVenta`/`CrearDevolucion` reutilizan el patrón de referencia genérica del Kardex (ADR-012) con `OrigenTipo="Venta"` — los tipos `Venta` y `Devolucion` y el `origen_tipo` ya estaban previstos en el `CHECK` desde el módulo de Inventario, así que no hizo falta ninguna migración para eso, ni tampoco para `AccionPermiso` (`Anular` ya existía de un módulo anterior).
+  - **Decisiones de alcance tomadas por continuidad, no por invención de reglas:** (1) el saldo pendiente (RF-089, RN-031) se resuelve con columnas inline en `ventas` (`saldo_pendiente`, `usuario_autorizo_saldo_id`), igual que Taller y Servicios de Campo — el módulo "Cobranzas" que el diseño original modela como tabla separada (`saldos_pendientes`) nunca se construyó y no está en el orden de módulos acordado; (2) la ventana de tiempo para anular una venta no está confirmada (BQ-013 abierta) — se implementó el permiso `Ventas.Anular` como único control de acceso, sin inventar un plazo de horas, siguiendo la recomendación técnica documentada (RN-010); (3) vincular una venta a una OT o Servicio de Campo para combinar materiales y mano de obra en un solo comprobante (RF-083, sección agregada después) queda fuera de alcance — el campo `origen` existe en el modelo con el catálogo completo (`Directa`/`OrdenTrabajo`/`ServicioCampo`) pero solo `Directa` es alcanzable por los comandos actuales, mismo patrón usado para estados inalcanzables en Taller y Servicios de Campo.
+  - `Application`: `RegistrarVentaCommand` (RN-003: valida stock antes de confirmar; agrega cantidades por producto entre líneas repetidas antes de validar), `AnularVentaCommand` (RN-010: motivo obligatorio, revierte el Kardex vía `CrearDevolucion` por cada línea), `RegistrarDevolucionCommand` (RN-032: valida que el producto realmente forme parte de la venta original), `BuscarVentasQuery`/`ObtenerVentaQuery`.
+  - `API`: `VentasController` con los 5 endpoints ya diseñados en Fase 3 (`GET /ventas`, `POST /ventas`, `GET /ventas/{id}`, `POST /ventas/{id}/anular`, `POST /ventas/{id}/devoluciones`).
+  - Frontend: `VentasPage` (listado + nueva venta con líneas de producto y pago dinámicas) y `VentaDetalleDialog` (formularios de devolución y anulación).
+  - Pruebas unitarias: 19 Domain + 13 Application = 32 nuevas (228/228 en todo el backend).
+  - **Corrección de documentación detectada, sin impacto en el código:** RF-039 y el modelo físico citan "CAT-004" como el catálogo de tipos de comprobante, pero ese identificador ya está asignado a un catálogo no relacionado (Tipos de Servicio de Campo) en `Business-Catalogs.md`. Se implementó `tipo_comprobante` como un `CHECK` cerrado (no como catálogo editable), que es como el propio modelo físico ya lo tenía declarado independientemente de esa referencia cruzada.
+
+Verificado end-to-end contra PostgreSQL real: registro de venta con pago completo (stock descontado 26→24, Kardex con `Venta` y `origenId` vinculado a la venta), rechazo por stock insuficiente (400), venta con saldo pendiente autorizado (saldo calculado correctamente, estado `Registrada`), rechazo de saldo pendiente sin usuario autorizante (400 `VALIDACION_FALLIDA`), devolución con rechazo de producto no vendido en esa venta (400 `PRODUCTO_NO_VENDIDO`) y devolución válida (stock repuesto, Kardex con `Devolucion`), anulación con reversión de inventario (stock repuesto, Kardex con `Devolucion` vinculado a la venta anulada) y rechazo de una segunda anulación sobre la misma venta (409 `ESTADO_VENTA_INVALIDO`); búsqueda por estado; 404 para venta inexistente. Permisos `Ventas.*` otorgados al Administrador vía `PUT /roles/{id}/permisos`.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste), Compras, Caja, Taller, Servicios de Campo y Ventas completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Reportes.
+
+---
+
 ## [0.16.0] - 20/07/2026
 
 ### Agregado

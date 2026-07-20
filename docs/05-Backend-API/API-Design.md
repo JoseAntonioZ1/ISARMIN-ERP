@@ -138,13 +138,15 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 
 | Método y ruta | Command/Query | Permiso | UC |
 |---|---|---|---|
-| `GET /ventas?estado=&pagina=` | `BuscarVentasQuery` | `Ventas.Consultar` | — |
-| `POST /ventas` | `RegistrarVentaCommand` | `Ventas.Crear` | UC-14 |
+| `GET /ventas?estado=&cliente=&pagina=` | `BuscarVentasQuery` | `Ventas.Consultar` | — |
+| `POST /ventas` | `RegistrarVentaCommand` | `Ventas.Crear` | UC-14 (RN-003: valida stock antes de confirmar; RN-031: saldo pendiente exige usuario Administrador/Propietario autorizante) |
 | `GET /ventas/{id}` | `ObtenerVentaQuery` | `Ventas.Consultar` | UC-14 |
-| `POST /ventas/{id}/anular` | `AnularVentaCommand` | `Ventas.Anular` | UC-16 *([PV] BQ-013)* |
-| `POST /ventas/{id}/devoluciones` | `RegistrarDevolucionCommand` | `Ventas.Crear` | UC-17 |
+| `POST /ventas/{id}/anular` | `AnularVentaCommand` | `Ventas.Anular` | UC-16 (RN-010: motivo obligatorio, reversión automática de inventario; la ventana de tiempo exacta para anular no está confirmada — BQ-013 — se resuelve solo con el permiso `Ventas.Anular`, sin inventar un plazo de horas) |
+| `POST /ventas/{id}/devoluciones` | `RegistrarDevolucionCommand` | `Ventas.Crear` | UC-17 (RN-032: el producto devuelto debe formar parte de la venta original) |
 
-### 6.6 Cobranzas *(módulo separado de Caja — ADR-012)*
+> **Alcance de esta implementación (2026-07-20):** el saldo pendiente (RF-089, RN-031) se resuelve con columnas inline en `ventas` (`saldo_pendiente`, `usuario_autorizo_saldo_id`) en vez del módulo `Cobranzas`/`saldos_pendientes` de la sección 6.6 — mismo patrón ya usado en Taller y Servicios de Campo, porque ese módulo nunca se construyó y no está en el orden de módulos acordado. Vincular una venta a una OT o Servicio de Campo para combinar materiales y mano de obra (RF-083) queda fuera de alcance: el campo `origen` existe con el catálogo completo, pero solo `Directa` es alcanzable por los comandos actuales.
+
+### 6.6 Cobranzas *(módulo separado de Caja — ADR-012, no construido: ver nota de alcance en 6.5)*
 
 | Método y ruta | Command/Query | Permiso | UC |
 |---|---|---|---|

@@ -8,8 +8,8 @@ namespace ISARMIN.Domain.Entities.Inventario;
 /// <see cref="ProductoId"/> es FK fuerte; <see cref="OrigenTipo"/>/<see cref="OrigenId"/> son
 /// informativos, sin integridad declarativa, porque el Kardex es en esencia un log histórico.
 /// Fábricas existentes: <see cref="CrearAjuste"/> (UC-12), <see cref="CrearCompra"/> (UC-13),
-/// <see cref="CrearConsumoTaller"/> (UC-25), <see cref="CrearConsumoCampo"/> (UC-32). Venta y
-/// Devolucion las generará el módulo de Ventas cuando exista.</summary>
+/// <see cref="CrearConsumoTaller"/> (UC-25), <see cref="CrearConsumoCampo"/> (UC-32),
+/// <see cref="CrearVenta"/> (UC-14), <see cref="CrearDevolucion"/> (UC-16/UC-17).</summary>
 public class MovimientoInventario : Entity
 {
     public Guid ProductoId { get; private set; }
@@ -92,5 +92,28 @@ public class MovimientoInventario : Entity
         }
 
         return new MovimientoInventario(productoId, TipoMovimientoInventario.ConsumoCampo, -cantidad, "ServicioCampo", servicioCampoId, null, usuarioId, fecha);
+    }
+
+    /// <summary>UC-14/RF-041 — movimiento de salida generado al confirmar una venta (RN-002, RN-003, RN-006).</summary>
+    public static MovimientoInventario CrearVenta(Guid productoId, decimal cantidad, Guid ventaId, Guid usuarioId, DateTime fecha)
+    {
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad vendida debe ser mayor a cero.", nameof(cantidad));
+        }
+
+        return new MovimientoInventario(productoId, TipoMovimientoInventario.Venta, -cantidad, "Venta", ventaId, null, usuarioId, fecha);
+    }
+
+    /// <summary>UC-16/RF-043 (reversión al anular) y UC-17/RF-091 (devolución de cliente) — movimiento
+    /// de entrada que repone el stock, trazable a la venta original (RN-032).</summary>
+    public static MovimientoInventario CrearDevolucion(Guid productoId, decimal cantidad, Guid ventaId, Guid usuarioId, DateTime fecha)
+    {
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad devuelta debe ser mayor a cero.", nameof(cantidad));
+        }
+
+        return new MovimientoInventario(productoId, TipoMovimientoInventario.Devolucion, cantidad, "Venta", ventaId, null, usuarioId, fecha);
     }
 }

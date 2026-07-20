@@ -213,14 +213,19 @@ erDiagram
 |---|---|---|
 | id | uuid | PK |
 | cliente_id | uuid | NULL, FK → `clientes.id` — venta simple sin cliente registrado |
-| tipo_comprobante | varchar(20) | NOT NULL, `CHECK (tipo_comprobante IN ('Cotizacion','Boleta','Factura','NotaVenta','Ticket'))` — CAT-004 |
-| serie | varchar(10) | NULL — **[PV] BQ-050** |
-| correlativo | integer | NULL **[PV] BQ-050** |
-| origen | varchar(20) | NOT NULL, `CHECK (origen IN ('Directa','OrdenTrabajo','ServicioCampo'))`, default `'Directa'` — RF-083 |
+| tipo_comprobante | varchar(20) | NOT NULL, `CHECK (tipo_comprobante IN ('Cotizacion','Boleta','Factura','NotaVenta','Ticket'))` — implementado como `CHECK` cerrado, no como catálogo editable; la referencia a "CAT-004" en Functional-Requirements.md es una cita cruzada equivocada (ese catálogo son Tipos de Servicio de Campo) |
+| origen | varchar(20) | NOT NULL, `CHECK (origen IN ('Directa','OrdenTrabajo','ServicioCampo'))`, default `'Directa'` — solo `Directa` es alcanzable en esta implementación (2026-07-20): vincular la venta a una OT/Servicio de Campo (RF-083) queda fuera de alcance |
 | fecha | timestamptz | NOT NULL, default `now()` |
 | usuario_id | uuid | NOT NULL, FK → `usuarios.id` |
 | total | numeric(12,2) | NOT NULL, default `0` |
-| estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Registrada','Emitida','Pagada','Anulada'))`, default `'Registrada'` — **[PV] BQ-013** (reglas exactas de anulación) |
+| estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Registrada','Emitida','Pagada','Anulada'))`, default `'Registrada'` — **[PV] BQ-013** (ventana de tiempo exacta para anular); `Emitida` no se persiste como paso real (no hay integración SUNAT) |
+| saldo_pendiente | numeric(12,2) | NULL — **agregada en la implementación (2026-07-20)**: RF-089/RN-031 exige capturar el saldo pendiente, columna faltante en el diseño original |
+| usuario_autorizo_saldo_id | uuid | NULL, FK → `usuarios.id` — **agregada**: RN-031 exige el usuario Administrador/Propietario que autorizó el saldo pendiente |
+| motivo_anulacion | text | NULL — **agregada**: RF-043/RN-010 exige un motivo obligatorio al anular, columna faltante en el diseño original |
+| usuario_anulo_id | uuid | NULL, FK → `usuarios.id` — **agregada**: RN-022 exige trazar qué usuario ejecutó la anulación |
+| fecha_anulacion | timestamptz | NULL — **agregada** |
+
+> **Nota (2026-07-20):** `serie` y `correlativo` (numeración de comprobantes, RN-035/BQ-050) no se implementaron — la emisión de comprobantes electrónicos SUNAT sigue diferida (RF-044/UC-15, `[PV]`) y no hay una fuente de verdad confirmada para la numeración interna todavía.
 
 **`venta_detalle`**
 | Columna | Tipo | Restricciones |

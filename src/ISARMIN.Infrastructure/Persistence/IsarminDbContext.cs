@@ -5,6 +5,7 @@ using ISARMIN.Domain.Entities.Inventario;
 using ISARMIN.Domain.Entities.ServiciosCampo;
 using ISARMIN.Domain.Entities.Taller;
 using ISARMIN.Domain.Entities.Terceros;
+using ISARMIN.Domain.Entities.Ventas;
 using Microsoft.EntityFrameworkCore;
 using CajaEntity = ISARMIN.Domain.Entities.Caja.Caja;
 using MovimientoCajaEntity = ISARMIN.Domain.Entities.Caja.MovimientoCaja;
@@ -40,6 +41,9 @@ public class IsarminDbContext : DbContext
     public DbSet<Garantia> Garantias => Set<Garantia>();
     public DbSet<ServicioCampo> ServiciosCampo => Set<ServicioCampo>();
     public DbSet<ServicioCampoDetalle> ServiciosCampoDetalle => Set<ServicioCampoDetalle>();
+    public DbSet<Venta> Ventas => Set<Venta>();
+    public DbSet<VentaDetalle> VentaDetalle => Set<VentaDetalle>();
+    public DbSet<PagoVenta> PagosVenta => Set<PagoVenta>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

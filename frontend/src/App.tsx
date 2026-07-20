@@ -11,6 +11,7 @@ import { ProveedoresPage } from '@/modules/proveedores/pages/ProveedoresPage'
 import { RolesPage } from '@/modules/roles/pages/RolesPage'
 import { ServiciosCampoPage } from '@/modules/serviciosCampo/pages/ServiciosCampoPage'
 import { TallerPage } from '@/modules/taller/pages/TallerPage'
+import { VentasPage } from '@/modules/ventas/pages/VentasPage'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
 import { UsuariosPage } from '@/modules/usuarios/pages/UsuariosPage'
 import { queryClient } from '@/shared/api/queryClient'
@@ -40,6 +41,7 @@ function App() {
             <Route path="/caja" element={<CajaPage />} />
             <Route path="/taller" element={<TallerPage />} />
             <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
+            <Route path="/ventas" element={<VentasPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
             <Route path="/configuracion/roles" element={<RolesPage />} />

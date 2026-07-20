@@ -111,4 +111,52 @@ public class MovimientoInventarioTests
         Assert.Equal("ServicioCampo", movimiento.OrigenTipo);
         Assert.Equal(servicioCampoId, movimiento.OrigenId);
     }
+
+    [Fact]
+    public void CrearVenta_CantidadCero_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            MovimientoInventario.CrearVenta(Guid.NewGuid(), 0m, Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void CrearVenta_DatosValidos_CreaMovimientoDeSalidaConOrigenVenta()
+    {
+        var productoId = Guid.NewGuid();
+        var ventaId = Guid.NewGuid();
+        var usuarioId = Guid.NewGuid();
+        var fecha = DateTime.UtcNow;
+
+        var movimiento = MovimientoInventario.CrearVenta(productoId, 2m, ventaId, usuarioId, fecha);
+
+        Assert.Equal(productoId, movimiento.ProductoId);
+        Assert.Equal(TipoMovimientoInventario.Venta, movimiento.TipoMovimiento);
+        Assert.Equal(-2m, movimiento.Cantidad);
+        Assert.Equal("Venta", movimiento.OrigenTipo);
+        Assert.Equal(ventaId, movimiento.OrigenId);
+    }
+
+    [Fact]
+    public void CrearDevolucion_CantidadCero_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            MovimientoInventario.CrearDevolucion(Guid.NewGuid(), 0m, Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void CrearDevolucion_DatosValidos_CreaMovimientoDeEntradaConOrigenVenta()
+    {
+        var productoId = Guid.NewGuid();
+        var ventaId = Guid.NewGuid();
+        var usuarioId = Guid.NewGuid();
+        var fecha = DateTime.UtcNow;
+
+        var movimiento = MovimientoInventario.CrearDevolucion(productoId, 1m, ventaId, usuarioId, fecha);
+
+        Assert.Equal(productoId, movimiento.ProductoId);
+        Assert.Equal(TipoMovimientoInventario.Devolucion, movimiento.TipoMovimiento);
+        Assert.Equal(1m, movimiento.Cantidad);
+        Assert.Equal("Venta", movimiento.OrigenTipo);
+        Assert.Equal(ventaId, movimiento.OrigenId);
+    }
 }

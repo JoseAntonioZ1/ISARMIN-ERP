@@ -55,6 +55,12 @@ using ISARMIN.Application.Modulos.ServiciosCampo.Commands.CobrarServicioCampo;
 using ISARMIN.Application.Modulos.ServiciosCampo.DTOs;
 using ISARMIN.Application.Modulos.ServiciosCampo.Queries.BuscarServiciosCampo;
 using ISARMIN.Application.Modulos.ServiciosCampo.Queries.ObtenerServicioCampo;
+using ISARMIN.Application.Modulos.Ventas.Commands.RegistrarVenta;
+using ISARMIN.Application.Modulos.Ventas.Commands.AnularVenta;
+using ISARMIN.Application.Modulos.Ventas.Commands.RegistrarDevolucion;
+using ISARMIN.Application.Modulos.Ventas.DTOs;
+using ISARMIN.Application.Modulos.Ventas.Queries.BuscarVentas;
+using ISARMIN.Application.Modulos.Ventas.Queries.ObtenerVenta;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
@@ -144,6 +150,12 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<CobrarServicioCampoCommand, ServicioCampoDto>, CobrarServicioCampoCommandHandler>();
         services.AddScoped<IQueryHandler<BuscarServiciosCampoQuery, ListadoPaginadoDto<ServicioCampoDto>>, BuscarServiciosCampoQueryHandler>();
         services.AddScoped<IQueryHandler<ObtenerServicioCampoQuery, ServicioCampoDto>, ObtenerServicioCampoQueryHandler>();
+
+        services.AddScoped<ICommandHandler<RegistrarVentaCommand, VentaDto>, RegistrarVentaCommandHandler>();
+        services.AddScoped<ICommandHandler<AnularVentaCommand, VentaDto>, AnularVentaCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarDevolucionCommand, VentaDto>, RegistrarDevolucionCommandHandler>();
+        services.AddScoped<IQueryHandler<BuscarVentasQuery, ListadoPaginadoDto<VentaDto>>, BuscarVentasQueryHandler>();
+        services.AddScoped<IQueryHandler<ObtenerVentaQuery, VentaDto>, ObtenerVentaQueryHandler>();
 
         return services;
     }
