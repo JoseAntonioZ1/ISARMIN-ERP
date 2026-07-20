@@ -11,7 +11,7 @@ public class PermisoConfiguration : IEntityTypeConfiguration<Permiso>
     {
         builder.ToTable("permisos", t => t.HasCheckConstraint(
             "ck_permisos_accion",
-            "accion IN ('Crear','Editar','Eliminar','Consultar','Anular','Ajustar','Abrir','Cerrar','Registrar','Recepcionar','Diagnosticar','Cotizar','Reparar','Entregar')"));
+            "accion IN ('Crear','Editar','Eliminar','Consultar','Anular','Ajustar','Abrir','Cerrar','Registrar','Recepcionar','Diagnosticar','Cotizar','Reparar','Entregar','Cobrar')"));
 
         builder.HasKey(p => p.Id);
 

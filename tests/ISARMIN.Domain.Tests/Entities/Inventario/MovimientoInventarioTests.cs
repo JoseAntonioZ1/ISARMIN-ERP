@@ -87,4 +87,28 @@ public class MovimientoInventarioTests
         Assert.Equal("OrdenTrabajo", movimiento.OrigenTipo);
         Assert.Equal(ordenTrabajoId, movimiento.OrigenId);
     }
+
+    [Fact]
+    public void CrearConsumoCampo_CantidadCero_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            MovimientoInventario.CrearConsumoCampo(Guid.NewGuid(), 0m, Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void CrearConsumoCampo_DatosValidos_CreaMovimientoDeSalidaConOrigenServicioCampo()
+    {
+        var productoId = Guid.NewGuid();
+        var servicioCampoId = Guid.NewGuid();
+        var usuarioId = Guid.NewGuid();
+        var fecha = DateTime.UtcNow;
+
+        var movimiento = MovimientoInventario.CrearConsumoCampo(productoId, 3m, servicioCampoId, usuarioId, fecha);
+
+        Assert.Equal(productoId, movimiento.ProductoId);
+        Assert.Equal(TipoMovimientoInventario.ConsumoCampo, movimiento.TipoMovimiento);
+        Assert.Equal(-3m, movimiento.Cantidad);
+        Assert.Equal("ServicioCampo", movimiento.OrigenTipo);
+        Assert.Equal(servicioCampoId, movimiento.OrigenId);
+    }
 }

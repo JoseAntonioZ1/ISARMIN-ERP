@@ -186,10 +186,13 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | Método y ruta | Command/Query | Permiso | UC |
 |---|---|---|---|
 | `POST /servicios-campo` | `SolicitarServicioCampoCommand` | `ServiciosCampo.Crear` | UC-30 |
-| `GET /servicios-campo?estado=&pagina=` | `BuscarServiciosCampoQuery` | `ServiciosCampo.Consultar` | RF-075 |
+| `GET /servicios-campo?estado=&cliente=&pagina=` | `BuscarServiciosCampoQuery` | `ServiciosCampo.Consultar` | RF-075 |
+| `GET /servicios-campo/{id}` | `ObtenerServicioCampoQuery` | `ServiciosCampo.Consultar` | (completa una brecha detectada 2026-07-20, mismo criterio que `GET /caja`: no había forma de consultar el detalle de un servicio antes de cotizar/cerrar/cobrar) |
 | `POST /servicios-campo/{id}/cotizacion` | `CotizarServicioCampoCommand` | `ServiciosCampo.Cotizar` | UC-31 |
 | `POST /servicios-campo/{id}/cierre` | `CerrarServicioCampoCommand` | `ServiciosCampo.Cerrar` | UC-32 |
 | `POST /servicios-campo/{id}/cobro` | `CobrarServicioCampoCommand` | `ServiciosCampo.Cobrar` | UC-33 |
+
+> **Alcance de esta implementación (2026-07-20):** no existe un endpoint ni comando separado para una aprobación formal de la cotización — el catálogo de estados confirmado no tiene un estado `Cotizado`, así que `POST /servicios-campo/{id}/cotizacion` solo captura `MontoEstimado` sin transición de estado. `Agendado`/`EnEjecucion` existen en el enum de estado (para coincidir con el `CHECK` constraint ya confirmado) pero no son pasos persistidos reales: `POST /servicios-campo/{id}/cierre` transiciona directo de `Solicitado` a `Cerrado`.
 
 ### 6.10 Gestión Documental
 

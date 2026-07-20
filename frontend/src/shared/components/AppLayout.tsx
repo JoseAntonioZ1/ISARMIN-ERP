@@ -43,6 +43,9 @@ export function AppLayout() {
             <Link to="/taller" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
               Taller
             </Link>
+            <Link to="/servicios-campo" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
+              Servicios de Campo
+            </Link>
             <Link to="/configuracion" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
               Configuración
             </Link>

@@ -359,11 +359,16 @@ erDiagram
 | descripcion_trabajo | text | NOT NULL |
 | fecha_solicitud | timestamptz | NOT NULL, default `now()` |
 | tecnico_asignado_id | uuid | NULL, FK → `usuarios.id` — **[PV] BQ-037** |
+| estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Solicitado','Agendado','EnEjecucion','Cerrado'))`, default `'Solicitado'` |
+| monto_estimado | numeric(12,2) | NULL — **agregada en la implementación (2026-07-20)**: RF-068 exige capturar el monto estimado al cotizar, columna faltante en el diseño original |
 | fecha_ejecucion | timestamptz | NULL |
 | estado_final | varchar(50) | NULL — RN-019 |
 | observaciones | text | NULL |
 | usuario_cierre_id | uuid | NULL, FK → `usuarios.id` |
-| estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Solicitado','Agendado','EnEjecucion','Cerrado'))`, default `'Solicitado'` |
+| medio_pago_id | uuid | NULL, FK → `medios_pago.id` — **agregada**: RF-070 exige registrar el medio de pago del cobro |
+| monto_pagado | numeric(12,2) | NULL — **agregada**: RF-070 exige capturar el monto pagado, columna faltante en el diseño original |
+| saldo_pendiente | numeric(12,2) | NULL — **agregada**: RN-031 exige el monto pendiente cuando queda un saldo |
+| usuario_autorizo_saldo_id | uuid | NULL, FK → `usuarios.id` — **agregada**: RN-031 exige el usuario Administrador/Propietario que autorizó el saldo pendiente |
 
 **`servicio_campo_detalle`**
 | Columna | Tipo | Restricciones |

@@ -6,6 +6,30 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.16.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Servicios de Campo (UC-30 a UC-33), backend + frontend (RF-064 a RF-070) — más simple que Taller: sin máquina de estados de 9 valores ni flujo formal de aprobación de cotización:**
+  - `Domain`: `ServicioCampo` (aggregate root) con `ServicioCampoDetalle` (hijos 1:muchos, mismo patrón que `ConsumoRepuesto`). `Cotizar` es una acción de solo captura de dato (`MontoEstimado`), sin transición de estado — el catálogo de estados confirmado (`Solicitado, Agendado, EnEjecucion, Cerrado`) no tiene un estado `Cotizado` ni un endpoint de decisión del cliente separado, a diferencia de Taller. `Cerrar` transiciona directo de `Solicitado` a `Cerrado`, saltando `Agendado`/`EnEjecucion` como pasos persistidos reales — esos dos valores existen en el enum solo para coincidir con el catálogo ya confirmado en el `CHECK` constraint.
+  - **Completa cinco campos que faltaban en el modelo físico original:** `servicios_campo` solo tenía `id, cliente_id, descripcion_trabajo, fecha_solicitud, tecnico_asignado_id, fecha_ejecucion, estado_final, observaciones, usuario_cierre_id, estado`; se agregaron `monto_estimado` (RF-068), `medio_pago_id`/`monto_pagado`/`saldo_pendiente`/`usuario_autorizo_saldo_id` (RF-070/RN-031) como columnas simples — mismo criterio ya aplicado dos veces en Taller.
+  - `MovimientoInventario.CrearConsumoCampo` reutiliza el patrón de referencia genérica del Kardex (ADR-012) con `OrigenTipo="ServicioCampo"`, ya previsto en el `CHECK` de `origen_tipo` desde Inventario (junto con `Compra`/`Venta`/`OrdenTrabajo`). El consumo reutiliza `Producto.AjustarStock` sin necesitar un método nuevo.
+  - **Deliberadamente fuera de alcance:** `participaciones_temporales` (tabla compartida entre Taller y Servicios de Campo para referencias opcionales a personal temporal, RF-090) — tampoco se construyó para Taller y el UC la marca explícitamente "(Opcional)". Tampoco se generó un movimiento de Caja automático al cobrar — mismo criterio que Compras y Taller: el puente "cobro → Caja" pertenece a un mecanismo unificado (Cobranzas) aún no construido.
+  - Se agregó 1 acción de permiso nueva (`Cobrar` en `AccionPermiso`) — `Crear`, `Consultar`, `Cotizar` y `Cerrar` ya existían de módulos anteriores. Misma migración de ampliación del `CHECK` de `permisos`.
+  - `Application`: `SolicitarServicioCampoCommand`, `CotizarServicioCampoCommand`, `CerrarServicioCampoCommand` (RN-020: descuenta materiales consumidos del inventario compartido, valida stock antes de descontar), `CobrarServicioCampoCommand` (RN-031: exige usuario Administrador/Propietario autorizante si hay saldo pendiente; reutiliza `IMedioPagoRepository` del módulo de Configuración), `BuscarServiciosCampoQuery`/`ObtenerServicioCampoQuery`.
+  - `API`: `ServiciosCampoController` con los 6 endpoints diseñados en Fase 3 (incluye `GET /servicios-campo/{id}`, no explícito en el diseño original pero necesario para el detalle del frontend, mismo criterio que `GET /caja`).
+  - Frontend: `ServiciosCampoPage` (listado + nueva solicitud) y `ServicioCampoDetalleDialog` (formularios contextuales de cotizar/cerrar/cobrar según el estado del servicio).
+  - Pruebas unitarias: 11 Domain + 22 Application = 33 nuevas (196/196 en todo el backend).
+  - Se aplicó proactivamente, desde el primer intento, la corrección de tracking de entidades `Added` de EF Core (documentada por primera vez en `[0.7.0]` y reencontrada tres veces en Taller, ver `[0.15.0]`) en `CerrarServicioCampoCommandHandler`: `IServicioCampoRepository.AgregarDetalles` registra explícitamente los `ServicioCampoDetalle` nuevos vía `DbSet.AddRange` antes de guardar cambios, evitando que reapareciera aquí.
+
+Verificado end-to-end contra PostgreSQL real: ciclo completo solicitud → cotización (sin cambio de estado) → cierre con consumo de materiales (stock descontado 28→26, Kardex con `ConsumoCampo` y `origenId` vinculado al servicio; rechazo por stock insuficiente) → cobro (rechazo de saldo pendiente sin usuario autorizante, cobro con saldo pendiente y usuario autorizante válido); guardas de estado inválido en cierre y cotización repetidos sobre un servicio ya cerrado (409); búsqueda por estado; 404 para servicio inexistente. Permisos `ServiciosCampo.*` otorgados al Administrador vía `PUT /roles/{id}/permisos`.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste), Compras, Caja, Taller y Servicios de Campo completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Ventas.
+
+---
+
 ## [0.15.0] - 20/07/2026
 
 ### Agregado

@@ -15,5 +15,6 @@ public enum AccionPermiso
     Diagnosticar,
     Cotizar,
     Reparar,
-    Entregar
+    Entregar,
+    Cobrar
 }

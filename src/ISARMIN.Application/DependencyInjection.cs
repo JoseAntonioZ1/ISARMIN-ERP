@@ -48,6 +48,13 @@ using ISARMIN.Application.Modulos.Taller.Commands.RegistrarReparacion;
 using ISARMIN.Application.Modulos.Taller.DTOs;
 using ISARMIN.Application.Modulos.Taller.Queries.BuscarOrdenesTrabajo;
 using ISARMIN.Application.Modulos.Taller.Queries.ObtenerOrdenTrabajo;
+using ISARMIN.Application.Modulos.ServiciosCampo.Commands.SolicitarServicioCampo;
+using ISARMIN.Application.Modulos.ServiciosCampo.Commands.CotizarServicioCampo;
+using ISARMIN.Application.Modulos.ServiciosCampo.Commands.CerrarServicioCampo;
+using ISARMIN.Application.Modulos.ServiciosCampo.Commands.CobrarServicioCampo;
+using ISARMIN.Application.Modulos.ServiciosCampo.DTOs;
+using ISARMIN.Application.Modulos.ServiciosCampo.Queries.BuscarServiciosCampo;
+using ISARMIN.Application.Modulos.ServiciosCampo.Queries.ObtenerServicioCampo;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
@@ -130,6 +137,13 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<RegistrarGarantiaCommand, GarantiaDto>, RegistrarGarantiaCommandHandler>();
         services.AddScoped<IQueryHandler<BuscarOrdenesTrabajoQuery, ListadoPaginadoDto<OrdenTrabajoDto>>, BuscarOrdenesTrabajoQueryHandler>();
         services.AddScoped<IQueryHandler<ObtenerOrdenTrabajoQuery, OrdenTrabajoDetalleDto>, ObtenerOrdenTrabajoQueryHandler>();
+
+        services.AddScoped<ICommandHandler<SolicitarServicioCampoCommand, ServicioCampoDto>, SolicitarServicioCampoCommandHandler>();
+        services.AddScoped<ICommandHandler<CotizarServicioCampoCommand, ServicioCampoDto>, CotizarServicioCampoCommandHandler>();
+        services.AddScoped<ICommandHandler<CerrarServicioCampoCommand, ServicioCampoDto>, CerrarServicioCampoCommandHandler>();
+        services.AddScoped<ICommandHandler<CobrarServicioCampoCommand, ServicioCampoDto>, CobrarServicioCampoCommandHandler>();
+        services.AddScoped<IQueryHandler<BuscarServiciosCampoQuery, ListadoPaginadoDto<ServicioCampoDto>>, BuscarServiciosCampoQueryHandler>();
+        services.AddScoped<IQueryHandler<ObtenerServicioCampoQuery, ServicioCampoDto>, ObtenerServicioCampoQueryHandler>();
 
         return services;
     }

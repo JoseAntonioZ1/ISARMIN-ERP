@@ -15,6 +15,7 @@ export const ACCIONES = [
   'Cotizar',
   'Reparar',
   'Entregar',
+  'Cobrar',
 ] as const
 export type Accion = (typeof ACCIONES)[number]
 
