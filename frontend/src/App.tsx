@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import { CategoriasPage } from '@/modules/catalogos/pages/CategoriasPage'
 import { MediosPagoPage } from '@/modules/catalogos/pages/MediosPagoPage'
 import { UnidadesMedidaPage } from '@/modules/catalogos/pages/UnidadesMedidaPage'
+import { CajaPage } from '@/modules/caja/pages/CajaPage'
 import { ClientesPage } from '@/modules/clientes/pages/ClientesPage'
 import { ComprasPage } from '@/modules/compras/pages/ComprasPage'
 import { ProductosPage } from '@/modules/productos/pages/ProductosPage'
@@ -34,6 +35,7 @@ function App() {
             <Route path="/proveedores" element={<ProveedoresPage />} />
             <Route path="/productos" element={<ProductosPage />} />
             <Route path="/compras" element={<ComprasPage />} />
+            <Route path="/caja" element={<CajaPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
             <Route path="/configuracion/roles" element={<RolesPage />} />

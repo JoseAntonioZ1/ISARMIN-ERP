@@ -4,6 +4,8 @@ using ISARMIN.Domain.Entities.Identidad;
 using ISARMIN.Domain.Entities.Inventario;
 using ISARMIN.Domain.Entities.Terceros;
 using Microsoft.EntityFrameworkCore;
+using CajaEntity = ISARMIN.Domain.Entities.Caja.Caja;
+using MovimientoCajaEntity = ISARMIN.Domain.Entities.Caja.MovimientoCaja;
 
 namespace ISARMIN.Infrastructure.Persistence;
 
@@ -27,6 +29,8 @@ public class IsarminDbContext : DbContext
     public DbSet<MovimientoInventario> MovimientosInventario => Set<MovimientoInventario>();
     public DbSet<Compra> Compras => Set<Compra>();
     public DbSet<CompraDetalle> ComprasDetalle => Set<CompraDetalle>();
+    public DbSet<CajaEntity> Cajas => Set<CajaEntity>();
+    public DbSet<MovimientoCajaEntity> MovimientosCaja => Set<MovimientoCajaEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

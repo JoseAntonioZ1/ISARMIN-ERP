@@ -277,21 +277,19 @@ erDiagram
 | usuario_id | uuid | NOT NULL, FK → `usuarios.id` |
 | estado | varchar(20) | NOT NULL, `CHECK (estado IN ('Abierta','Cerrada'))`, default `'Abierta'` |
 
-**`movimientos_caja`**
+**`movimientos_caja`** *(alcance reducido en la implementación — ver nota)*
 | Columna | Tipo | Restricciones |
 |---|---|---|
 | id | uuid | PK |
 | caja_id | uuid | NOT NULL, FK → `cajas.id` |
 | tipo | varchar(10) | NOT NULL, `CHECK (tipo IN ('Ingreso','Egreso'))` |
 | monto | numeric(12,2) | NOT NULL, `CHECK (monto > 0)` |
-| venta_id | uuid | NULL, FK → `ventas.id` |
-| compra_id | uuid | NULL, FK → `compras.id` |
-| orden_trabajo_id | uuid | NULL, FK → `ordenes_trabajo.id` |
-| servicio_campo_id | uuid | NULL, FK → `servicios_campo.id` |
-| saldo_pendiente_id | uuid | NULL, FK → `saldos_pendientes.id` |
-| concepto_gasto | varchar(255) | NULL — solo si es egreso sin origen transaccional |
+| concepto | varchar(30) | NOT NULL, `CHECK (concepto IN ('GastoOperativo','RetiroPropietario','AporteCapital'))` — RN-026, resuelve la parte estructural de BQ-088/BQ-030 (tipo de movimiento explícito) |
+| descripcion | varchar(255) | NULL — texto libre opcional |
 | usuario_id | uuid | NOT NULL, FK → `usuarios.id` |
 | fecha | timestamptz | NOT NULL, default `now()` |
+
+> **Nota (2026-07-19):** el diseño original de Fase 3 incluía además `venta_id`/`compra_id`/`orden_trabajo_id`/`servicio_campo_id`/`saldo_pendiente_id` (FK opcionales, Architecture-Overview.md §7.2) para vincular movimientos de caja a su origen transaccional. Se omiten en esta implementación porque los módulos de Ventas, Taller, Servicios de Campo y Cobranzas todavía no existen — declarar esas FK ahora apuntaría a tablas inexistentes. El módulo de Caja implementado cubre únicamente el registro **manual** (`concepto`, RN-026), que es lo que el propio `API-Design.md` describe como "egreso manual/gasto". Cada columna de origen se agregará (con su FK real) cuando el módulo correspondiente se construya, igual que `MovimientoInventario.origen_id` obtuvo su primer valor real (`compra_id`) solo cuando existió el módulo de Compras.
 | | | `CHECK (` como máximo un origen no nulo entre venta/compra/orden_trabajo/servicio_campo/saldo_pendiente, o ninguno si `concepto_gasto` está presente `)` |
 
 ### 5.8 Taller

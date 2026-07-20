@@ -5,6 +5,12 @@ using ISARMIN.Application.Modulos.Clientes.Commands.CambiarEstadoCliente;
 using ISARMIN.Application.Modulos.Clientes.Commands.EditarCliente;
 using ISARMIN.Application.Modulos.Clientes.Commands.RegistrarCliente;
 using ISARMIN.Application.Modulos.Clientes.DTOs;
+using ISARMIN.Application.Modulos.Caja.Commands.AbrirCaja;
+using ISARMIN.Application.Modulos.Caja.Commands.CerrarCaja;
+using ISARMIN.Application.Modulos.Caja.Commands.RegistrarMovimientoCaja;
+using ISARMIN.Application.Modulos.Caja.DTOs;
+using ISARMIN.Application.Modulos.Caja.Queries.ListarMovimientosCaja;
+using ISARMIN.Application.Modulos.Caja.Queries.ObtenerCajaActual;
 using ISARMIN.Application.Modulos.Clientes.Queries.BuscarClientes;
 using ISARMIN.Application.Modulos.Compras.Commands.RegistrarCompra;
 using ISARMIN.Application.Modulos.Compras.DTOs;
@@ -98,6 +104,12 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<RegistrarCompraCommand, CompraDto>, RegistrarCompraCommandHandler>();
         services.AddScoped<IQueryHandler<BuscarComprasQuery, ListadoPaginadoDto<CompraDto>>, BuscarComprasQueryHandler>();
         services.AddScoped<IQueryHandler<ObtenerCompraQuery, CompraDto>, ObtenerCompraQueryHandler>();
+
+        services.AddScoped<ICommandHandler<AbrirCajaCommand, CajaDto>, AbrirCajaCommandHandler>();
+        services.AddScoped<ICommandHandler<CerrarCajaCommand, CajaDto>, CerrarCajaCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarMovimientoCajaCommand, MovimientoCajaDto>, RegistrarMovimientoCajaCommandHandler>();
+        services.AddScoped<IQueryHandler<ObtenerCajaActualQuery, CajaDto?>, ObtenerCajaActualQueryHandler>();
+        services.AddScoped<IQueryHandler<ListarMovimientosCajaQuery, IReadOnlyCollection<MovimientoCajaDto>>, ListarMovimientosCajaQueryHandler>();
 
         return services;
     }

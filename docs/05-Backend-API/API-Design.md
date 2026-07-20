@@ -157,10 +157,13 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 
 | Método y ruta | Command/Query | Permiso | UC |
 |---|---|---|---|
-| `POST /caja/apertura` | `AbrirCajaCommand` | `Caja.Abrir` | UC-19 |
-| `POST /caja/cierre` | `CerrarCajaCommand` | `Caja.Cerrar` | UC-19 |
-| `GET /caja/movimientos?desde=&hasta=` | `ListarMovimientosCajaQuery` | `Caja.Consultar` | UC-20 |
-| `POST /caja/movimientos` | `RegistrarMovimientoCajaCommand` | `Caja.Registrar` | UC-20 (egreso manual/gasto) |
+| `GET /caja` | `ObtenerCajaActualQuery` | `Caja.Consultar` | UC-19 (completa una brecha detectada 2026-07-19: no había forma de consultar si hay una caja abierta antes de intentar abrir/cerrar/registrar. Devuelve la abierta actual o, si no hay ninguna, la más reciente cerrada) |
+| `POST /caja/apertura` | `AbrirCajaCommand` | `Caja.Abrir` | UC-19 (RN-025: rechaza si ya existe una caja abierta) |
+| `POST /caja/cierre` | `CerrarCajaCommand` | `Caja.Cerrar` | UC-19 (RN-015: concilia monto teórico vs. físico declarado) |
+| `GET /caja/movimientos?cajaId=&desde=&hasta=` | `ListarMovimientosCajaQuery` | `Caja.Consultar` | UC-20 (si no se indica `cajaId`, usa la caja abierta actual o la más reciente) |
+| `POST /caja/movimientos` | `RegistrarMovimientoCajaCommand` | `Caja.Registrar` | UC-20 (RN-026: egreso/ingreso manual sin origen transaccional — GastoOperativo, RetiroPropietario o AporteCapital; RN-014: rechaza si no hay caja abierta) |
+
+> **Alcance de esta implementación (2026-07-19):** `movimientos_caja` aún no incluye las columnas `venta_id`/`orden_trabajo_id`/`servicio_campo_id`/`saldo_pendiente_id` del modelo físico original — sus tablas no existen todavía. Se agregarán con FK real cuando se construyan los módulos de Ventas, Taller, Servicios de Campo y Cobranzas, respectivamente (mismo patrón que `MovimientoInventario.CrearCompra`, agregado solo cuando existió el módulo de Compras).
 
 ### 6.8 Taller
 

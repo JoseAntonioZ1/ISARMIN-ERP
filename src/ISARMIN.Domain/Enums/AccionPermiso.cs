@@ -7,5 +7,8 @@ public enum AccionPermiso
     Eliminar,
     Consultar,
     Anular,
-    Ajustar
+    Ajustar,
+    Abrir,
+    Cerrar,
+    Registrar
 }

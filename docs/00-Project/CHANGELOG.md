@@ -6,6 +6,29 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.14.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Caja (UC-19, UC-20), backend + frontend (RF-046 a RF-049):**
+  - `Domain`: `Caja` (apertura/cierre, RN-025: solo una caja `Abierta` a la vez) y `MovimientoCaja`. `ConceptoMovimientoCaja` (GastoOperativo, RetiroPropietario, AporteCapital) implementa la parte estructural de RN-026 — el tipo (Ingreso/Egreso) se **deriva** del concepto, nunca se captura por separado. `Caja.Cerrar` calcula la diferencia (monto físico - monto teórico) para RN-015; el mecanismo de resolución de un descuadre sigue sin definirse (BQ-031) y no se implementó ninguno.
+  - **Alcance reducido respecto al diseño original de Fase 3:** `movimientos_caja` no incluye las FK opcionales a `ventas`/`ordenes_trabajo`/`servicios_campo`/`saldos_pendientes` (Architecture-Overview.md §7.2) porque esos módulos no existen todavía — se agregarán cuando cada uno se construya, mismo patrón que `MovimientoInventario.origen_id` con Compras. Solo se implementó el registro **manual** (`RegistrarMovimientoCajaCommand`), que es lo que el propio `API-Design.md` ya describía como "egreso manual/gasto".
+  - Se agregaron 3 acciones de permiso nuevas (`Abrir`, `Cerrar`, `Registrar` en `AccionPermiso`), ya previstas en `API-Design.md` (`Caja.Abrir`/`Caja.Cerrar`/`Caja.Registrar`/`Caja.Consultar`) — misma migración de ampliación del `CHECK` de `permisos` que con `Ajustar`.
+  - `Application`: `AbrirCajaCommand` (rechaza si ya hay una caja abierta), `CerrarCajaCommand` (calcula monto teórico = apertura + ingresos - egresos), `RegistrarMovimientoCajaCommand` (rechaza si no hay caja abierta — RN-014), `ObtenerCajaActualQuery` (la abierta o, si no hay, la más reciente cerrada), `ListarMovimientosCajaQuery`.
+  - `API`: `CajaController`. `GET /caja` completa una brecha del diseño original (no había forma de consultar el estado antes de actuar).
+  - Frontend: `CajaPage` con apertura/cierre/registro de movimientos y resumen de conciliación al cerrar.
+  - Pruebas unitarias: 83 Domain + 51 Application = 134/134 exitosas.
+
+Verificado end-to-end contra PostgreSQL real: apertura (201), segunda apertura rechazada (409 `CAJA_YA_ABIERTA`, RN-025), registro de GastoOperativo derivando Egreso y de AporteCapital derivando Ingreso, monto cero rechazado (400), cierre con cálculo correcto del monto teórico (200 apertura + 500 ingresos - 30 egresos = 670) y diferencia (660 físico - 670 teórico = -10), movimiento/cierre rechazados tras cerrar (409 `CAJA_NO_ABIERTA`, RN-014), reapertura tras cierre (201). Permisos `Caja.*` otorgados al Administrador vía `PUT /roles/{id}/permisos`.
+
+**Bug real detectado solo en la verificación E2E** (no por las 134 pruebas unitarias, que llaman al handler directamente sin pasar por serialización JSON real): `RegistrarMovimientoCajaRequest.Concepto` estaba tipado como el enum `ConceptoMovimientoCaja` directamente, y System.Text.Json espera enums como número, no como string, por lo que cualquier llamada real fallaba con un 400 de deserialización antes de llegar al controller. Corregido tipando el campo como `string` y usando `Enum.Parse` en el controller — el mismo patrón ya usado en Roles/Permisos, que ningún módulo anterior había roto porque ninguno exponía un enum crudo directamente en un DTO de request.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste), Compras y Caja completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Taller.
+
+---
+
 ## [0.13.0] - 19/07/2026
 
 ### Agregado

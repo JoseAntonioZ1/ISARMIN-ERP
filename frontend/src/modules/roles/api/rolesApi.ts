@@ -1,6 +1,16 @@
 import { httpClient } from '@/shared/api/httpClient'
 
-export const ACCIONES = ['Crear', 'Editar', 'Eliminar', 'Consultar', 'Anular', 'Ajustar'] as const
+export const ACCIONES = [
+  'Crear',
+  'Editar',
+  'Eliminar',
+  'Consultar',
+  'Anular',
+  'Ajustar',
+  'Abrir',
+  'Cerrar',
+  'Registrar',
+] as const
 export type Accion = (typeof ACCIONES)[number]
 
 export interface Permiso {
