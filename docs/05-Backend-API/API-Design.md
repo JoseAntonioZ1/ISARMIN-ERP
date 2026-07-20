@@ -210,9 +210,11 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 |---|---|---|
 | `GET /reportes/ventas?desde=&hasta=` | `ReporteVentasQuery` | `Reportes.Consultar` |
 | `GET /reportes/inventario` | `ReporteInventarioQuery` | `Reportes.Consultar` |
-| `GET /reportes/ordenes-trabajo?estado=&tecnico=` | `ReporteOrdenesTrabajoQuery` | `Reportes.Consultar` |
-| `GET /reportes/servicios-campo` | `ReporteServiciosCampoQuery` | `Reportes.Consultar` |
+| `GET /reportes/ordenes-trabajo?estado=&desde=&hasta=` | `ReporteOrdenesTrabajoQuery` | `Reportes.Consultar` |
+| `GET /reportes/servicios-campo?tecnico=&desde=&hasta=` | `ReporteServiciosCampoQuery` | `Reportes.Consultar` |
 | `GET /reportes/caja?desde=&hasta=` | `ReporteCajaQuery` | `Reportes.Consultar` |
+
+> **Alcance de esta implementación (2026-07-20):** `ordenes-trabajo` no filtra por `tecnico` — `OrdenTrabajo` no tiene un campo de técnico asignado en el modelo confirmado (a diferencia de `ServicioCampo`, que sí filtra por `tecnico`). El reporte de caja refleja únicamente `movimientos_caja` (entradas manuales); no incluye cobros de Ventas/Taller/Servicios de Campo, mismo motivo documentado en 6.6. RF-077 (reportes gerenciales ad-hoc) y exportación/programación (BQ-080/BQ-081) quedan fuera de alcance. Los parámetros `desde`/`hasta` requieren normalizar `DateTimeKind` a UTC antes de comparar contra columnas `timestamptz` (Npgsql lo exige) — corregido aquí; el mismo bug preexiste en Kardex y en `GET /caja/movimientos`, sin corregir.
 
 ### 6.12 Auditoría (solo lectura)
 

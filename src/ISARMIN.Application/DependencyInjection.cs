@@ -61,6 +61,12 @@ using ISARMIN.Application.Modulos.Ventas.Commands.RegistrarDevolucion;
 using ISARMIN.Application.Modulos.Ventas.DTOs;
 using ISARMIN.Application.Modulos.Ventas.Queries.BuscarVentas;
 using ISARMIN.Application.Modulos.Ventas.Queries.ObtenerVenta;
+using ISARMIN.Application.Modulos.Reportes.DTOs;
+using ISARMIN.Application.Modulos.Reportes.Queries.ReporteVentas;
+using ISARMIN.Application.Modulos.Reportes.Queries.ReporteInventario;
+using ISARMIN.Application.Modulos.Reportes.Queries.ReporteOrdenesTrabajo;
+using ISARMIN.Application.Modulos.Reportes.Queries.ReporteServiciosCampo;
+using ISARMIN.Application.Modulos.Reportes.Queries.ReporteCaja;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
@@ -156,6 +162,12 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<RegistrarDevolucionCommand, VentaDto>, RegistrarDevolucionCommandHandler>();
         services.AddScoped<IQueryHandler<BuscarVentasQuery, ListadoPaginadoDto<VentaDto>>, BuscarVentasQueryHandler>();
         services.AddScoped<IQueryHandler<ObtenerVentaQuery, VentaDto>, ObtenerVentaQueryHandler>();
+
+        services.AddScoped<IQueryHandler<ReporteVentasQuery, ReporteVentasDto>, ReporteVentasQueryHandler>();
+        services.AddScoped<IQueryHandler<ReporteInventarioQuery, ReporteInventarioDto>, ReporteInventarioQueryHandler>();
+        services.AddScoped<IQueryHandler<ReporteOrdenesTrabajoQuery, ReporteOrdenesTrabajoDto>, ReporteOrdenesTrabajoQueryHandler>();
+        services.AddScoped<IQueryHandler<ReporteServiciosCampoQuery, ReporteServiciosCampoDto>, ReporteServiciosCampoQueryHandler>();
+        services.AddScoped<IQueryHandler<ReporteCajaQuery, ReporteCajaDto>, ReporteCajaQueryHandler>();
 
         return services;
     }

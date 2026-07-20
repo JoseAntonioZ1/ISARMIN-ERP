@@ -9,6 +9,7 @@ import { ComprasPage } from '@/modules/compras/pages/ComprasPage'
 import { ProductosPage } from '@/modules/productos/pages/ProductosPage'
 import { ProveedoresPage } from '@/modules/proveedores/pages/ProveedoresPage'
 import { RolesPage } from '@/modules/roles/pages/RolesPage'
+import { ReportesPage } from '@/modules/reportes/pages/ReportesPage'
 import { ServiciosCampoPage } from '@/modules/serviciosCampo/pages/ServiciosCampoPage'
 import { TallerPage } from '@/modules/taller/pages/TallerPage'
 import { VentasPage } from '@/modules/ventas/pages/VentasPage'
@@ -42,6 +43,7 @@ function App() {
             <Route path="/taller" element={<TallerPage />} />
             <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
             <Route path="/ventas" element={<VentasPage />} />
+            <Route path="/reportes" element={<ReportesPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
             <Route path="/configuracion/roles" element={<RolesPage />} />

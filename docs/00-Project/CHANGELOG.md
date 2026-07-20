@@ -6,6 +6,27 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.18.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Reportes (UC-35), backend + frontend (RF-072 a RF-076):** 5 reportes operativos de solo lectura sobre datos ya capturados por los módulos existentes — sin agregado nuevo ni reglas de negocio, es una capa de agregación pura.
+  - `Application`: `IReporteRepository`, una interfaz de solo lectura separada de los repositorios transaccionales de cada módulo (no se agregaron métodos sin paginar a `IVentaRepository`/`IOrdenTrabajoRepository`/etc. porque esas consultas no se usan fuera de este caso de uso). `ReporteVentasQuery` (excluye ventas Anuladas del monto total, las incluye en el listado para trazabilidad), `ReporteInventarioQuery` (separa productos en quiebre: stock actual ≤ stock mínimo, cuando este último está definido), `ReporteOrdenesTrabajoQuery` (filtra por estado y período), `ReporteServiciosCampoQuery` (filtra por técnico asignado y período), `ReporteCajaQuery` (totaliza ingresos/egresos/saldo neto). Todos los DTOs de respuesta reutilizan los mappers ya existentes de cada módulo (`VentaDto`, `ProductoDto`, `OrdenTrabajoDto`, `ServicioCampoDto`, `CajaDto`/`MovimientoCajaDto`).
+  - **Decisiones de alcance tomadas por continuidad, no por invención de reglas:** (1) RF-074 pide filtrar el reporte de OT "por técnico", pero `OrdenTrabajo` no tiene un campo de técnico asignado en el modelo confirmado (a diferencia de `ServicioCampo`) — se implementó solo con filtro de estado y período; (2) el reporte de caja refleja únicamente `movimientos_caja` (aperturas/cierres/gastos/aportes manuales) — no incluye cobros de Ventas/Taller/Servicios de Campo porque ese puente nunca se construyó (mismo hallazgo documentado desde Taller); (3) quedan fuera de alcance, todos con recomendación técnica ya documentada como no bloqueante: RF-077 (reportes gerenciales ad-hoc — rentabilidad, rotación de inventario —, bloqueado por BQ-054 abierta) y exportación/programación de reportes (PDF/Excel, envío automático — BQ-080/BQ-081, ambas abiertas y de baja prioridad).
+  - `API`: `ReportesController` con los 5 endpoints ya diseñados en Fase 3, todos bajo un único permiso `Reportes.Consultar` (no se agregó ninguna acción nueva a `AccionPermiso` — `Consultar` ya existía —, así que esta es la primera implementación de módulo sin ninguna migración de EF Core).
+  - Frontend: `ReportesPage` con pestañas por tipo de reporte (Ventas, Inventario, Órdenes de Trabajo, Servicios de Campo, Caja), cada una con sus propios filtros de fecha/estado/técnico y tarjetas de totales.
+  - Pruebas unitarias: 7 nuevas en Application (no aplica Domain — el módulo no tiene agregados propios). 235/235 en todo el backend.
+
+**Bug real detectado en la verificación E2E, con alcance más amplio que este módulo:** los parámetros `desde`/`hasta` (`DateTime?` enlazados desde query string) llegan con `DateTimeKind.Unspecified`, pero Npgsql exige `DateTimeKind.Utc` para comparar contra columnas `timestamptz` — cualquier filtro de fecha lanzaba una excepción no controlada (500) antes de llegar al handler. Corregido en `ReportesController` normalizando explícitamente a UTC antes de construir cada Query. **El mismo bug ya existía y sigue sin corregirse en el endpoint de Kardex** (`GET /productos/{id}/movimientos?desde=&hasta=`, Inventario) y probablemente en `GET /caja/movimientos?desde=&hasta=` (Caja) — no se corrigieron aquí por quedar fuera del alcance de este módulo; queda pendiente decidir si se corrigen en una pasada de mantenimiento.
+
+Verificado end-to-end contra PostgreSQL real: los 5 reportes devuelven datos correctos sobre las entidades creadas en las verificaciones E2E de Ventas/Taller/Servicios de Campo/Caja (monto total de ventas excluyendo la anulada, cero productos en quiebre, orden de trabajo filtrada por estado `Entregado`, servicio de campo filtrado por técnico inexistente devolviendo lista vacía, totales de caja correctos); filtros de fecha verificados tras la corrección del bug de `DateTimeKind`. Permiso `Reportes.Consultar` otorgado al Administrador vía `PUT /roles/{id}/permisos`.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste), Compras, Caja, Taller, Servicios de Campo, Ventas y Reportes completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Configuración.
+
+---
+
 ## [0.17.0] - 20/07/2026
 
 ### Agregado
