@@ -40,6 +40,9 @@ export function AppLayout() {
             <Link to="/caja" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
               Caja
             </Link>
+            <Link to="/taller" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
+              Taller
+            </Link>
             <Link to="/configuracion" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
               Configuración
             </Link>

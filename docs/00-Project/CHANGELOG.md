@@ -6,6 +6,31 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.15.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Taller (UC-22 a UC-28), backend + frontend — el más grande hasta ahora (RF-051 a RF-063):** ciclo completo de recepción de equipo → diagnóstico → cotización → decisión del cliente → reparación → entrega → garantía, sobre una máquina de estados de 9 valores.
+  - `Domain`: `OrdenTrabajo` (aggregate root) con `Diagnostico`/`CotizacionReparacion` (hijos 1:1) y `ConsumosRepuesto` (hijos 1:muchos); `Garantia` como aggregate separado (referencia a la OT que la generó). `RegistrarReparacion` combina consumo de repuestos y resultado de pruebas en un solo paso, transicionando directo de `Aprobado` a `ListoParaEntrega` — coincide con que `API-Design.md` ya definía un único endpoint para todo el paso (`EnReparacion`/`EnPruebas` quedan en el catálogo confirmado de estados pero no se persisten como pasos intermedios reales).
+  - **Completa dos campos que faltaban en el modelo físico original:** `ordenes_trabajo` solo tenía `estado_pago`, pero RF-059 exige capturar también monto pagado, saldo pendiente y el usuario Administrador/Propietario que autorizó (RN-001/RN-031) — se agregaron como columnas simples. También se agregó `resultado_pruebas` (RF-058), sin columna asignada en el diseño original.
+  - `MovimientoInventario.CrearConsumoTaller` reutiliza el mismo patrón de referencia genérica del Kardex (ADR-012) con `OrigenTipo="OrdenTrabajo"`, ya previsto en el `CHECK` de `origen_tipo` desde Fase 3. El consumo reutiliza `Producto.AjustarStock` (cantidad negativa) sin necesitar un método nuevo.
+  - **Deliberadamente fuera de alcance:** vincular una OT de reingreso a una garantía vigente (RF-062) — no tiene endpoint propio definido en `API-Design.md` y cruza dos OTs; la columna `orden_trabajo_reingreso_id` existe (su FK sí se pudo declarar, a diferencia de las de `movimientos_caja`, porque `ordenes_trabajo` existe en esta misma migración) pero ningún comando la puebla todavía. Tampoco se generó un movimiento de Caja automático al entregar el equipo — mismo criterio que con Compras: el puente "cobro → Caja" pertenece a un mecanismo unificado (Cobranzas) aún no construido.
+  - Se agregaron 5 acciones de permiso nuevas (`Recepcionar`, `Diagnosticar`, `Cotizar`, `Reparar`, `Entregar` en `AccionPermiso`), ya previstas en `API-Design.md` (`Taller.Recepcionar`/`Taller.Diagnosticar`/`Taller.Cotizar`/`Taller.Reparar`/`Taller.Entregar`; `Taller.Editar` y `Taller.Consultar` ya existían) — misma migración de ampliación del `CHECK` de `permisos` que con `Ajustar` y `Abrir/Cerrar/Registrar`.
+  - `Application`: `RegistrarRecepcionCommand`, `RegistrarDiagnosticoCommand`, `GenerarCotizacionReparacionCommand`, `RegistrarDecisionClienteCommand` (RN-016/RN-030), `RegistrarReparacionCommand` (RN-018, valida stock antes de descontar), `EntregarEquipoCommand` (RN-001: el pago no bloquea la entrega; exige usuario autorizante si hay saldo pendiente), `RegistrarGarantiaCommand` (RN-017, alcance V1 acotado), `BuscarOrdenesTrabajoQuery`/`ObtenerOrdenTrabajoQuery` (satisface UC-28, historial por cliente).
+  - `API`: `OrdenesTrabajoController` con los 9 endpoints ya diseñados en Fase 3.
+  - Frontend: `TallerPage` (listado + nueva recepción) y `OrdenTrabajoDetalleDialog` (un solo diálogo que muestra el formulario contextual correspondiente al estado actual de la OT).
+  - Pruebas unitarias: 105 Domain + 61 Application = 166/166 exitosas.
+
+**Bug real detectado solo en la verificación E2E** (no por las 166 pruebas unitarias, que usan repositorios mockeados sin tracking real de EF Core): el mismo problema de tracking de entidades `Added` documentado para `Rol`/`Permiso` (ver `[0.7.0]`) reapareció en **tres** lugares de este módulo — `RegistrarDiagnostico` y `GenerarCotizacion` (navegación de referencia 1:1 sobre una OT ya rastreada) y `RegistrarReparacion`'s `ConsumosRepuesto` (colección sobre una OT ya rastreada) — porque ninguno de los tres pasa por `repository.Agregar` sobre un agregado nuevo (a diferencia de `RegistrarRecepcionCommandHandler`, que sí crea una OT nueva y no sufre el problema). Corregido agregando `IOrdenTrabajoRepository.AgregarDiagnostico`/`AgregarCotizacion`/`AgregarConsumosRepuesto`, que registran explícitamente los hijos nuevos vía `DbSet.Add`/`AddRange` antes de guardar cambios.
+
+Verificado end-to-end contra PostgreSQL real: ciclo completo recepción → diagnóstico → cotización → aprobación → reparación (stock descontado 30→28, Kardex con `ConsumoTaller` y `origenId` vinculado a la OT) → entrega (rechazo de saldo pendiente sin usuario autorizante, entrega con pago completo) → garantía (y rechazo de garantía duplicada); rama alternativa de cotización rechazada con cobro opcional por diagnóstico; guardas de estado inválido en cada transición (409); búsqueda por estado; 404 para OT inexistente. Permisos `Taller.*` otorgados al Administrador vía `PUT /roles/{id}/permisos`.
+
+Estado del proyecto:
+
+🔵 Fase de Desarrollo (Fase 4) en curso — Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario (Kardex/Ajuste), Compras, Caja y Taller completos (backend + frontend), verificados end-to-end contra PostgreSQL real. Siguiente módulo: Servicios de Campo.
+
+---
+
 ## [0.14.0] - 20/07/2026
 
 ### Agregado

@@ -7,9 +7,9 @@ namespace ISARMIN.Domain.Entities.Inventario;
 /// Referencia genérica a su origen (ADR-012, Architecture-Overview.md §7.3): solo
 /// <see cref="ProductoId"/> es FK fuerte; <see cref="OrigenTipo"/>/<see cref="OrigenId"/> son
 /// informativos, sin integridad declarativa, porque el Kardex es en esencia un log histórico.
-/// Por ahora solo existe la fábrica <see cref="CrearAjuste"/> (UC-12): los demás tipos de
-/// movimiento (Compra, Venta, ConsumoTaller, ConsumoCampo, Devolucion) los generarán sus
-/// respectivos módulos (Compras, Ventas, Taller, Servicios de Campo) cuando existan.</summary>
+/// Fábricas existentes: <see cref="CrearAjuste"/> (UC-12), <see cref="CrearCompra"/> (UC-13),
+/// <see cref="CrearConsumoTaller"/> (UC-25). Venta, ConsumoCampo y Devolucion las generarán sus
+/// respectivos módulos (Ventas, Servicios de Campo) cuando existan.</summary>
 public class MovimientoInventario : Entity
 {
     public Guid ProductoId { get; private set; }
@@ -68,5 +68,17 @@ public class MovimientoInventario : Entity
         }
 
         return new MovimientoInventario(productoId, TipoMovimientoInventario.Compra, cantidad, "Compra", compraId, null, usuarioId, fecha);
+    }
+
+    /// <summary>UC-25/RF-057 — movimiento de salida generado al registrar los repuestos consumidos en
+    /// una reparación (RN-002, RN-006, RN-018).</summary>
+    public static MovimientoInventario CrearConsumoTaller(Guid productoId, decimal cantidad, Guid ordenTrabajoId, Guid usuarioId, DateTime fecha)
+    {
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad consumida debe ser mayor a cero.", nameof(cantidad));
+        }
+
+        return new MovimientoInventario(productoId, TipoMovimientoInventario.ConsumoTaller, -cantidad, "OrdenTrabajo", ordenTrabajoId, null, usuarioId, fecha);
     }
 }

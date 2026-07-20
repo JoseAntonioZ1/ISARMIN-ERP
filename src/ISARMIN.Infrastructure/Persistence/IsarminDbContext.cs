@@ -2,6 +2,7 @@ using ISARMIN.Domain.Entities.Compras;
 using ISARMIN.Domain.Entities.Configuracion;
 using ISARMIN.Domain.Entities.Identidad;
 using ISARMIN.Domain.Entities.Inventario;
+using ISARMIN.Domain.Entities.Taller;
 using ISARMIN.Domain.Entities.Terceros;
 using Microsoft.EntityFrameworkCore;
 using CajaEntity = ISARMIN.Domain.Entities.Caja.Caja;
@@ -31,6 +32,11 @@ public class IsarminDbContext : DbContext
     public DbSet<CompraDetalle> ComprasDetalle => Set<CompraDetalle>();
     public DbSet<CajaEntity> Cajas => Set<CajaEntity>();
     public DbSet<MovimientoCajaEntity> MovimientosCaja => Set<MovimientoCajaEntity>();
+    public DbSet<OrdenTrabajo> OrdenesTrabajo => Set<OrdenTrabajo>();
+    public DbSet<Diagnostico> Diagnosticos => Set<Diagnostico>();
+    public DbSet<CotizacionReparacion> CotizacionesReparacion => Set<CotizacionReparacion>();
+    public DbSet<ConsumoRepuesto> ConsumosRepuesto => Set<ConsumoRepuesto>();
+    public DbSet<Garantia> Garantias => Set<Garantia>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

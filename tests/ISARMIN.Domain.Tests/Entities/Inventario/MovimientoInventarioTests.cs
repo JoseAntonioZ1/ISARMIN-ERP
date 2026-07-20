@@ -63,4 +63,28 @@ public class MovimientoInventarioTests
         Assert.Equal(compraId, movimiento.OrigenId);
         Assert.Null(movimiento.MotivoAjuste);
     }
+
+    [Fact]
+    public void CrearConsumoTaller_CantidadCero_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            MovimientoInventario.CrearConsumoTaller(Guid.NewGuid(), 0m, Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void CrearConsumoTaller_DatosValidos_CreaMovimientoDeSalidaConOrigenOrdenTrabajo()
+    {
+        var productoId = Guid.NewGuid();
+        var ordenTrabajoId = Guid.NewGuid();
+        var usuarioId = Guid.NewGuid();
+        var fecha = DateTime.UtcNow;
+
+        var movimiento = MovimientoInventario.CrearConsumoTaller(productoId, 3m, ordenTrabajoId, usuarioId, fecha);
+
+        Assert.Equal(productoId, movimiento.ProductoId);
+        Assert.Equal(TipoMovimientoInventario.ConsumoTaller, movimiento.TipoMovimiento);
+        Assert.Equal(-3m, movimiento.Cantidad);
+        Assert.Equal("OrdenTrabajo", movimiento.OrigenTipo);
+        Assert.Equal(ordenTrabajoId, movimiento.OrigenId);
+    }
 }

@@ -313,7 +313,7 @@ namespace ISARMIN.Infrastructure.Persistence.Migrations
 
                     b.ToTable("permisos", null, t =>
                         {
-                            t.HasCheckConstraint("ck_permisos_accion", "accion IN ('Crear','Editar','Eliminar','Consultar','Anular','Ajustar','Abrir','Cerrar','Registrar')");
+                            t.HasCheckConstraint("ck_permisos_accion", "accion IN ('Crear','Editar','Eliminar','Consultar','Anular','Ajustar','Abrir','Cerrar','Registrar','Recepcionar','Diagnosticar','Cotizar','Reparar','Entregar')");
                         });
 
                     b.HasData(
@@ -748,6 +748,256 @@ namespace ISARMIN.Infrastructure.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.ConsumoRepuesto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasPrecision(12, 3)
+                        .HasColumnType("numeric(12,3)")
+                        .HasColumnName("cantidad");
+
+                    b.Property<Guid>("OrdenTrabajoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("orden_trabajo_id");
+
+                    b.Property<Guid>("ProductoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("producto_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_consumos_repuesto");
+
+                    b.HasIndex("OrdenTrabajoId")
+                        .HasDatabaseName("ix_consumos_repuesto_orden_trabajo_id");
+
+                    b.HasIndex("ProductoId")
+                        .HasDatabaseName("ix_consumos_repuesto_producto_id");
+
+                    b.ToTable("consumos_repuesto", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_consumos_repuesto_cantidad", "cantidad > 0");
+                        });
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.CotizacionReparacion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal?>("CobroDiagnosticoRechazo")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("cobro_diagnostico_rechazo");
+
+                    b.Property<string>("DecisionCliente")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("decision_cliente");
+
+                    b.Property<string>("EvidenciaAprobacion")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("evidencia_aprobacion");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha");
+
+                    b.Property<decimal>("MontoEstimado")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("monto_estimado");
+
+                    b.Property<Guid>("OrdenTrabajoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("orden_trabajo_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_cotizaciones_reparacion");
+
+                    b.HasIndex("OrdenTrabajoId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_cotizaciones_reparacion_orden_trabajo_id");
+
+                    b.ToTable("cotizaciones_reparacion", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_cotizaciones_reparacion_decision_cliente", "decision_cliente IN ('Aprobada','Rechazada') OR decision_cliente IS NULL");
+                        });
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.Diagnostico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("descripcion");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha");
+
+                    b.Property<Guid>("OrdenTrabajoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("orden_trabajo_id");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("usuario_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_diagnosticos");
+
+                    b.HasIndex("OrdenTrabajoId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_diagnosticos_orden_trabajo_id");
+
+                    b.HasIndex("UsuarioId")
+                        .HasDatabaseName("ix_diagnosticos_usuario_id");
+
+                    b.ToTable("diagnosticos", (string)null);
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.Garantia", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateOnly>("FechaFin")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_fin");
+
+                    b.Property<DateOnly>("FechaInicio")
+                        .HasColumnType("date")
+                        .HasColumnName("fecha_inicio");
+
+                    b.Property<Guid>("OrdenTrabajoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("orden_trabajo_id");
+
+                    b.Property<Guid?>("OrdenTrabajoReingresoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("orden_trabajo_reingreso_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_garantias");
+
+                    b.HasIndex("OrdenTrabajoId")
+                        .HasDatabaseName("ix_garantias_orden_trabajo_id");
+
+                    b.HasIndex("OrdenTrabajoReingresoId")
+                        .HasDatabaseName("ix_garantias_orden_trabajo_reingreso_id");
+
+                    b.ToTable("garantias", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_garantias_fecha_fin", "fecha_fin > fecha_inicio");
+                        });
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ClienteId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cliente_id");
+
+                    b.Property<string>("EquipoDescripcion")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("equipo_descripcion");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Recibido")
+                        .HasColumnName("estado");
+
+                    b.Property<string>("EstadoPago")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("estado_pago");
+
+                    b.Property<string>("FallaReportada")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("falla_reportada");
+
+                    b.Property<DateTime?>("FechaEntrega")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_entrega");
+
+                    b.Property<DateTime>("FechaRecepcion")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha_recepcion");
+
+                    b.Property<decimal?>("MontoPagado")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("monto_pagado");
+
+                    b.Property<string>("ResultadoPruebas")
+                        .HasColumnType("text")
+                        .HasColumnName("resultado_pruebas");
+
+                    b.Property<decimal?>("SaldoPendiente")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("saldo_pendiente");
+
+                    b.Property<Guid?>("UsuarioAutorizoSaldoId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("usuario_autorizo_saldo_id");
+
+                    b.Property<Guid?>("UsuarioEntregaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("usuario_entrega_id");
+
+                    b.Property<Guid>("UsuarioRecepcionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("usuario_recepcion_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ordenes_trabajo");
+
+                    b.HasIndex("ClienteId")
+                        .HasDatabaseName("ix_ordenes_trabajo_cliente_id");
+
+                    b.HasIndex("UsuarioAutorizoSaldoId")
+                        .HasDatabaseName("ix_ordenes_trabajo_usuario_autorizo_saldo_id");
+
+                    b.HasIndex("UsuarioEntregaId")
+                        .HasDatabaseName("ix_ordenes_trabajo_usuario_entrega_id");
+
+                    b.HasIndex("UsuarioRecepcionId")
+                        .HasDatabaseName("ix_ordenes_trabajo_usuario_recepcion_id");
+
+                    b.ToTable("ordenes_trabajo", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_ordenes_trabajo_estado", "estado IN ('Recibido','Diagnosticado','Cotizado','Aprobado','Rechazado','EnReparacion','EnPruebas','ListoParaEntrega','Entregado')");
+
+                            t.HasCheckConstraint("ck_ordenes_trabajo_estado_pago", "estado_pago IN ('CompletoAntes','CompletoAlMomento','Adelanto','SaldoPendiente') OR estado_pago IS NULL");
+                        });
+                });
+
             modelBuilder.Entity("ISARMIN.Domain.Entities.Terceros.Cliente", b =>
                 {
                     b.Property<Guid>("Id")
@@ -984,6 +1234,95 @@ namespace ISARMIN.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_productos_unidades_medida_unidad_medida_id");
                 });
 
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.ConsumoRepuesto", b =>
+                {
+                    b.HasOne("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", null)
+                        .WithMany("ConsumosRepuesto")
+                        .HasForeignKey("OrdenTrabajoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_consumos_repuesto_ordenes_trabajo_orden_trabajo_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Inventario.Producto", null)
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_consumos_repuesto_productos_producto_id");
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.CotizacionReparacion", b =>
+                {
+                    b.HasOne("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", null)
+                        .WithOne("CotizacionReparacion")
+                        .HasForeignKey("ISARMIN.Domain.Entities.Taller.CotizacionReparacion", "OrdenTrabajoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_cotizaciones_reparacion_ordenes_trabajo_orden_trabajo_id");
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.Diagnostico", b =>
+                {
+                    b.HasOne("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", null)
+                        .WithOne("Diagnostico")
+                        .HasForeignKey("ISARMIN.Domain.Entities.Taller.Diagnostico", "OrdenTrabajoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_diagnosticos_ordenes_trabajo_orden_trabajo_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Identidad.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_diagnosticos_usuarios_usuario_id");
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.Garantia", b =>
+                {
+                    b.HasOne("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", null)
+                        .WithMany()
+                        .HasForeignKey("OrdenTrabajoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_garantias_ordenes_trabajo_orden_trabajo_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", null)
+                        .WithMany()
+                        .HasForeignKey("OrdenTrabajoReingresoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_garantias_ordenes_trabajo_orden_trabajo_reingreso_id");
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", b =>
+                {
+                    b.HasOne("ISARMIN.Domain.Entities.Terceros.Cliente", null)
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_ordenes_trabajo_clientes_cliente_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Identidad.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuarioAutorizoSaldoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_ordenes_trabajo_usuarios_usuario_autorizo_saldo_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Identidad.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuarioEntregaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_ordenes_trabajo_usuarios_usuario_entrega_id");
+
+                    b.HasOne("ISARMIN.Domain.Entities.Identidad.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuarioRecepcionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_ordenes_trabajo_usuarios_usuario_recepcion_id");
+                });
+
             modelBuilder.Entity("ISARMIN.Domain.Entities.Compras.Compra", b =>
                 {
                     b.Navigation("Detalles");
@@ -997,6 +1336,15 @@ namespace ISARMIN.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("ISARMIN.Domain.Entities.Identidad.Usuario", b =>
                 {
                     b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("ISARMIN.Domain.Entities.Taller.OrdenTrabajo", b =>
+                {
+                    b.Navigation("ConsumosRepuesto");
+
+                    b.Navigation("CotizacionReparacion");
+
+                    b.Navigation("Diagnostico");
                 });
 #pragma warning restore 612, 618
         }

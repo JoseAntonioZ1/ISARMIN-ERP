@@ -10,5 +10,10 @@ public enum AccionPermiso
     Ajustar,
     Abrir,
     Cerrar,
-    Registrar
+    Registrar,
+    Recepcionar,
+    Diagnosticar,
+    Cotizar,
+    Reparar,
+    Entregar
 }

@@ -38,6 +38,16 @@ using ISARMIN.Application.Modulos.Proveedores.Commands.EditarProveedor;
 using ISARMIN.Application.Modulos.Proveedores.Commands.RegistrarProveedor;
 using ISARMIN.Application.Modulos.Proveedores.DTOs;
 using ISARMIN.Application.Modulos.Proveedores.Queries.BuscarProveedores;
+using ISARMIN.Application.Modulos.Taller.Commands.EntregarEquipo;
+using ISARMIN.Application.Modulos.Taller.Commands.GenerarCotizacionReparacion;
+using ISARMIN.Application.Modulos.Taller.Commands.RegistrarDecisionCliente;
+using ISARMIN.Application.Modulos.Taller.Commands.RegistrarDiagnostico;
+using ISARMIN.Application.Modulos.Taller.Commands.RegistrarGarantia;
+using ISARMIN.Application.Modulos.Taller.Commands.RegistrarRecepcion;
+using ISARMIN.Application.Modulos.Taller.Commands.RegistrarReparacion;
+using ISARMIN.Application.Modulos.Taller.DTOs;
+using ISARMIN.Application.Modulos.Taller.Queries.BuscarOrdenesTrabajo;
+using ISARMIN.Application.Modulos.Taller.Queries.ObtenerOrdenTrabajo;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
@@ -110,6 +120,16 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<RegistrarMovimientoCajaCommand, MovimientoCajaDto>, RegistrarMovimientoCajaCommandHandler>();
         services.AddScoped<IQueryHandler<ObtenerCajaActualQuery, CajaDto?>, ObtenerCajaActualQueryHandler>();
         services.AddScoped<IQueryHandler<ListarMovimientosCajaQuery, IReadOnlyCollection<MovimientoCajaDto>>, ListarMovimientosCajaQueryHandler>();
+
+        services.AddScoped<ICommandHandler<RegistrarRecepcionCommand, OrdenTrabajoDto>, RegistrarRecepcionCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarDiagnosticoCommand, OrdenTrabajoDto>, RegistrarDiagnosticoCommandHandler>();
+        services.AddScoped<ICommandHandler<GenerarCotizacionReparacionCommand, OrdenTrabajoDto>, GenerarCotizacionReparacionCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarDecisionClienteCommand, OrdenTrabajoDto>, RegistrarDecisionClienteCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarReparacionCommand, OrdenTrabajoDto>, RegistrarReparacionCommandHandler>();
+        services.AddScoped<ICommandHandler<EntregarEquipoCommand, OrdenTrabajoDto>, EntregarEquipoCommandHandler>();
+        services.AddScoped<ICommandHandler<RegistrarGarantiaCommand, GarantiaDto>, RegistrarGarantiaCommandHandler>();
+        services.AddScoped<IQueryHandler<BuscarOrdenesTrabajoQuery, ListadoPaginadoDto<OrdenTrabajoDto>>, BuscarOrdenesTrabajoQueryHandler>();
+        services.AddScoped<IQueryHandler<ObtenerOrdenTrabajoQuery, OrdenTrabajoDetalleDto>, ObtenerOrdenTrabajoQueryHandler>();
 
         return services;
     }

@@ -179,6 +179,8 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `POST /ordenes-trabajo/{id}/entrega` | `EntregarEquipoCommand` | `Taller.Entregar` *(Administrador, Ventas o Técnico — RN-029)* | UC-26 |
 | `POST /ordenes-trabajo/{id}/garantia` | `RegistrarGarantiaCommand` | `Taller.Editar` | UC-27 |
 
+> **Alcance de esta implementación (2026-07-20):** no existe un endpoint para RF-062 (asociar una OT de reingreso a una garantía vigente) — no está definido aquí y cruza dos OTs distintas; queda como mejora futura. Tampoco existe un paso separado para `EnReparacion`/`EnPruebas`: `RegistrarReparacionCommand` combina consumo de repuestos y resultado de pruebas en un único paso, transicionando directo de `Aprobado` a `ListoParaEntrega`.
+
 ### 6.9 Servicios de Campo
 
 | Método y ruta | Command/Query | Permiso | UC |

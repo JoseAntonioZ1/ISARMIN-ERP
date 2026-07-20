@@ -294,7 +294,7 @@ erDiagram
 
 ### 5.8 Taller
 
-**`ordenes_trabajo`**
+**`ordenes_trabajo`** *(3 columnas agregadas en la implementación — ver nota)*
 | Columna | Tipo | Restricciones |
 |---|---|---|
 | id | uuid | PK |
@@ -307,6 +307,10 @@ erDiagram
 | fecha_entrega | timestamptz | NULL |
 | usuario_entrega_id | uuid | NULL, FK → `usuarios.id` |
 | estado_pago | varchar(20) | NULL, `CHECK (estado_pago IN ('CompletoAntes','CompletoAlMomento','Adelanto','SaldoPendiente'))` — obligatorio al entregar (RN-001) |
+| monto_pagado | numeric(12,2) | NULL — **agregada en la implementación (2026-07-20)**: RF-059 exige capturar el monto pagado al entregar, columna faltante en el diseño original |
+| saldo_pendiente | numeric(12,2) | NULL — **agregada**: RN-001/RN-031 exige el monto pendiente cuando `estado_pago = 'SaldoPendiente'` |
+| usuario_autorizo_saldo_id | uuid | NULL, FK → `usuarios.id` — **agregada**: RN-001/RN-031 exige el usuario Administrador/Propietario que autorizó el saldo pendiente |
+| resultado_pruebas | text | NULL — **agregada**: RF-058, sin columna asignada en el diseño original |
 
 **`diagnosticos`**
 | Columna | Tipo | Restricciones |

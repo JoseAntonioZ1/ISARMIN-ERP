@@ -9,6 +9,7 @@ import { ComprasPage } from '@/modules/compras/pages/ComprasPage'
 import { ProductosPage } from '@/modules/productos/pages/ProductosPage'
 import { ProveedoresPage } from '@/modules/proveedores/pages/ProveedoresPage'
 import { RolesPage } from '@/modules/roles/pages/RolesPage'
+import { TallerPage } from '@/modules/taller/pages/TallerPage'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
 import { UsuariosPage } from '@/modules/usuarios/pages/UsuariosPage'
 import { queryClient } from '@/shared/api/queryClient'
@@ -36,6 +37,7 @@ function App() {
             <Route path="/productos" element={<ProductosPage />} />
             <Route path="/compras" element={<ComprasPage />} />
             <Route path="/caja" element={<CajaPage />} />
+            <Route path="/taller" element={<TallerPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
             <Route path="/configuracion/roles" element={<RolesPage />} />
