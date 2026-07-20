@@ -1,6 +1,7 @@
 using ISARMIN.Application.Common;
 using ISARMIN.Application.Modulos.Configuracion.Commands.ActualizarConfiguracionEmpresa;
 using ISARMIN.Application.Modulos.Configuracion.DTOs;
+using ISARMIN.Application.Modulos.Configuracion.Queries.ObtenerBranding;
 using ISARMIN.Application.Modulos.Configuracion.Queries.ObtenerConfiguracionEmpresa;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,16 @@ public class ConfiguracionEmpresaController : ControllerBase
 {
     private readonly IQueryHandler<ObtenerConfiguracionEmpresaQuery, ConfiguracionEmpresaDto> _obtenerHandler;
     private readonly ICommandHandler<ActualizarConfiguracionEmpresaCommand, ConfiguracionEmpresaDto> _actualizarHandler;
+    private readonly IQueryHandler<ObtenerBrandingQuery, BrandingDto> _obtenerBrandingHandler;
 
     public ConfiguracionEmpresaController(
         IQueryHandler<ObtenerConfiguracionEmpresaQuery, ConfiguracionEmpresaDto> obtenerHandler,
-        ICommandHandler<ActualizarConfiguracionEmpresaCommand, ConfiguracionEmpresaDto> actualizarHandler)
+        ICommandHandler<ActualizarConfiguracionEmpresaCommand, ConfiguracionEmpresaDto> actualizarHandler,
+        IQueryHandler<ObtenerBrandingQuery, BrandingDto> obtenerBrandingHandler)
     {
         _obtenerHandler = obtenerHandler;
         _actualizarHandler = actualizarHandler;
+        _obtenerBrandingHandler = obtenerBrandingHandler;
     }
 
     [HttpGet]
@@ -29,6 +33,17 @@ public class ConfiguracionEmpresaController : ControllerBase
     {
         var configuracion = await _obtenerHandler.ManejarAsync(new ObtenerConfiguracionEmpresaQuery(), cancellationToken);
         return Ok(configuracion);
+    }
+
+    /// <summary>Sin autenticación — identidad visual y textos (ver <see cref="BrandingDto"/>), para
+    /// personalizar el login, el encabezado, la pantalla de inicio y los reportes sin exponer
+    /// dirección ni configuración de Caja.</summary>
+    [HttpGet("/api/v1/configuracion/branding")]
+    [AllowAnonymous]
+    public async Task<ActionResult<BrandingDto>> ObtenerBranding(CancellationToken cancellationToken)
+    {
+        var branding = await _obtenerBrandingHandler.ManejarAsync(new ObtenerBrandingQuery(), cancellationToken);
+        return Ok(branding);
     }
 
     [HttpPut]

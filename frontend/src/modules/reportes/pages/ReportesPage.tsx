@@ -4,6 +4,7 @@ import { ReporteInventarioTab } from '@/modules/reportes/components/ReporteInven
 import { ReporteOrdenesTrabajoTab } from '@/modules/reportes/components/ReporteOrdenesTrabajoTab'
 import { ReporteServiciosCampoTab } from '@/modules/reportes/components/ReporteServiciosCampoTab'
 import { ReporteVentasTab } from '@/modules/reportes/components/ReporteVentasTab'
+import { useBranding } from '@/shared/hooks/useBranding'
 
 const PESTANAS = [
   { id: 'ventas', etiqueta: 'Ventas' },
@@ -17,10 +18,19 @@ type PestanaId = (typeof PESTANAS)[number]['id']
 
 export function ReportesPage() {
   const [pestana, setPestana] = useState<PestanaId>('ventas')
+  const { data: branding } = useBranding()
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Reportes</h1>
+      <div className="mb-4">
+        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Reportes</h1>
+        {branding && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {branding.razonSocial}
+            {branding.ruc ? ` — RUC ${branding.ruc}` : ''}
+          </p>
+        )}
+      </div>
 
       <div className="mb-4 flex gap-1 border-b border-slate-200 dark:border-slate-700">
         {PESTANAS.map((p) => (

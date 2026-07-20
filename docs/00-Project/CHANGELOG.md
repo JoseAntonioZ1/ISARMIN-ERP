@@ -6,6 +6,21 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.20.0] - 20/07/2026
+
+### Agregado
+
+- **Personalización visual de marca — pedido directo del propietario, no derivado de un RF/UC del backlog original (Fase 4 ya estaba completa):**
+  - `ConfiguracionEmpresa` gana dos campos: `ColorAcento` (hex `#RRGGBB`, validado en Domain y en el validador de FluentValidation) y `MensajeBienvenida` (texto libre, máx. 500 caracteres). Migración `PersonalizacionEmpresa`, sin impacto en filas existentes (ambos nullable).
+  - **Logo sin dependencia de internet**: el campo `Logo` (ya existente) pasó de aceptar una URL externa a guardar la imagen embebida en Base64 — se detectó que un enlace externo no se vería sin conexión a internet; al estar embebido en la propia respuesta de la API, se muestra incluso sin ninguna llamada externa. Sin migración: `Logo` ya era `text`, sin límite de tamaño. Límite de 1.5 MB aplicado en el frontend antes de codificar.
+  - **Nuevo endpoint público `GET /configuracion/branding`** (`[AllowAnonymous]`, sin permiso): expone `RazonSocial`, `Ruc`, `Logo`, `ColorAcento` y `MensajeBienvenida` — el subconjunto sin datos operativos sensibles (quedan fuera `Direccion` y `MontoAperturaCajaPredeterminado`, detrás de `Configuracion.Consultar`). Necesario porque el login no tiene sesión iniciada, y porque el mensaje de bienvenida y el color de acento deben verse para *cualquier* usuario autenticado, no solo quienes tienen `Configuracion.Consultar` (hasta ahora, solo Administrador).
+  - Frontend: el logo/nombre de empresa ahora se muestran en el login, el encabezado de la app (para cualquier rol), el título de la pestaña del navegador y el favicon. La pantalla de inicio muestra el mensaje de bienvenida. Los 5 reportes muestran razón social/RUC en el encabezado. El color de acento se aplica vía una variable CSS (`--color-acento`) sincronizada en tiempo real, reemplazando el gris fijo (`slate-800`) de los 43 botones de acción primaria en toda la aplicación — con filtros `brightness` para los estados hover, sin necesitar una segunda variable calculada.
+  - Pruebas unitarias: 4 Domain + 4 Application nuevas/actualizadas (250/250 en todo el backend).
+
+Verificado end-to-end contra PostgreSQL real: `GET /configuracion/branding` sin token devuelve los 5 campos; actualización con color y mensaje persiste y se refleja en el endpoint público; formato de color inválido rechazado (400 `VALIDACION_FALLIDA`); logo Base64 viaja íntegro sin truncarse.
+
+---
+
 ## [0.19.0] - 20/07/2026
 
 ### Agregado

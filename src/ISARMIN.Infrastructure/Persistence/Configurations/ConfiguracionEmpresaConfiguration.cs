@@ -20,6 +20,8 @@ public class ConfiguracionEmpresaConfiguration : IEntityTypeConfiguration<Config
         builder.Property(c => c.Direccion).HasColumnType("text");
         builder.Property(c => c.Logo).HasColumnType("text");
         builder.Property(c => c.MontoAperturaCajaPredeterminado).HasPrecision(12, 2);
+        builder.Property(c => c.ColorAcento).HasMaxLength(7);
+        builder.Property(c => c.MensajeBienvenida).HasMaxLength(500);
 
         builder.HasData(new { Id = ConfiguracionEmpresaId, RazonSocial = "ISARMIN PERÚ S.A.C." });
     }

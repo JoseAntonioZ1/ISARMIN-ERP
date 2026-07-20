@@ -1,11 +1,13 @@
 import { Link, Outlet, useNavigate } from 'react-router'
 import { authApi } from '@/modules/usuarios/api/authApi'
+import { useBranding } from '@/shared/hooks/useBranding'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
 export function AppLayout() {
   const navigate = useNavigate()
   const usuario = useSessionStore((s) => s.usuario)
   const cerrarSesion = useSessionStore((s) => s.cerrarSesion)
+  const { data: branding } = useBranding()
 
   const handleLogout = async () => {
     try {
@@ -20,7 +22,10 @@ export function AppLayout() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-700 dark:bg-slate-800">
         <div className="flex items-center gap-6">
-          <span className="font-semibold text-slate-800 dark:text-slate-100">ISARMIN ERP</span>
+          <span className="flex items-center gap-2 font-semibold text-slate-800 dark:text-slate-100">
+            {branding?.logo && <img src={branding.logo} alt="Logo" className="h-7 w-7 object-contain" />}
+            {branding?.razonSocial ?? 'ISARMIN ERP'}
+          </span>
           <nav className="flex gap-4 text-sm">
             <Link to="/" className="text-slate-600 hover:text-slate-900 dark:text-slate-300">
               Inicio

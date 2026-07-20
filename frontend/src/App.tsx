@@ -17,6 +17,7 @@ import { VentasPage } from '@/modules/ventas/pages/VentasPage'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
 import { UsuariosPage } from '@/modules/usuarios/pages/UsuariosPage'
 import { queryClient } from '@/shared/api/queryClient'
+import { AplicarBranding } from '@/shared/components/AplicarBranding'
 import { AppLayout } from '@/shared/components/AppLayout'
 import { ConfiguracionPage } from '@/shared/components/ConfiguracionPage'
 import { PaginaInicio } from '@/shared/components/PaginaInicio'
@@ -25,6 +26,7 @@ import { RutaProtegida } from '@/shared/components/RutaProtegida'
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <AplicarBranding />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

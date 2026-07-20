@@ -228,11 +228,14 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 |---|---|---|---|
 | `GET /configuracion/empresa` | `ObtenerConfiguracionEmpresaQuery` | `Configuracion.Consultar` | UC-37 |
 | `PUT /configuracion/empresa` | `ActualizarConfiguracionEmpresaCommand` | `Configuracion.Editar` | UC-37 |
+| `GET /configuracion/branding` | `ObtenerBrandingQuery` | *(sin permiso, `[AllowAnonymous]`)* | — |
 | `GET /configuracion/medios-pago` | `ListarMediosPagoQuery` | `Configuracion.Consultar` | UC-37 (CAT-008, configurable — refinado 2026-07-19: se separó lectura de escritura, igual que en el resto de la API) |
 | `POST /configuracion/medios-pago` | `CrearMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
 | `PATCH /configuracion/medios-pago/{id}/estado` | `CambiarEstadoMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
 
 > **Alcance de esta implementación (2026-07-20):** `configuracion_empresa` es una fila única sembrada, sin endpoint de creación. RF-081 (series/correlativos de comprobantes) no tiene endpoint — bloqueado por BQ-050/BQ-051/BQ-072/BQ-082, todas abiertas sobre facturación electrónica SUNAT. RF-082 ("administrar catálogos sin cambios de código") se da por satisfecho con los catálogos ya existentes (`medios_pago`, `categorias`, `unidades_medida`, `roles`) — no se agregó una API de administración de catálogos genérica.
+
+> **Personalización de marca (2026-07-20, pedido directo del propietario, sin RF asociado):** `ConfiguracionEmpresa` ganó `ColorAcento` (hex `#RRGGBB`) y `MensajeBienvenida`. `GET /configuracion/branding` expone `RazonSocial`/`Ruc`/`Logo`/`ColorAcento`/`MensajeBienvenida` sin autenticación — necesario porque el login no tiene sesión, y porque el color/mensaje deben verse para cualquier usuario autenticado, no solo quienes tienen `Configuracion.Consultar`. `Direccion` y `MontoAperturaCajaPredeterminado` no se exponen ahí por ser más operativos. `Logo` pasó de aceptar una URL externa a guardarse embebido en Base64 (mismo campo `text`, sin migración) — una URL externa no se vería sin conexión a internet.
 
 ## 7. DTOs representativos
 

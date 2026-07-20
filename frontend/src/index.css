@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  --color-acento: #1e293b; /* slate-800 — valor por defecto hasta que cargue la configuración de la empresa */
+}
+
 body {
   margin: 0;
 }

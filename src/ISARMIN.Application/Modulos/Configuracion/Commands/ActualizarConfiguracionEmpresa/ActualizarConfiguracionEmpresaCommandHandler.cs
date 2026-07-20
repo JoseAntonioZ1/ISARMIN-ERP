@@ -23,7 +23,9 @@ public class ActualizarConfiguracionEmpresaCommandHandler : ICommandHandler<Actu
         await _validator.ValidateAndThrowAsync(comando, cancellationToken);
 
         var configuracion = await _configuracionEmpresaRepository.ObtenerAsync(cancellationToken);
-        configuracion.Actualizar(comando.RazonSocial, comando.Ruc, comando.Direccion, comando.Logo, comando.MontoAperturaCajaPredeterminado);
+        configuracion.Actualizar(
+            comando.RazonSocial, comando.Ruc, comando.Direccion, comando.Logo, comando.MontoAperturaCajaPredeterminado,
+            comando.ColorAcento, comando.MensajeBienvenida);
 
         await _configuracionEmpresaRepository.GuardarCambiosAsync(cancellationToken);
 

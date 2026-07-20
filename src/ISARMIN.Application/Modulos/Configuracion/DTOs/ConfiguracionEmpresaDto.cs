@@ -8,7 +8,9 @@ public record ConfiguracionEmpresaDto(
     string? Ruc,
     string? Direccion,
     string? Logo,
-    decimal? MontoAperturaCajaPredeterminado);
+    decimal? MontoAperturaCajaPredeterminado,
+    string? ColorAcento,
+    string? MensajeBienvenida);
 
 public static class ConfiguracionEmpresaMapper
 {
@@ -18,5 +20,7 @@ public static class ConfiguracionEmpresaMapper
         configuracion.Ruc,
         configuracion.Direccion,
         configuracion.Logo,
-        configuracion.MontoAperturaCajaPredeterminado);
+        configuracion.MontoAperturaCajaPredeterminado,
+        configuracion.ColorAcento,
+        configuracion.MensajeBienvenida);
 }

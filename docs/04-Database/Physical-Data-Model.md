@@ -431,8 +431,10 @@ erDiagram
 | razon_social | varchar(200) | NOT NULL |
 | ruc | varchar(11) | NULL |
 | direccion | text | NULL |
-| logo | text | NULL — URL/ruta; no hay carga de archivos (Gestión Documental no cubre este campo) |
+| logo | text | NULL — **redefinido (2026-07-20)**: imagen embebida en Base64, ya no una URL externa (una URL no se vería sin conexión a internet; mismo tipo de columna, sin migración) |
 | monto_apertura_caja_predeterminado | numeric(12,2) | NULL — RN-026: prellena (no bloquea) el monto de apertura en `AbrirCajaDialog`; el mecanismo de configuración general que ese módulo dejó pendiente para este |
+| color_acento | varchar(7) | NULL — **agregada (2026-07-20)**: hex `#RRGGBB`, validado en Domain y en el validador; personalización visual pedida directamente por el propietario, sin RF asociado |
+| mensaje_bienvenida | varchar(500) | NULL — **agregada (2026-07-20)**: texto libre mostrado en la pantalla de inicio, mismo origen que `color_acento` |
 
 > **Nota (2026-07-20):** RF-081 (series y correlativos de comprobantes) no se modeló — bloqueado por BQ-050 (parcialmente resuelta), BQ-051, BQ-072 y BQ-082, todas abiertas sobre facturación electrónica SUNAT. RF-082 ("administrar catálogos del sistema sin cambios de código") se considera satisfecho por el patrón ya existente de catálogos configurables (`medios_pago`, `categorias`, `unidades_medida`, `roles`) — no se agregó una tabla `parametros_sistema` genérica porque ningún RF/RN/BQ la solicita explícitamente.
 

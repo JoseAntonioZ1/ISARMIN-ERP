@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 import { z } from 'zod'
 import { authApi } from '@/modules/usuarios/api/authApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { useBranding } from '@/shared/hooks/useBranding'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
 const esquemaLogin = z.object({
@@ -34,6 +35,7 @@ function obtenerMensajeError(error: unknown): string | null {
 export function LoginPage() {
   const navigate = useNavigate()
   const establecerSesion = useSessionStore((s) => s.establecerSesion)
+  const { data: branding } = useBranding()
 
   const {
     register,
@@ -59,7 +61,10 @@ export function LoginPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800"
       >
-        <h1 className="mb-6 text-xl font-semibold text-slate-800 dark:text-slate-100">ISARMIN ERP</h1>
+        <div className="mb-6 flex flex-col items-center gap-2">
+          {branding?.logo && <img src={branding.logo} alt="Logo" className="h-16 w-16 object-contain" />}
+          <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</h1>
+        </div>
 
         <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Usuario</label>
         <input
@@ -84,7 +89,7 @@ export function LoginPage() {
         <button
           type="submit"
           disabled={mutacionLogin.isPending}
-          className="mt-5 w-full rounded bg-slate-800 py-2 text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+          className="mt-5 w-full rounded bg-[var(--color-acento)] py-2 text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
         >
           {mutacionLogin.isPending ? 'Ingresando...' : 'Ingresar'}
         </button>

@@ -58,7 +58,7 @@ export function UnidadesMedidaPage() {
           type="button"
           onClick={handleCrear}
           disabled={mutacionCrear.isPending}
-          className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
         >
           Agregar
         </button>

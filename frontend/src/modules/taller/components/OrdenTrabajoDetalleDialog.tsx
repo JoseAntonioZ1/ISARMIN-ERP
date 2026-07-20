@@ -268,7 +268,7 @@ function FormularioDiagnostico({ onGuardar, guardando }: { onGuardar: (descripci
         type="button"
         disabled={!descripcion.trim() || guardando}
         onClick={() => onGuardar(descripcion.trim())}
-        className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar diagnóstico'}
       </button>
@@ -293,7 +293,7 @@ function FormularioCotizacion({ onGuardar, guardando }: { onGuardar: (monto: num
         type="button"
         disabled={!monto || Number(monto) < 0 || guardando}
         onClick={() => onGuardar(Number(monto))}
-        className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Generar cotización'}
       </button>
@@ -318,7 +318,7 @@ function FormularioDecision({
           type="button"
           disabled={guardando}
           onClick={() => onGuardar({ decision: 'Aprobada', cobroDiagnosticoRechazo: null, evidenciaAprobacion: null })}
-          className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
         >
           Aprobar
         </button>
@@ -424,7 +424,7 @@ function FormularioReparacion({
         type="button"
         disabled={guardando}
         onClick={handleGuardar}
-        className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar reparación'}
       </button>
@@ -519,7 +519,7 @@ function FormularioEntrega({
             usuarioAutorizoSaldoId: esSaldoPendiente ? usuarioAutorizoId : null,
           })
         }
-        className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Entregar equipo'}
       </button>
@@ -565,7 +565,7 @@ function FormularioGarantia({
         type="button"
         disabled={guardando || !fechaFin}
         onClick={() => onGuardar({ fechaInicio, fechaFin })}
-        className="rounded bg-slate-800 px-4 py-2 text-sm text-white hover:bg-slate-700 disabled:opacity-50 dark:bg-slate-600 dark:hover:bg-slate-500"
+        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar garantía'}
       </button>

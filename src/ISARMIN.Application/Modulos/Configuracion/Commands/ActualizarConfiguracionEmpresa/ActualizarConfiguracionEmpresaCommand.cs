@@ -5,4 +5,6 @@ public record ActualizarConfiguracionEmpresaCommand(
     string? Ruc,
     string? Direccion,
     string? Logo,
-    decimal? MontoAperturaCajaPredeterminado);
+    decimal? MontoAperturaCajaPredeterminado,
+    string? ColorAcento,
+    string? MensajeBienvenida);

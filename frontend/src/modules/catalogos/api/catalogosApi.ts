@@ -24,6 +24,8 @@ export interface ConfiguracionEmpresa {
   direccion: string | null
   logo: string | null
   montoAperturaCajaPredeterminado: number | null
+  colorAcento: string | null
+  mensajeBienvenida: string | null
 }
 
 export const categoriasApi = {
@@ -55,5 +57,7 @@ export const configuracionEmpresaApi = {
     direccion: string | null
     logo: string | null
     montoAperturaCajaPredeterminado: number | null
+    colorAcento: string | null
+    mensajeBienvenida: string | null
   }) => httpClient.put<ConfiguracionEmpresa>('/configuracion/empresa', datos),
 }
