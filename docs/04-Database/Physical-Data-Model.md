@@ -422,6 +422,20 @@ erDiagram
 
 *Índice recomendado:* `(entidad_tipo, entidad_id)` para consultar el historial de un registro específico; `(usuario_id, fecha_hora)` para consultas por usuario/fecha (RF-079).
 
+### 5.11 Configuración
+
+**`configuracion_empresa`** — **agregada en la implementación (2026-07-20)**: fila única sembrada en la migración (patrón singleton, mismo criterio que el usuario Administrador semilla), sin comando de creación — solo lectura/actualización (UC-37/RF-080).
+| Columna | Tipo | Restricciones |
+|---|---|---|
+| id | uuid | PK — valor fijo sembrado (`00000000-0000-0000-0000-0000000000e1`) |
+| razon_social | varchar(200) | NOT NULL |
+| ruc | varchar(11) | NULL |
+| direccion | text | NULL |
+| logo | text | NULL — URL/ruta; no hay carga de archivos (Gestión Documental no cubre este campo) |
+| monto_apertura_caja_predeterminado | numeric(12,2) | NULL — RN-026: prellena (no bloquea) el monto de apertura en `AbrirCajaDialog`; el mecanismo de configuración general que ese módulo dejó pendiente para este |
+
+> **Nota (2026-07-20):** RF-081 (series y correlativos de comprobantes) no se modeló — bloqueado por BQ-050 (parcialmente resuelta), BQ-051, BQ-072 y BQ-082, todas abiertas sobre facturación electrónica SUNAT. RF-082 ("administrar catálogos del sistema sin cambios de código") se considera satisfecho por el patrón ya existente de catálogos configurables (`medios_pago`, `categorias`, `unidades_medida`, `roles`) — no se agregó una tabla `parametros_sistema` genérica porque ningún RF/RN/BQ la solicita explícitamente.
+
 ## 6. Resumen de constraints de exclusividad (patrón repetido)
 
 Estas tres tablas comparten el mismo mecanismo — **exactamente un origen no nulo**, verificado con `CHECK` a nivel de PostgreSQL y reforzado con FluentValidation en `Application` (Architecture-Overview.md §7.1–7.2):

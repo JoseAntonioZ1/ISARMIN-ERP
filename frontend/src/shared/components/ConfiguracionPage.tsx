@@ -5,6 +5,9 @@ export function ConfiguracionPage() {
     <div>
       <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Configuración</h1>
       <div className="flex flex-col gap-2">
+        <Link to="/configuracion/empresa" className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300">
+          Datos de la Empresa
+        </Link>
         <Link to="/configuracion/usuarios" className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300">
           Usuarios
         </Link>

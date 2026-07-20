@@ -25,6 +25,7 @@ public class IsarminDbContext : DbContext
     public DbSet<UsuarioRol> UsuarioRoles => Set<UsuarioRol>();
     public DbSet<Categoria> Categorias => Set<Categoria>();
     public DbSet<MedioPago> MediosPago => Set<MedioPago>();
+    public DbSet<ConfiguracionEmpresa> ConfiguracionEmpresa => Set<ConfiguracionEmpresa>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
     public DbSet<Proveedor> Proveedores => Set<Proveedor>();
     public DbSet<UnidadMedida> UnidadesMedida => Set<UnidadMedida>();

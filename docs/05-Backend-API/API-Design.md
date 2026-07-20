@@ -232,6 +232,8 @@ Define los contratos REST expuestos por `ISARMIN.API` (capa Presentation de [Arc
 | `POST /configuracion/medios-pago` | `CrearMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
 | `PATCH /configuracion/medios-pago/{id}/estado` | `CambiarEstadoMedioPagoCommand` | `Configuracion.Editar` | UC-37, CAT-008 |
 
+> **Alcance de esta implementación (2026-07-20):** `configuracion_empresa` es una fila única sembrada, sin endpoint de creación. RF-081 (series/correlativos de comprobantes) no tiene endpoint — bloqueado por BQ-050/BQ-051/BQ-072/BQ-082, todas abiertas sobre facturación electrónica SUNAT. RF-082 ("administrar catálogos sin cambios de código") se da por satisfecho con los catálogos ya existentes (`medios_pago`, `categorias`, `unidades_medida`, `roles`) — no se agregó una API de administración de catálogos genérica.
+
 ## 7. DTOs representativos
 
 No se repite aquí el detalle completo de `Data-Dictionary.md` — solo los DTOs con forma distinta a su entidad (agregaciones, combinaciones de varias tablas):

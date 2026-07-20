@@ -6,6 +6,28 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.19.0] - 20/07/2026
+
+### Agregado
+
+- **Módulo de Configuración (UC-37), backend + frontend (RF-080) — último módulo del orden de construcción acordado.** La mayor parte de lo que "Configuración" cubre conceptualmente ya estaba construido (Usuarios, Roles, Categorías, Medios de Pago, Unidades de Medida), solo enlazado desde el hub `/configuracion` sin lógica propia. Lo genuinamente nuevo:
+  - `Domain`: `ConfiguracionEmpresa` — fila única sembrada en la migración (patrón singleton, mismo criterio que el usuario Administrador semilla), con `RazonSocial`, `Ruc`, `Direccion`, `Logo` y `MontoAperturaCajaPredeterminado`. No existe un comando de creación, solo `Actualizar`.
+  - **RN-026 saldado:** cuando Caja se construyó, el "monto de apertura fijo y configurable" quedó explícitamente diferido con la nota "el mecanismo de configuración general... es el módulo Configuración, el último en el orden de construcción". `MontoAperturaCajaPredeterminado` resuelve ese mecanismo: `AbrirCajaDialog` ahora prellena el monto con este valor si está configurado, sin bloquear ni forzar el monto (el valor recomendado exacto por RN-026 no está confirmado por el propietario, BQ-030/BQ-088 siguen abiertas).
+  - `Application`: `ObtenerConfiguracionEmpresaQuery`, `ActualizarConfiguracionEmpresaCommand`. Reutiliza los permisos `Configuracion.Consultar`/`Configuracion.Editar` ya existentes (usados por Categorías/Medios de Pago/Unidades de Medida) — ninguna acción nueva en `AccionPermiso`.
+  - `Infrastructure`: `ConfiguracionEmpresaConfiguration` con la fila sembrada, `ConfiguracionEmpresaRepository`. Migración con una sola tabla nueva, sin `CHECK` constraints ni ampliación del catálogo de permisos.
+  - `API`: `ConfiguracionEmpresaController` (`GET`/`PUT /configuracion/empresa`), tal como ya lo definía `API-Design.md`.
+  - Frontend: `ConfiguracionEmpresaPage` (enlazada desde el hub de Configuración) y prellenado del monto de apertura en `AbrirCajaDialog`.
+  - Pruebas unitarias: 6 Domain + 3 Application = 9 nuevas (244/244 en todo el backend).
+  - **Deliberadamente fuera de alcance:** RF-081 (series y correlativos de comprobantes) — bloqueado por BQ-050 (parcialmente resuelta), BQ-051, BQ-072 y BQ-082, todas abiertas sobre facturación electrónica SUNAT; mismo criterio ya aplicado a RF-044/UC-15 en todo el proyecto. RF-082 ("administrar catálogos del sistema sin cambios de código") se da por satisfecho por el patrón de catálogos configurables ya construido (`medios_pago`, `categorias`, `unidades_medida`, `roles`) — no se agregó una tabla `parametros_sistema` genérica ni una API de administración de catálogos, porque ningún RF/RN/BQ la solicita explícitamente.
+
+Verificado end-to-end contra PostgreSQL real: la fila sembrada se obtiene correctamente, actualización con datos válidos persiste (razón social, RUC, dirección, monto de apertura predeterminado), rechazo de razón social vacía y de monto negativo (400 `VALIDACION_FALLIDA`), 401 sin autenticación. Los permisos `Configuracion.Consultar`/`Configuracion.Editar` ya estaban otorgados al Administrador desde módulos anteriores — no fue necesario un otorgamiento nuevo.
+
+Estado del proyecto:
+
+✅ Fase de Desarrollo (Fase 4) completa — los 16 módulos del orden acordado (Autenticación, Usuarios, Roles/Permisos, Catálogos, Clientes, Proveedores, Productos, Inventario, Compras, Caja, Taller, Servicios de Campo, Ventas, Reportes y Configuración) están construidos, backend y frontend, verificados end-to-end contra PostgreSQL real. Siguiente fase: Fase 5 — Pruebas (unitarias ya cubiertas de forma continua; pendiente integración/funcional/aceptación formal).
+
+---
+
 ## [0.18.0] - 20/07/2026
 
 ### Agregado

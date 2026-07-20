@@ -18,8 +18,10 @@ using ISARMIN.Application.Modulos.Compras.Queries.BuscarCompras;
 using ISARMIN.Application.Modulos.Compras.Queries.ObtenerCompra;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CambiarEstadoMedioPago;
 using ISARMIN.Application.Modulos.Configuracion.Commands.CrearMedioPago;
+using ISARMIN.Application.Modulos.Configuracion.Commands.ActualizarConfiguracionEmpresa;
 using ISARMIN.Application.Modulos.Configuracion.DTOs;
 using ISARMIN.Application.Modulos.Configuracion.Queries.ListarMediosPago;
+using ISARMIN.Application.Modulos.Configuracion.Queries.ObtenerConfiguracionEmpresa;
 using ISARMIN.Application.Modulos.Inventario.Commands.AjustarInventario;
 using ISARMIN.Application.Modulos.Inventario.Commands.CambiarEstadoProducto;
 using ISARMIN.Application.Modulos.Inventario.Commands.CrearCategoria;
@@ -119,6 +121,8 @@ public static class DependencyInjection
         services.AddScoped<ICommandHandler<CrearMedioPagoCommand, MedioPagoDto>, CrearMedioPagoCommandHandler>();
         services.AddScoped<ICommandHandler<CambiarEstadoMedioPagoCommand, Unit>, CambiarEstadoMedioPagoCommandHandler>();
         services.AddScoped<IQueryHandler<ListarMediosPagoQuery, IReadOnlyCollection<MedioPagoDto>>, ListarMediosPagoQueryHandler>();
+        services.AddScoped<IQueryHandler<ObtenerConfiguracionEmpresaQuery, ConfiguracionEmpresaDto>, ObtenerConfiguracionEmpresaQueryHandler>();
+        services.AddScoped<ICommandHandler<ActualizarConfiguracionEmpresaCommand, ConfiguracionEmpresaDto>, ActualizarConfiguracionEmpresaCommandHandler>();
 
         services.AddScoped<ICommandHandler<RegistrarClienteCommand, ClienteDto>, RegistrarClienteCommandHandler>();
         services.AddScoped<ICommandHandler<EditarClienteCommand, ClienteDto>, EditarClienteCommandHandler>();

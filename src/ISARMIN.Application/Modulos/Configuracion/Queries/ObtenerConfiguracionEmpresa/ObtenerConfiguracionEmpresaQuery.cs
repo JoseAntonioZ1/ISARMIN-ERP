@@ -1,0 +1,3 @@
+namespace ISARMIN.Application.Modulos.Configuracion.Queries.ObtenerConfiguracionEmpresa;
+
+public record ObtenerConfiguracionEmpresaQuery;

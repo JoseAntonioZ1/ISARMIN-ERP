@@ -1,6 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { configuracionEmpresaApi } from '@/modules/catalogos/api/catalogosApi'
 
 const esquemaAbrirCaja = z.object({
   montoApertura: z
@@ -21,11 +24,23 @@ export function AbrirCajaDialog({ onGuardar, onCancelar, guardando }: AbrirCajaD
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormularioAbrirCaja>({
     resolver: zodResolver(esquemaAbrirCaja),
     defaultValues: { montoApertura: '' },
   })
+
+  const { data: configuracion } = useQuery({
+    queryKey: ['configuracion-empresa'],
+    queryFn: configuracionEmpresaApi.obtener,
+  })
+
+  useEffect(() => {
+    if (configuracion?.montoAperturaCajaPredeterminado != null) {
+      setValue('montoApertura', String(configuracion.montoAperturaCajaPredeterminado))
+    }
+  }, [configuracion, setValue])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">

@@ -17,6 +17,15 @@ export interface UnidadMedida {
   nombre: string
 }
 
+export interface ConfiguracionEmpresa {
+  id: string
+  razonSocial: string
+  ruc: string | null
+  direccion: string | null
+  logo: string | null
+  montoAperturaCajaPredeterminado: number | null
+}
+
 export const categoriasApi = {
   listar: () => httpClient.get<Categoria[]>('/categorias'),
   crear: (datos: { nombre: string; categoriaPadreId: string | null }) =>
@@ -36,4 +45,15 @@ export const unidadesMedidaApi = {
   listar: () => httpClient.get<UnidadMedida[]>('/unidades-medida'),
   crear: (nombre: string) => httpClient.post<UnidadMedida>('/unidades-medida', { nombre }),
   editar: (id: string, nombre: string) => httpClient.put<UnidadMedida>(`/unidades-medida/${id}`, { nombre }),
+}
+
+export const configuracionEmpresaApi = {
+  obtener: () => httpClient.get<ConfiguracionEmpresa>('/configuracion/empresa'),
+  actualizar: (datos: {
+    razonSocial: string
+    ruc: string | null
+    direccion: string | null
+    logo: string | null
+    montoAperturaCajaPredeterminado: number | null
+  }) => httpClient.put<ConfiguracionEmpresa>('/configuracion/empresa', datos),
 }
