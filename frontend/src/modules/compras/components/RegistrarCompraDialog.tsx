@@ -89,7 +89,7 @@ export function RegistrarCompraDialog({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Proveedor</label>
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Proveedor</label>
             <select
               {...register('proveedorId')}
               className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -105,7 +105,7 @@ export function RegistrarCompraDialog({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Fecha</label>
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Fecha</label>
             <input
               type="date"
               {...register('fecha')}
@@ -117,7 +117,7 @@ export function RegistrarCompraDialog({
 
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Tipo de documento
             </label>
             <input
@@ -130,7 +130,7 @@ export function RegistrarCompraDialog({
             )}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Número de documento
             </label>
             <input
@@ -145,11 +145,11 @@ export function RegistrarCompraDialog({
 
         <div className="mt-4">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Productos</h3>
+            <h3 className="text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Productos</h3>
             <button
               type="button"
               onClick={() => append({ productoId: '', cantidad: '', costoUnitario: '' })}
-              className="text-sm text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+              className="text-sm text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
             >
               Agregar producto
             </button>
@@ -221,7 +221,7 @@ export function RegistrarCompraDialog({
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Registrar compra'}
           </button>

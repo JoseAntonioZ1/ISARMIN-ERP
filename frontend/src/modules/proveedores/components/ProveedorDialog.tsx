@@ -44,7 +44,7 @@ export function ProveedorDialog({ proveedor, onGuardar, onCancelar, guardando }:
           {proveedor ? 'Editar proveedor' : 'Nuevo proveedor'}
         </h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Nombre / Razón social
         </label>
         <input
@@ -53,7 +53,7 @@ export function ProveedorDialog({ proveedor, onGuardar, onCancelar, guardando }:
         />
         {errors.nombreRazonSocial && <p className="mb-2 text-sm text-red-600">{errors.nombreRazonSocial.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Documento (opcional)
         </label>
         <input
@@ -61,7 +61,7 @@ export function ProveedorDialog({ proveedor, onGuardar, onCancelar, guardando }:
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Teléfono (opcional)
         </label>
         <input
@@ -69,7 +69,7 @@ export function ProveedorDialog({ proveedor, onGuardar, onCancelar, guardando }:
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Dirección (opcional)
         </label>
         <input
@@ -88,7 +88,7 @@ export function ProveedorDialog({ proveedor, onGuardar, onCancelar, guardando }:
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Guardar'}
           </button>

@@ -30,14 +30,14 @@ export function CrearRolDialog({ onGuardar, onCancelar, guardando }: CrearRolDia
       >
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Nuevo rol</h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Nombre</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Nombre</label>
         <input
           {...register('nombre')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
         {errors.nombre && <p className="mb-2 text-sm text-red-600">{errors.nombre.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Descripción (opcional)
         </label>
         <textarea
@@ -46,7 +46,7 @@ export function CrearRolDialog({ onGuardar, onCancelar, guardando }: CrearRolDia
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
 
-        <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-3 text-sm text-[var(--color-terciario)] dark:text-slate-400">
           Los permisos se asignan después de crear el rol, desde la pantalla de edición.
         </p>
 
@@ -61,7 +61,7 @@ export function CrearRolDialog({ onGuardar, onCancelar, guardando }: CrearRolDia
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Guardar'}
           </button>

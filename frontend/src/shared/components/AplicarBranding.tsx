@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useBranding } from '@/shared/hooks/useBranding'
 
-const COLOR_ACENTO_PREDETERMINADO = '#1e293b' // slate-800 — el mismo tono que ya usaba el sistema antes de ser configurable
+const COLOR_PRINCIPAL_PREDETERMINADO = '#EE2027' // rojo de marca ISARMIN — valor por defecto hasta que se configure otro
 
-/** Sin salida visual — solo sincroniza título de pestaña, favicon y color de acento con la configuración de la empresa. */
+/** Sin salida visual — solo sincroniza título de pestaña, favicon y color principal con la configuración de la empresa. */
 export function AplicarBranding() {
   const { data: branding } = useBranding()
 
@@ -23,7 +23,7 @@ export function AplicarBranding() {
       icono.href = branding.logo
     }
 
-    document.documentElement.style.setProperty('--color-acento', branding.colorAcento ?? COLOR_ACENTO_PREDETERMINADO)
+    document.documentElement.style.setProperty('--color-principal', branding.colorAcento ?? COLOR_PRINCIPAL_PREDETERMINADO)
   }, [branding])
 
   return null

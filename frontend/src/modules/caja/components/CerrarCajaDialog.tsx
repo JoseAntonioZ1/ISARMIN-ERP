@@ -34,11 +34,11 @@ export function CerrarCajaDialog({ onGuardar, onCancelar, guardando }: CerrarCaj
         className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800"
       >
         <h2 className="mb-1 text-lg font-semibold text-slate-800 dark:text-slate-100">Cerrar caja</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mb-4 text-sm text-[var(--color-terciario)] dark:text-slate-400">
           Cuenta el dinero físico en caja y registra el monto exacto.
         </p>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Monto físico contado
         </label>
         <input
@@ -62,7 +62,7 @@ export function CerrarCajaDialog({ onGuardar, onCancelar, guardando }: CerrarCaj
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Cerrando...' : 'Cerrar caja'}
           </button>

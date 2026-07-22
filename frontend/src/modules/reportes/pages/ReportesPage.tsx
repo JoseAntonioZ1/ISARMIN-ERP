@@ -25,7 +25,7 @@ export function ReportesPage() {
       <div className="mb-4">
         <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Reportes</h1>
         {branding && (
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-[var(--color-terciario)] dark:text-slate-400">
             {branding.razonSocial}
             {branding.ruc ? ` — RUC ${branding.ruc}` : ''}
           </p>
@@ -41,7 +41,7 @@ export function ReportesPage() {
             className={`px-4 py-2 text-sm ${
               pestana === p.id
                 ? 'border-b-2 border-slate-800 font-semibold text-slate-800 dark:border-slate-100 dark:text-slate-100'
-                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                : 'text-[var(--color-terciario)] hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             {p.etiqueta}

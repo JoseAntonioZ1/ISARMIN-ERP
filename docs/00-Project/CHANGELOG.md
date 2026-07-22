@@ -6,6 +6,20 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.21.0] - 22/07/2026
+
+### Agregado
+
+- **Menú lateral + paleta de colores de marca completa — segundo pedido directo del propietario de mejora post-Fase 4, sin RF/UC asociado:**
+  - **Navegación**: la barra horizontal superior fue reemplazada por un menú lateral fijo (`AppLayout`), con los módulos agrupados por área (Comercial, Operaciones, Análisis, Sistema) e íconos de `lucide-react` (nueva dependencia, tree-shakeable — solo los íconos usados terminan en el bundle). El enlace activo se resuelve automáticamente vía `NavLink` de `react-router`, sin lógica manual de "ruta actual". El logo y la razón social de la empresa (branding público) se muestran en el encabezado del menú.
+  - **Paleta de marca**: se definieron 6 variables CSS en `:root` (`--color-principal #EE2027`, `--color-secundario #F8C129`, `--color-neutro #FFFFFF`, `--color-terciario #7C7C7C`, `--color-apoyo #4D4D4D`, `--color-fondo #F5F8FB`) y se aplicaron en todo el frontend reemplazando los tonos `slate`/`amber` genéricos usados hasta ahora: `--color-acento` (introducida en 0.20.0) se renombró a `--color-principal` para que el color configurable desde Configuración → Empresa sea consistente con el nombre de la paleta oficial; `bg-slate-50` → `--color-fondo` (fondos de página); `text-amber-600` → `--color-secundario` (advertencias); `text-slate-700`/`text-slate-500` (solo variantes claras, sin tocar sus equivalentes `dark:`) → `--color-apoyo`/`--color-terciario` respectivamente (texto secundario y apagado). `--color-neutro` queda definida pero deliberadamente sin barrer sobre `bg-white` — sustituirlo no cambiaría nada visualmente y solo generaría ruido en el diff.
+  - **Deliberadamente fuera de alcance:** no se tocaron los tonos `slate` usados como bordes/fondos de superficies oscuras (`dark:bg-slate-800`, `border-slate-200`, etc.) — la paleta entregada por el propietario cubre texto y fondos de marca, no la superficie completa del modo oscuro, y remplazarlos sin pedido explícito habría sido una reescritura visual no solicitada.
+  - Sin cambios de backend ni migraciones — esta iteración es puramente de frontend (CSS + componentes de presentación).
+
+Verificado: `npm run build` (1981 módulos, sin errores de tipos) y `npx oxlint` (sin advertencias) tras el barrido completo de clases; verificación manual de que las clases `dark:text-slate-500`/`dark:text-slate-700` existentes no fueron alteradas por los reemplazos con lookbehind negativo.
+
+---
+
 ## [0.20.0] - 20/07/2026
 
 ### Agregado

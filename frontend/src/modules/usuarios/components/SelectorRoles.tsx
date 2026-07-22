@@ -17,10 +17,10 @@ export function SelectorRoles<T extends CampoRoles>({
 
   return (
     <div>
-      <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Roles</label>
+      <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Roles</label>
       <div className="mb-1 flex flex-col gap-1">
         {roles?.map((rol) => (
-          <label key={rol.id} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <label key={rol.id} className="flex items-center gap-2 text-sm text-[var(--color-apoyo)] dark:text-slate-300">
             <input type="checkbox" value={rol.id} {...register('rolIds' as Path<T>)} />
             {rol.nombre}
           </label>

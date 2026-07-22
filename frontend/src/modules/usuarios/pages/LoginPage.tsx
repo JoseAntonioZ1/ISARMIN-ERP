@@ -56,7 +56,7 @@ export function LoginPage() {
   const mensajeError = obtenerMensajeError(mutacionLogin.error)
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--color-fondo)] dark:bg-slate-900">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800"
@@ -66,7 +66,7 @@ export function LoginPage() {
           <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</h1>
         </div>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Usuario</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Usuario</label>
         <input
           {...register('nombreUsuario')}
           type="text"
@@ -75,7 +75,7 @@ export function LoginPage() {
         />
         {errors.nombreUsuario && <p className="mb-2 text-sm text-red-600">{errors.nombreUsuario.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Contraseña</label>
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Contraseña</label>
         <input
           {...register('credencial')}
           type="password"
@@ -89,7 +89,7 @@ export function LoginPage() {
         <button
           type="submit"
           disabled={mutacionLogin.isPending}
-          className="mt-5 w-full rounded bg-[var(--color-acento)] py-2 text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="mt-5 w-full rounded bg-[var(--color-principal)] py-2 text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           {mutacionLogin.isPending ? 'Ingresando...' : 'Ingresar'}
         </button>

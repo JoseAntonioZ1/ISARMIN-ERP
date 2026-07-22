@@ -5,7 +5,7 @@ import { configuracionEmpresaApi } from '@/modules/catalogos/api/catalogosApi'
 import { ApiError } from '@/shared/api/httpClient'
 
 const TAMANO_MAXIMO_LOGO_BYTES = 1.5 * 1024 * 1024 // 1.5 MB — el logo queda embebido (Base64) en la base de datos, no como archivo aparte
-const COLOR_ACENTO_PREDETERMINADO = '#1e293b' // mismo tono (slate-800) que ya usa el sistema por defecto
+const COLOR_PRINCIPAL_PREDETERMINADO = '#EE2027' // rojo de marca ISARMIN
 
 function archivoABase64(archivo: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -26,7 +26,7 @@ export function ConfiguracionEmpresaPage() {
   const [direccion, setDireccion] = useState('')
   const [logo, setLogo] = useState('')
   const [montoAperturaCaja, setMontoAperturaCaja] = useState('')
-  const [colorAcento, setColorAcento] = useState(COLOR_ACENTO_PREDETERMINADO)
+  const [colorAcento, setColorAcento] = useState(COLOR_PRINCIPAL_PREDETERMINADO)
   const [mensajeBienvenida, setMensajeBienvenida] = useState('')
 
   const { data: configuracion, isLoading } = useQuery({
@@ -41,7 +41,7 @@ export function ConfiguracionEmpresaPage() {
     setDireccion(configuracion.direccion ?? '')
     setLogo(configuracion.logo ?? '')
     setMontoAperturaCaja(configuracion.montoAperturaCajaPredeterminado?.toString() ?? '')
-    setColorAcento(configuracion.colorAcento ?? COLOR_ACENTO_PREDETERMINADO)
+    setColorAcento(configuracion.colorAcento ?? COLOR_PRINCIPAL_PREDETERMINADO)
     setMensajeBienvenida(configuracion.mensajeBienvenida ?? '')
   }, [configuracion])
 
@@ -89,7 +89,7 @@ export function ConfiguracionEmpresaPage() {
   }
 
   if (isLoading) {
-    return <p className="text-slate-500">Cargando...</p>
+    return <p className="text-[var(--color-terciario)]">Cargando...</p>
   }
 
   return (
@@ -101,7 +101,7 @@ export function ConfiguracionEmpresaPage() {
 
       <div className="max-w-lg space-y-3 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Razón social</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Razón social</label>
           <input
             value={razonSocial}
             onChange={(e) => setRazonSocial(e.target.value)}
@@ -110,7 +110,7 @@ export function ConfiguracionEmpresaPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">RUC (opcional)</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">RUC (opcional)</label>
           <input
             value={ruc}
             onChange={(e) => setRuc(e.target.value)}
@@ -120,7 +120,7 @@ export function ConfiguracionEmpresaPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Dirección (opcional)</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Dirección (opcional)</label>
           <input
             value={direccion}
             onChange={(e) => setDireccion(e.target.value)}
@@ -129,8 +129,8 @@ export function ConfiguracionEmpresaPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Logo (opcional)</label>
-          <p className="mb-2 text-xs text-slate-500">
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Logo (opcional)</label>
+          <p className="mb-2 text-xs text-[var(--color-terciario)]">
             Se guarda embebido en el sistema (no como enlace externo), así se muestra aunque no haya internet.
           </p>
 
@@ -156,7 +156,7 @@ export function ConfiguracionEmpresaPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
             Monto de apertura de caja predeterminado (opcional)
           </label>
           <input
@@ -170,7 +170,7 @@ export function ConfiguracionEmpresaPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Color de acento</label>
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Color principal</label>
           <div className="flex items-center gap-3">
             <input
               type="color"
@@ -178,12 +178,12 @@ export function ConfiguracionEmpresaPage() {
               onChange={(e) => setColorAcento(e.target.value)}
               className="h-10 w-14 cursor-pointer rounded border border-slate-300 dark:border-slate-600"
             />
-            <span className="text-xs text-slate-500">{colorAcento}</span>
+            <span className="text-xs text-[var(--color-terciario)]">{colorAcento}</span>
           </div>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+          <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
             Mensaje de bienvenida (opcional)
           </label>
           <textarea
@@ -200,7 +200,7 @@ export function ConfiguracionEmpresaPage() {
           type="button"
           disabled={!razonSocial.trim() || mutacionActualizar.isPending}
           onClick={handleGuardar}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           {mutacionActualizar.isPending ? 'Guardando...' : 'Guardar'}
         </button>

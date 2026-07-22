@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --color-acento: #1e293b; /* slate-800 — valor por defecto hasta que cargue la configuración de la empresa */
+  /* Paleta de marca ISARMIN */
+  --color-principal: #ee2027; /* rojo — configurable desde Configuración → Empresa (ColorAcento); este es el valor por defecto */
+  --color-secundario: #f8c129; /* amarillo — advertencias y resaltados */
+  --color-neutro: #ffffff; /* blanco — superficies (tarjetas, diálogos) */
+  --color-terciario: #7c7c7c; /* gris medio — texto secundario/apagado */
+  --color-apoyo: #4d4d4d; /* gris oscuro — texto de apoyo, etiquetas, enlaces */
+  --color-fondo: #f5f8fb; /* gris azulado muy claro — fondo general de la aplicación */
 }
 
 body {

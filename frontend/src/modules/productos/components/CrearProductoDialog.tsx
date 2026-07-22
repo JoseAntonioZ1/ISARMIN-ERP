@@ -88,14 +88,14 @@ export function CrearProductoDialog({
       >
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Nuevo producto</h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Código interno</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Código interno</label>
         <input
           {...register('codigoInterno')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
         {errors.codigoInterno && <p className="mb-2 text-sm text-red-600">{errors.codigoInterno.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Nombre</label>
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Nombre</label>
         <input
           {...register('nombre')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -104,7 +104,7 @@ export function CrearProductoDialog({
 
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Categoría</label>
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Categoría</label>
             <select
               {...register('categoriaId')}
               className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -120,7 +120,7 @@ export function CrearProductoDialog({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Unidad de medida
             </label>
             <select
@@ -138,7 +138,7 @@ export function CrearProductoDialog({
           </div>
         </div>
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Marca (opcional)
         </label>
         <input
@@ -148,7 +148,7 @@ export function CrearProductoDialog({
 
         <div className="mt-3 grid grid-cols-3 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Costo de adquisición
             </label>
             <input
@@ -160,7 +160,7 @@ export function CrearProductoDialog({
             {errors.costoReferencia && <p className="mt-1 text-sm text-red-600">{errors.costoReferencia.message}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Precio de venta
             </label>
             <input
@@ -172,7 +172,7 @@ export function CrearProductoDialog({
             {errors.precioVenta && <p className="mt-1 text-sm text-red-600">{errors.precioVenta.message}</p>}
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Stock inicial
             </label>
             <input
@@ -187,7 +187,7 @@ export function CrearProductoDialog({
 
         <div className="mt-3 grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Código de barras (opcional)
             </label>
             <input
@@ -196,7 +196,7 @@ export function CrearProductoDialog({
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Stock mínimo (opcional)
             </label>
             <input
@@ -219,7 +219,7 @@ export function CrearProductoDialog({
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Guardar'}
           </button>

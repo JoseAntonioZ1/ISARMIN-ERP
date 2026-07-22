@@ -15,7 +15,7 @@ export function ReporteVentasTab() {
     <div>
       <div className="mb-4 flex gap-3">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Desde</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
           <input
             type="date"
             value={desde}
@@ -24,7 +24,7 @@ export function ReporteVentasTab() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Hasta</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
           <input
             type="date"
             value={hasta}
@@ -35,16 +35,16 @@ export function ReporteVentasTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <>
           <div className="mb-4 grid grid-cols-2 gap-4">
             <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-              <p className="text-xs text-slate-500">Cantidad de ventas</p>
+              <p className="text-xs text-[var(--color-terciario)]">Cantidad de ventas</p>
               <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{reporte.cantidadVentas}</p>
             </div>
             <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-              <p className="text-xs text-slate-500">Monto total (excluye anuladas)</p>
+              <p className="text-xs text-[var(--color-terciario)]">Monto total (excluye anuladas)</p>
               <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">S/ {reporte.montoTotal.toFixed(2)}</p>
             </div>
           </div>

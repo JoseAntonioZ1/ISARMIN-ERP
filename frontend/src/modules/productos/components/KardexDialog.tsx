@@ -17,12 +17,12 @@ export function KardexDialog({ producto, onCerrar }: KardexDialogProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         <h2 className="mb-1 text-lg font-semibold text-slate-800 dark:text-slate-100">Kardex — {producto.nombre}</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">Stock actual: {producto.stockActual}</p>
+        <p className="mb-4 text-sm text-[var(--color-terciario)] dark:text-slate-400">Stock actual: {producto.stockActual}</p>
 
         {isLoading ? (
-          <p className="text-slate-500">Cargando...</p>
+          <p className="text-[var(--color-terciario)]">Cargando...</p>
         ) : !movimientos || movimientos.length === 0 ? (
-          <p className="text-slate-500">Aún no hay movimientos registrados para este producto.</p>
+          <p className="text-[var(--color-terciario)]">Aún no hay movimientos registrados para este producto.</p>
         ) : (
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">

@@ -58,7 +58,7 @@ export function ClienteDialog({ cliente, onGuardar, onCancelar, guardando }: Cli
           {cliente ? 'Editar cliente' : 'Nuevo cliente'}
         </h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Nombre / Razón social
         </label>
         <input
@@ -67,14 +67,14 @@ export function ClienteDialog({ cliente, onGuardar, onCancelar, guardando }: Cli
         />
         {errors.nombreRazonSocial && <p className="mb-2 text-sm text-red-600">{errors.nombreRazonSocial.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Teléfono</label>
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Teléfono</label>
         <input
           {...register('telefono')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         />
         {errors.telefono && <p className="mb-2 text-sm text-red-600">{errors.telefono.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Dirección (opcional)
         </label>
         <input
@@ -84,7 +84,7 @@ export function ClienteDialog({ cliente, onGuardar, onCancelar, guardando }: Cli
 
         <div className="mt-3 flex gap-3">
           <div className="flex-1">
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
               Tipo de documento (opcional)
             </label>
             <select
@@ -100,7 +100,7 @@ export function ClienteDialog({ cliente, onGuardar, onCancelar, guardando }: Cli
             </select>
           </div>
           <div className="flex-1">
-            <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Número</label>
+            <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Número</label>
             <input
               {...register('numeroDocumento')}
               className="w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -120,7 +120,7 @@ export function ClienteDialog({ cliente, onGuardar, onCancelar, guardando }: Cli
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Guardar'}
           </button>

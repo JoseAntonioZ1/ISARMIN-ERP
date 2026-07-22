@@ -13,14 +13,14 @@ export function ReporteCajaTab() {
 
   return (
     <div>
-      <p className="mb-4 text-xs text-slate-500">
+      <p className="mb-4 text-xs text-[var(--color-terciario)]">
         Refleja únicamente los movimientos manuales de Caja (aperturas, cierres, gastos y aportes) — no incluye cobros de
         Ventas, Taller ni Servicios de Campo.
       </p>
 
       <div className="mb-4 flex gap-3">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Desde</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
           <input
             type="date"
             value={desde}
@@ -29,7 +29,7 @@ export function ReporteCajaTab() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Hasta</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
           <input
             type="date"
             value={hasta}
@@ -40,20 +40,20 @@ export function ReporteCajaTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <>
           <div className="mb-4 grid grid-cols-3 gap-4">
             <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-              <p className="text-xs text-slate-500">Total ingresos</p>
+              <p className="text-xs text-[var(--color-terciario)]">Total ingresos</p>
               <p className="text-xl font-semibold text-emerald-600">S/ {reporte.totalIngresos.toFixed(2)}</p>
             </div>
             <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-              <p className="text-xs text-slate-500">Total egresos</p>
+              <p className="text-xs text-[var(--color-terciario)]">Total egresos</p>
               <p className="text-xl font-semibold text-red-600">S/ {reporte.totalEgresos.toFixed(2)}</p>
             </div>
             <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-              <p className="text-xs text-slate-500">Saldo neto</p>
+              <p className="text-xs text-[var(--color-terciario)]">Saldo neto</p>
               <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">S/ {reporte.saldoNeto.toFixed(2)}</p>
             </div>
           </div>

@@ -50,7 +50,7 @@ export function AbrirCajaDialog({ onGuardar, onCancelar, guardando }: AbrirCajaD
       >
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Abrir caja</h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Monto inicial de apertura
         </label>
         <input
@@ -72,7 +72,7 @@ export function AbrirCajaDialog({ onGuardar, onCancelar, guardando }: AbrirCajaD
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Abriendo...' : 'Abrir caja'}
           </button>

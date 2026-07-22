@@ -21,7 +21,7 @@ export function ReporteServiciosCampoTab() {
     <div>
       <div className="mb-4 flex gap-3">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Técnico</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Técnico</label>
           <select
             value={tecnico}
             onChange={(e) => setTecnico(e.target.value)}
@@ -36,7 +36,7 @@ export function ReporteServiciosCampoTab() {
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Desde</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
           <input
             type="date"
             value={desde}
@@ -45,7 +45,7 @@ export function ReporteServiciosCampoTab() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Hasta</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
           <input
             type="date"
             value={hasta}
@@ -56,11 +56,11 @@ export function ReporteServiciosCampoTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <>
           <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-            <p className="text-xs text-slate-500">Cantidad de servicios</p>
+            <p className="text-xs text-[var(--color-terciario)]">Cantidad de servicios</p>
             <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{reporte.cantidadTotal}</p>
           </div>
 

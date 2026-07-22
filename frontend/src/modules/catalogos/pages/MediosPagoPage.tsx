@@ -53,14 +53,14 @@ export function MediosPagoPage() {
           type="button"
           onClick={handleCrear}
           disabled={mutacionCrear.isPending}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           Agregar
         </button>
       </div>
 
       {isLoading ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">

@@ -48,7 +48,7 @@ export function SolicitarServicioCampoDialog({
       <form onSubmit={handleSubmit(enviar)} className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Solicitar servicio de campo</h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Cliente</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Cliente</label>
         <select
           {...register('clienteId')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -62,7 +62,7 @@ export function SolicitarServicioCampoDialog({
         </select>
         {errors.clienteId && <p className="mb-2 text-sm text-red-600">{errors.clienteId.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Descripción del trabajo
         </label>
         <textarea
@@ -72,7 +72,7 @@ export function SolicitarServicioCampoDialog({
         />
         {errors.descripcionTrabajo && <p className="mb-2 text-sm text-red-600">{errors.descripcionTrabajo.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Técnico asignado (opcional)
         </label>
         <select
@@ -98,7 +98,7 @@ export function SolicitarServicioCampoDialog({
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Solicitar'}
           </button>

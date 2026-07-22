@@ -100,14 +100,14 @@ export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar 
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         {isLoading || !detalle ? (
-          <p className="text-slate-500">Cargando...</p>
+          <p className="text-[var(--color-terciario)]">Cargando...</p>
         ) : (
           <>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
                 {detalle.ordenTrabajo.equipoDescripcion}
               </h2>
-              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-[var(--color-apoyo)] dark:bg-slate-700 dark:text-slate-200">
                 {detalle.ordenTrabajo.estado}
               </span>
             </div>
@@ -233,7 +233,7 @@ export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar 
               )}
 
               {detalle.ordenTrabajo.estado === 'Rechazado' && (
-                <p className="text-sm text-slate-500">El cliente rechazó la cotización. La OT queda cerrada.</p>
+                <p className="text-sm text-[var(--color-terciario)]">El cliente rechazó la cotización. La OT queda cerrada.</p>
               )}
             </div>
           </>
@@ -257,7 +257,7 @@ function FormularioDiagnostico({ onGuardar, guardando }: { onGuardar: (descripci
   const [descripcion, setDescripcion] = useState('')
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Registrar diagnóstico</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Registrar diagnóstico</h3>
       <textarea
         value={descripcion}
         onChange={(e) => setDescripcion(e.target.value)}
@@ -268,7 +268,7 @@ function FormularioDiagnostico({ onGuardar, guardando }: { onGuardar: (descripci
         type="button"
         disabled={!descripcion.trim() || guardando}
         onClick={() => onGuardar(descripcion.trim())}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar diagnóstico'}
       </button>
@@ -280,7 +280,7 @@ function FormularioCotizacion({ onGuardar, guardando }: { onGuardar: (monto: num
   const [monto, setMonto] = useState('')
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Generar cotización de reparación</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Generar cotización de reparación</h3>
       <input
         type="number"
         step="0.01"
@@ -293,7 +293,7 @@ function FormularioCotizacion({ onGuardar, guardando }: { onGuardar: (monto: num
         type="button"
         disabled={!monto || Number(monto) < 0 || guardando}
         onClick={() => onGuardar(Number(monto))}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Generar cotización'}
       </button>
@@ -312,13 +312,13 @@ function FormularioDecision({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Decisión del cliente</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Decisión del cliente</h3>
       <div className="mb-2 flex gap-3">
         <button
           type="button"
           disabled={guardando}
           onClick={() => onGuardar({ decision: 'Aprobada', cobroDiagnosticoRechazo: null, evidenciaAprobacion: null })}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           Aprobar
         </button>
@@ -375,11 +375,11 @@ function FormularioReparacion({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Registrar reparación</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Registrar reparación</h3>
 
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Repuestos consumidos (opcional)</span>
-        <button type="button" onClick={agregarFila} className="text-xs text-slate-700 underline dark:text-slate-300">
+        <span className="text-xs text-[var(--color-terciario)]">Repuestos consumidos (opcional)</span>
+        <button type="button" onClick={agregarFila} className="text-xs text-[var(--color-apoyo)] underline dark:text-slate-300">
           Agregar producto
         </button>
       </div>
@@ -412,7 +412,7 @@ function FormularioReparacion({
         </div>
       ))}
 
-      <label className="mb-1 mt-2 block text-xs text-slate-500">Resultado de pruebas (opcional)</label>
+      <label className="mb-1 mt-2 block text-xs text-[var(--color-terciario)]">Resultado de pruebas (opcional)</label>
       <textarea
         value={resultadoPruebas}
         onChange={(e) => setResultadoPruebas(e.target.value)}
@@ -424,7 +424,7 @@ function FormularioReparacion({
         type="button"
         disabled={guardando}
         onClick={handleGuardar}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar reparación'}
       </button>
@@ -455,9 +455,9 @@ function FormularioEntrega({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Entregar equipo</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Entregar equipo</h3>
 
-      <label className="mb-1 block text-xs text-slate-500">Estado de pago</label>
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">Estado de pago</label>
       <select
         value={estadoPago}
         onChange={(e) => setEstadoPago(e.target.value as EstadoPago)}
@@ -470,7 +470,7 @@ function FormularioEntrega({
         ))}
       </select>
 
-      <label className="mb-1 block text-xs text-slate-500">Monto pagado</label>
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">Monto pagado</label>
       <input
         type="number"
         step="0.01"
@@ -481,7 +481,7 @@ function FormularioEntrega({
 
       {esSaldoPendiente && (
         <>
-          <label className="mb-1 block text-xs text-slate-500">Saldo pendiente</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Saldo pendiente</label>
           <input
             type="number"
             step="0.01"
@@ -490,7 +490,7 @@ function FormularioEntrega({
             className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
           />
 
-          <label className="mb-1 block text-xs text-slate-500">
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">
             Usuario Administrador/Propietario que autoriza
           </label>
           <select
@@ -519,7 +519,7 @@ function FormularioEntrega({
             usuarioAutorizoSaldoId: esSaldoPendiente ? usuarioAutorizoId : null,
           })
         }
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Entregar equipo'}
       </button>
@@ -540,10 +540,10 @@ function FormularioGarantia({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Registrar garantía (opcional)</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Registrar garantía (opcional)</h3>
       <div className="mb-2 grid grid-cols-2 gap-2">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Fecha de inicio</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Fecha de inicio</label>
           <input
             type="date"
             value={fechaInicio}
@@ -552,7 +552,7 @@ function FormularioGarantia({
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Fecha de fin</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Fecha de fin</label>
           <input
             type="date"
             value={fechaFin}
@@ -565,7 +565,7 @@ function FormularioGarantia({
         type="button"
         disabled={guardando || !fechaFin}
         onClick={() => onGuardar({ fechaInicio, fechaFin })}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar garantía'}
       </button>

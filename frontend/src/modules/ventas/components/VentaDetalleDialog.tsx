@@ -48,12 +48,12 @@ export function VentaDetalleDialog({ ventaId, productos, onCerrar }: VentaDetall
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         {isLoading || !venta ? (
-          <p className="text-slate-500">Cargando...</p>
+          <p className="text-[var(--color-terciario)]">Cargando...</p>
         ) : (
           <>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Venta — {venta.tipoComprobante}</h2>
-              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-[var(--color-apoyo)] dark:bg-slate-700 dark:text-slate-200">
                 {venta.estado}
               </span>
             </div>
@@ -91,7 +91,7 @@ export function VentaDetalleDialog({ ventaId, productos, onCerrar }: VentaDetall
             )}
 
             {venta.saldoPendiente != null && (
-              <p className="mb-2 text-sm text-amber-600">Saldo pendiente: S/ {venta.saldoPendiente.toFixed(2)}</p>
+              <p className="mb-2 text-sm text-[var(--color-secundario)]">Saldo pendiente: S/ {venta.saldoPendiente.toFixed(2)}</p>
             )}
 
             {venta.estado === 'Anulada' && venta.motivoAnulacion && (
@@ -169,11 +169,11 @@ function FormularioDevolucion({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Registrar devolución</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Registrar devolución</h3>
 
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Productos devueltos</span>
-        <button type="button" onClick={agregarFila} className="text-xs text-slate-700 underline dark:text-slate-300">
+        <span className="text-xs text-[var(--color-terciario)]">Productos devueltos</span>
+        <button type="button" onClick={agregarFila} className="text-xs text-[var(--color-apoyo)] underline dark:text-slate-300">
           Agregar producto
         </button>
       </div>
@@ -206,7 +206,7 @@ function FormularioDevolucion({
         </div>
       ))}
 
-      <label className="mb-1 mt-2 block text-xs text-slate-500">Motivo (opcional)</label>
+      <label className="mb-1 mt-2 block text-xs text-[var(--color-terciario)]">Motivo (opcional)</label>
       <input
         value={motivo}
         onChange={(e) => setMotivo(e.target.value)}
@@ -217,7 +217,7 @@ function FormularioDevolucion({
         type="button"
         disabled={filas.filter((f) => f.productoId && f.cantidad).length === 0 || guardando}
         onClick={handleGuardar}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar devolución'}
       </button>
@@ -230,7 +230,7 @@ function FormularioAnular({ onGuardar, guardando }: { onGuardar: (motivo: string
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Anular venta</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Anular venta</h3>
       <div className="flex gap-2">
         <input
           value={motivo}

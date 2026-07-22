@@ -51,7 +51,7 @@ export function ComprasPage() {
         <button
           type="button"
           onClick={() => setRegistrando(true)}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           Registrar compra
         </button>
@@ -60,7 +60,7 @@ export function ComprasPage() {
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {isLoading ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
@@ -85,7 +85,7 @@ export function ComprasPage() {
                   <button
                     type="button"
                     onClick={() => setVerDetalle(compra)}
-                    className="text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                    className="text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
                   >
                     Ver detalle
                   </button>
@@ -115,7 +115,7 @@ export function ComprasPage() {
             <h2 className="mb-1 text-lg font-semibold text-slate-800 dark:text-slate-100">
               Compra {verDetalle.documentoCompraTipo} {verDetalle.documentoCompraNumero}
             </h2>
-            <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mb-4 text-sm text-[var(--color-terciario)] dark:text-slate-400">
               {nombreProveedor(verDetalle.proveedorId)} — {verDetalle.fecha}
             </p>
 

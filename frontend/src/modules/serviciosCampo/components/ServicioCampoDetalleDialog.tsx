@@ -77,12 +77,12 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         {isLoading || !servicio ? (
-          <p className="text-slate-500">Cargando...</p>
+          <p className="text-[var(--color-terciario)]">Cargando...</p>
         ) : (
           <>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Servicio de campo</h2>
-              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200">
+              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-[var(--color-apoyo)] dark:bg-slate-700 dark:text-slate-200">
                 {servicio.estado}
               </span>
             </div>
@@ -188,7 +188,7 @@ function FormularioCotizar({ onGuardar, guardando }: { onGuardar: (monto: number
   const [monto, setMonto] = useState('')
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Cotizar</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Cotizar</h3>
       <div className="flex gap-2">
         <input
           type="number"
@@ -202,7 +202,7 @@ function FormularioCotizar({ onGuardar, guardando }: { onGuardar: (monto: number
           type="button"
           disabled={!monto || Number(monto) < 0 || guardando}
           onClick={() => onGuardar(Number(monto))}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           {guardando ? 'Guardando...' : 'Cotizar'}
         </button>
@@ -238,11 +238,11 @@ function FormularioCerrar({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Cerrar servicio</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Cerrar servicio</h3>
 
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-slate-500">Materiales consumidos (opcional)</span>
-        <button type="button" onClick={agregarFila} className="text-xs text-slate-700 underline dark:text-slate-300">
+        <span className="text-xs text-[var(--color-terciario)]">Materiales consumidos (opcional)</span>
+        <button type="button" onClick={agregarFila} className="text-xs text-[var(--color-apoyo)] underline dark:text-slate-300">
           Agregar producto
         </button>
       </div>
@@ -275,7 +275,7 @@ function FormularioCerrar({
         </div>
       ))}
 
-      <label className="mb-1 mt-2 block text-xs text-slate-500">Estado final</label>
+      <label className="mb-1 mt-2 block text-xs text-[var(--color-terciario)]">Estado final</label>
       <input
         value={estadoFinal}
         onChange={(e) => setEstadoFinal(e.target.value)}
@@ -283,7 +283,7 @@ function FormularioCerrar({
         className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
       />
 
-      <label className="mb-1 block text-xs text-slate-500">Observaciones (opcional)</label>
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">Observaciones (opcional)</label>
       <textarea
         value={observaciones}
         onChange={(e) => setObservaciones(e.target.value)}
@@ -295,7 +295,7 @@ function FormularioCerrar({
         type="button"
         disabled={!estadoFinal.trim() || guardando}
         onClick={handleGuardar}
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Cerrar servicio'}
       </button>
@@ -327,9 +327,9 @@ function FormularioCobrar({
 
   return (
     <div>
-      <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Registrar cobro</h3>
+      <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Registrar cobro</h3>
 
-      <label className="mb-1 block text-xs text-slate-500">Medio de pago</label>
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">Medio de pago</label>
       <select
         value={medioPagoId}
         onChange={(e) => setMedioPagoId(e.target.value)}
@@ -343,7 +343,7 @@ function FormularioCobrar({
         ))}
       </select>
 
-      <label className="mb-1 block text-xs text-slate-500">Monto pagado</label>
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">Monto pagado</label>
       <input
         type="number"
         step="0.01"
@@ -352,14 +352,14 @@ function FormularioCobrar({
         className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
       />
 
-      <label className="mb-2 flex items-center gap-2 text-xs text-slate-500">
+      <label className="mb-2 flex items-center gap-2 text-xs text-[var(--color-terciario)]">
         <input type="checkbox" checked={conSaldoPendiente} onChange={(e) => setConSaldoPendiente(e.target.checked)} />
         Queda saldo pendiente
       </label>
 
       {conSaldoPendiente && (
         <>
-          <label className="mb-1 block text-xs text-slate-500">Saldo pendiente</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Saldo pendiente</label>
           <input
             type="number"
             step="0.01"
@@ -368,7 +368,7 @@ function FormularioCobrar({
             className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
           />
 
-          <label className="mb-1 block text-xs text-slate-500">Usuario Administrador/Propietario que autoriza</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Usuario Administrador/Propietario que autoriza</label>
           <select
             value={usuarioAutorizoId}
             onChange={(e) => setUsuarioAutorizoId(e.target.value)}
@@ -395,7 +395,7 @@ function FormularioCobrar({
             usuarioAutorizoSaldoId: conSaldoPendiente ? usuarioAutorizoId : null,
           })
         }
-        className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+        className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
       >
         {guardando ? 'Guardando...' : 'Registrar cobro'}
       </button>

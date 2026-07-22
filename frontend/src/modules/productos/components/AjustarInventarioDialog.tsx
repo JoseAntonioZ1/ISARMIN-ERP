@@ -41,11 +41,11 @@ export function AjustarInventarioDialog({ producto, onGuardar, onCancelar, guard
         className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800"
       >
         <h2 className="mb-1 text-lg font-semibold text-slate-800 dark:text-slate-100">Ajustar inventario</h2>
-        <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mb-4 text-sm text-[var(--color-terciario)] dark:text-slate-400">
           {producto.nombre} — stock actual: {producto.stockActual}
         </p>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Cantidad de ajuste (positivo suma, negativo resta)
         </label>
         <input
@@ -56,7 +56,7 @@ export function AjustarInventarioDialog({ producto, onGuardar, onCancelar, guard
         />
         {errors.cantidadAjuste && <p className="mb-2 text-sm text-red-600">{errors.cantidadAjuste.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Motivo</label>
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Motivo</label>
         <textarea
           {...register('motivo')}
           rows={3}
@@ -75,7 +75,7 @@ export function AjustarInventarioDialog({ producto, onGuardar, onCancelar, guard
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Ajustar'}
           </button>

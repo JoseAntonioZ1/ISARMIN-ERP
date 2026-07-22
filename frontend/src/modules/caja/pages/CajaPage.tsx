@@ -54,7 +54,7 @@ export function CajaPage() {
   })
 
   if (isLoading) {
-    return <p className="text-slate-500">Cargando...</p>
+    return <p className="text-[var(--color-terciario)]">Cargando...</p>
   }
 
   return (
@@ -73,7 +73,7 @@ export function CajaPage() {
             <button
               type="button"
               onClick={() => setCerrando(true)}
-              className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+              className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
             >
               Cerrar caja
             </button>
@@ -82,7 +82,7 @@ export function CajaPage() {
           <button
             type="button"
             onClick={() => setAbriendo(true)}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             Abrir caja
           </button>
@@ -92,7 +92,7 @@ export function CajaPage() {
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {!caja ? (
-        <p className="text-slate-500">Nunca se ha abierto una caja. Ábrela para empezar a registrar movimientos.</p>
+        <p className="text-[var(--color-terciario)]">Nunca se ha abierto una caja. Ábrela para empezar a registrar movimientos.</p>
       ) : (
         <div className="mb-6 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
           <p className="mb-1 text-sm">
@@ -147,7 +147,7 @@ export function CajaPage() {
             ))}
             {movimientos?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-2 text-slate-500">
+                <td colSpan={5} className="px-4 py-2 text-[var(--color-terciario)]">
                   Aún no hay movimientos registrados en esta caja.
                 </td>
               </tr>

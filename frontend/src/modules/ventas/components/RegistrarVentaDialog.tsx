@@ -96,7 +96,7 @@ export function RegistrarVentaDialog({
 
         <div className="mb-3 grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-xs text-slate-500">Cliente (opcional)</label>
+            <label className="mb-1 block text-xs text-[var(--color-terciario)]">Cliente (opcional)</label>
             <select
               value={clienteId}
               onChange={(e) => setClienteId(e.target.value)}
@@ -111,7 +111,7 @@ export function RegistrarVentaDialog({
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-xs text-slate-500">Tipo de comprobante</label>
+            <label className="mb-1 block text-xs text-[var(--color-terciario)]">Tipo de comprobante</label>
             <select
               value={tipoComprobante}
               onChange={(e) => setTipoComprobante(e.target.value as TipoComprobante)}
@@ -127,8 +127,8 @@ export function RegistrarVentaDialog({
         </div>
 
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500">Productos</span>
-          <button type="button" onClick={agregarFilaDetalle} className="text-xs text-slate-700 underline dark:text-slate-300">
+          <span className="text-xs font-semibold text-[var(--color-terciario)]">Productos</span>
+          <button type="button" onClick={agregarFilaDetalle} className="text-xs text-[var(--color-apoyo)] underline dark:text-slate-300">
             Agregar producto
           </button>
         </div>
@@ -169,13 +169,13 @@ export function RegistrarVentaDialog({
           </div>
         ))}
 
-        <div className="mb-3 mt-2 text-right text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <div className="mb-3 mt-2 text-right text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">
           Total: S/ {total.toFixed(2)}
         </div>
 
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-500">Pagos</span>
-          <button type="button" onClick={agregarFilaPago} className="text-xs text-slate-700 underline dark:text-slate-300">
+          <span className="text-xs font-semibold text-[var(--color-terciario)]">Pagos</span>
+          <button type="button" onClick={agregarFilaPago} className="text-xs text-[var(--color-apoyo)] underline dark:text-slate-300">
             Agregar pago
           </button>
         </div>
@@ -210,13 +210,13 @@ export function RegistrarVentaDialog({
 
         <div className="mb-2 text-right text-sm text-slate-600 dark:text-slate-400">
           Pagado: S/ {montoPagado.toFixed(2)}
-          {saldoPendiente > 0 && <span className="ml-2 text-amber-600">— Saldo pendiente: S/ {saldoPendiente.toFixed(2)}</span>}
+          {saldoPendiente > 0 && <span className="ml-2 text-[var(--color-secundario)]">— Saldo pendiente: S/ {saldoPendiente.toFixed(2)}</span>}
           {saldoPendiente < 0 && <span className="ml-2 text-red-600">— El monto pagado excede el total</span>}
         </div>
 
         {saldoPendiente > 0 && (
           <div className="mb-3">
-            <label className="mb-1 block text-xs text-slate-500">Usuario Administrador/Propietario que autoriza el saldo pendiente</label>
+            <label className="mb-1 block text-xs text-[var(--color-terciario)]">Usuario Administrador/Propietario que autoriza el saldo pendiente</label>
             <select
               value={usuarioAutorizoId}
               onChange={(e) => setUsuarioAutorizoId(e.target.value)}
@@ -244,7 +244,7 @@ export function RegistrarVentaDialog({
             type="button"
             disabled={!puedeGuardar}
             onClick={handleGuardar}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Registrar venta'}
           </button>

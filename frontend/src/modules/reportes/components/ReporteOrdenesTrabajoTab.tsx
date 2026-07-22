@@ -17,7 +17,7 @@ export function ReporteOrdenesTrabajoTab() {
     <div>
       <div className="mb-4 flex gap-3">
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Estado</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Estado</label>
           <select
             value={estado}
             onChange={(e) => setEstado(e.target.value as EstadoOt | '')}
@@ -32,7 +32,7 @@ export function ReporteOrdenesTrabajoTab() {
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Desde</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
           <input
             type="date"
             value={desde}
@@ -41,7 +41,7 @@ export function ReporteOrdenesTrabajoTab() {
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-500">Hasta</label>
+          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
           <input
             type="date"
             value={hasta}
@@ -52,11 +52,11 @@ export function ReporteOrdenesTrabajoTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <>
           <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-            <p className="text-xs text-slate-500">Cantidad de órdenes</p>
+            <p className="text-xs text-[var(--color-terciario)]">Cantidad de órdenes</p>
             <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{reporte.cantidadTotal}</p>
           </div>
 

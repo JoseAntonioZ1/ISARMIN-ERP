@@ -47,7 +47,7 @@ export function RegistrarMovimientoCajaDialog({ onGuardar, onCancelar, guardando
       >
         <h2 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">Registrar movimiento</h2>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Concepto</label>
+        <label className="mb-1 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Concepto</label>
         <select
           {...register('concepto')}
           className="mb-1 w-full rounded border border-slate-300 px-3 py-2 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -59,7 +59,7 @@ export function RegistrarMovimientoCajaDialog({ onGuardar, onCancelar, guardando
           ))}
         </select>
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">Monto</label>
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">Monto</label>
         <input
           type="number"
           step="0.01"
@@ -68,7 +68,7 @@ export function RegistrarMovimientoCajaDialog({ onGuardar, onCancelar, guardando
         />
         {errors.monto && <p className="mb-2 text-sm text-red-600">{errors.monto.message}</p>}
 
-        <label className="mb-1 mt-3 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
           Descripción (opcional)
         </label>
         <input
@@ -87,7 +87,7 @@ export function RegistrarMovimientoCajaDialog({ onGuardar, onCancelar, guardando
           <button
             type="submit"
             disabled={guardando}
-            className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+            className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
           >
             {guardando ? 'Guardando...' : 'Registrar'}
           </button>

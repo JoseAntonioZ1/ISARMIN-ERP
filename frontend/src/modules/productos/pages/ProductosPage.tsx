@@ -77,7 +77,7 @@ export function ProductosPage() {
         <button
           type="button"
           onClick={() => setCreando(true)}
-          className="rounded bg-[var(--color-acento)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-acento)] dark:hover:brightness-110"
+          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           Nuevo producto
         </button>
@@ -93,7 +93,7 @@ export function ProductosPage() {
       {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       {isLoading ? (
-        <p className="text-slate-500">Cargando...</p>
+        <p className="text-[var(--color-terciario)]">Cargando...</p>
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
@@ -122,21 +122,21 @@ export function ProductosPage() {
                   <button
                     type="button"
                     onClick={() => setEditando(producto)}
-                    className="mr-3 text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                    className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
                   >
                     Editar
                   </button>
                   <button
                     type="button"
                     onClick={() => setAjustando(producto)}
-                    className="mr-3 text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                    className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
                   >
                     Ajustar
                   </button>
                   <button
                     type="button"
                     onClick={() => setVerKardex(producto)}
-                    className="mr-3 text-slate-700 underline hover:text-slate-900 dark:text-slate-300"
+                    className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
                   >
                     Kardex
                   </button>
