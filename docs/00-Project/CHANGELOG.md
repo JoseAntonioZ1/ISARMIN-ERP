@@ -6,6 +6,17 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.21.1] - 22/07/2026
+
+### Agregado
+
+- **Logo del proyecto como asset estático — decisión tomada tras consulta directa del propietario ("¿es mejor así o como estaba?")**: dado que ISARMIN ERP es un proyecto propio de una sola empresa (no un producto multiempresa/white-label), el logo dejó de depender exclusivamente de una carga manual vía Configuración → Empresa (que además se perdía cada vez que la base de datos se reseteaba en las verificaciones E2E) y ahora tiene un valor por defecto embebido en el propio build del frontend: `frontend/public/assets/logo_isarmin.png`, servido por Vite igual que cualquier otro asset estático (funciona sin internet, sin distinto al `favicon.svg` genérico que reemplaza).
+  - El campo `Logo` en base de datos **no se eliminó ni cambió de tipo** — sigue existiendo para el caso de que el propietario quiera reemplazar el logo desde la UI sin necesidad de un nuevo build; simplemente ahora actúa como *override* opcional sobre el asset por defecto (`branding?.logo ?? LOGO_PREDETERMINADO`), en vez de ser la única fuente posible.
+  - Aplicado en los 4 lugares donde se mostraba el logo: sidebar (`AppLayout`), login, pantalla de inicio y favicon dinámico (`AplicarBranding`); también reemplaza el favicon estático por defecto en `index.html` (antes el ícono genérico de Vite).
+  - Sin cambios de backend — el archivo de imagen en sí queda pendiente de que el propietario lo coloque en `frontend/public/assets/logo_isarmin.png`.
+
+---
+
 ## [0.21.0] - 22/07/2026
 
 ### Agregado

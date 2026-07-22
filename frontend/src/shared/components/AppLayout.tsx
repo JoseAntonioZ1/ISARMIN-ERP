@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { NavLink, Outlet, useNavigate } from 'react-router'
 import { authApi } from '@/modules/usuarios/api/authApi'
+import { LOGO_PREDETERMINADO } from '@/shared/constants/branding'
 import { useBranding } from '@/shared/hooks/useBranding'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
@@ -78,7 +79,7 @@ export function AppLayout() {
     <div className="flex h-screen bg-[var(--color-fondo)] dark:bg-slate-900">
       <aside className="flex w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
         <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-4 dark:border-slate-700">
-          {branding?.logo && <img src={branding.logo} alt="Logo" className="h-8 w-8 flex-shrink-0 object-contain" />}
+          <img src={branding?.logo ?? LOGO_PREDETERMINADO} alt="Logo" className="h-8 w-8 flex-shrink-0 object-contain" />
           <span className="truncate font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</span>
         </div>
 

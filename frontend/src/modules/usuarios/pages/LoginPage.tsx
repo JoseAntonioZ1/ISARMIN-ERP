@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router'
 import { z } from 'zod'
 import { authApi } from '@/modules/usuarios/api/authApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { LOGO_PREDETERMINADO } from '@/shared/constants/branding'
 import { useBranding } from '@/shared/hooks/useBranding'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
@@ -62,7 +63,7 @@ export function LoginPage() {
         className="w-full max-w-sm rounded-lg border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800"
       >
         <div className="mb-6 flex flex-col items-center gap-2">
-          {branding?.logo && <img src={branding.logo} alt="Logo" className="h-16 w-16 object-contain" />}
+          <img src={branding?.logo ?? LOGO_PREDETERMINADO} alt="Logo" className="h-16 w-16 object-contain" />
           <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</h1>
         </div>
 

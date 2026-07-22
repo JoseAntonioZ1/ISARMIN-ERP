@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { LOGO_PREDETERMINADO } from '@/shared/constants/branding'
 import { useBranding } from '@/shared/hooks/useBranding'
 
 const COLOR_PRINCIPAL_PREDETERMINADO = '#EE2027' // rojo de marca ISARMIN — valor por defecto hasta que se configure otro
@@ -12,16 +13,14 @@ export function AplicarBranding() {
 
     document.title = `${branding.razonSocial} — ERP`
 
-    if (branding.logo) {
-      let icono = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
-      if (!icono) {
-        icono = document.createElement('link')
-        icono.rel = 'icon'
-        document.head.appendChild(icono)
-      }
-      icono.removeAttribute('type')
-      icono.href = branding.logo
+    let icono = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    if (!icono) {
+      icono = document.createElement('link')
+      icono.rel = 'icon'
+      document.head.appendChild(icono)
     }
+    icono.removeAttribute('type')
+    icono.href = branding.logo ?? LOGO_PREDETERMINADO
 
     document.documentElement.style.setProperty('--color-principal', branding.colorAcento ?? COLOR_PRINCIPAL_PREDETERMINADO)
   }, [branding])
