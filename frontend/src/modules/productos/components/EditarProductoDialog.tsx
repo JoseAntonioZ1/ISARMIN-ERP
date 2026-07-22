@@ -1,8 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import type { ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import type { Categoria, UnidadMedida } from '@/modules/catalogos/api/catalogosApi'
 import type { DatosEditarProducto, Producto } from '@/modules/productos/api/productosApi'
+import { archivoABase64, TAMANO_MAXIMO_IMAGEN_BYTES } from '@/shared/utils/archivos'
 
 const numeroObligatorio = (mensaje: string) =>
   z
@@ -47,6 +50,9 @@ export function EditarProductoDialog({
   onCancelar,
   guardando,
 }: EditarProductoDialogProps) {
+  const [imagen, setImagen] = useState<string | null>(producto.imagen)
+  const [errorImagen, setErrorImagen] = useState<string | null>(null)
+
   const {
     register,
     handleSubmit,
@@ -66,6 +72,20 @@ export function EditarProductoDialog({
     },
   })
 
+  const handleSeleccionarImagen = async (e: ChangeEvent<HTMLInputElement>) => {
+    const archivo = e.target.files?.[0]
+    e.target.value = ''
+    if (!archivo) return
+
+    if (archivo.size > TAMANO_MAXIMO_IMAGEN_BYTES) {
+      setErrorImagen('La imagen no puede pesar más de 1.5 MB. Usa una imagen más liviana (recomendado: PNG o JPG comprimido).')
+      return
+    }
+
+    setErrorImagen(null)
+    setImagen(await archivoABase64(archivo))
+  }
+
   const onSubmit = (datos: FormularioEditarProducto) =>
     onGuardar({
       codigoInterno: datos.codigoInterno,
@@ -77,6 +97,7 @@ export function EditarProductoDialog({
       precioVenta: Number(datos.precioVenta),
       codigoBarras: datos.codigoBarras || null,
       stockMinimo: datos.stockMinimo ? Number(datos.stockMinimo) : null,
+      imagen,
     })
 
   return (
@@ -198,6 +219,25 @@ export function EditarProductoDialog({
         <p className="mt-3 text-xs text-[var(--color-terciario)] dark:text-slate-400">
           El stock actual ({producto.stockActual}) no se edita aquí — se ajusta desde el módulo de Inventario.
         </p>
+
+        <label className="mb-1 mt-3 block text-sm font-medium text-[var(--color-apoyo)] dark:text-slate-300">
+          Imagen (opcional)
+        </label>
+        {errorImagen && <p className="mb-2 text-sm text-red-600">{errorImagen}</p>}
+        {imagen && (
+          <div className="mb-2 flex items-center gap-3">
+            <img src={imagen} alt="Imagen del producto" className="h-16 w-16 rounded border border-slate-300 object-contain dark:border-slate-600" />
+            <button type="button" onClick={() => setImagen(null)} className="text-xs text-red-600 underline hover:text-red-800">
+              Quitar imagen
+            </button>
+          </div>
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleSeleccionarImagen}
+          className="w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+        />
 
         <div className="mt-5 flex justify-end gap-3">
           <button

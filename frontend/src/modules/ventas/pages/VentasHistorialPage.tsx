@@ -1,19 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { mediosPagoApi } from '@/modules/catalogos/api/catalogosApi'
 import { clientesApi } from '@/modules/clientes/api/clientesApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
-import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
-import { RegistrarVentaDialog } from '@/modules/ventas/components/RegistrarVentaDialog'
 import { VentaDetalleDialog } from '@/modules/ventas/components/VentaDetalleDialog'
-import { type DetalleVentaInput, type PagoVentaInput, type TipoComprobante, ventasApi } from '@/modules/ventas/api/ventasApi'
-import { ApiError } from '@/shared/api/httpClient'
+import { ventasApi } from '@/modules/ventas/api/ventasApi'
 
-export function VentasPage() {
-  const queryClient = useQueryClient()
-  const [registrando, setRegistrando] = useState(false)
+export function VentasHistorialPage() {
   const [verDetalle, setVerDetalle] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   const { data: listado, isLoading } = useQuery({
     queryKey: ['ventas', 'lista'],
@@ -30,48 +23,11 @@ export function VentasPage() {
     queryFn: () => productosApi.buscar(undefined, 1, 200),
   })
 
-  const { data: mediosPago } = useQuery({ queryKey: ['medios-pago'], queryFn: mediosPagoApi.listar })
-
-  const { data: usuarios } = useQuery({ queryKey: ['usuarios', 'todos'], queryFn: () => usuariosApi.listar(1, 200) })
-
   const nombreCliente = (id: string | null) => (id ? clientes?.datos.find((c) => c.id === id)?.nombreRazonSocial ?? '—' : 'Sin cliente')
-
-  const mutacionRegistrar = useMutation({
-    mutationFn: ({
-      clienteId,
-      tipoComprobante,
-      detalles,
-      pagos,
-      usuarioAutorizoSaldoId,
-    }: {
-      clienteId: string | null
-      tipoComprobante: TipoComprobante
-      detalles: DetalleVentaInput[]
-      pagos: PagoVentaInput[]
-      usuarioAutorizoSaldoId: string | null
-    }) => ventasApi.registrar(clienteId, tipoComprobante, detalles, pagos, usuarioAutorizoSaldoId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ventas', 'lista'] })
-      queryClient.invalidateQueries({ queryKey: ['productos', 'todos'] })
-      setRegistrando(false)
-    },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo registrar la venta.'),
-  })
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Ventas</h1>
-        <button
-          type="button"
-          onClick={() => setRegistrando(true)}
-          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
-        >
-          Nueva venta
-        </button>
-      </div>
-
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+      <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Historial de Ventas</h1>
 
       {isLoading ? (
         <p className="text-[var(--color-terciario)]">Cargando...</p>
@@ -108,21 +64,6 @@ export function VentasPage() {
             ))}
           </tbody>
         </table>
-      )}
-
-      {registrando && (
-        <RegistrarVentaDialog
-          clientes={clientes?.datos ?? []}
-          productos={productos?.datos ?? []}
-          mediosPago={mediosPago ?? []}
-          usuarios={usuarios?.datos ?? []}
-          onGuardar={(datos) => {
-            setError(null)
-            mutacionRegistrar.mutate(datos)
-          }}
-          onCancelar={() => setRegistrando(false)}
-          guardando={mutacionRegistrar.isPending}
-        />
       )}
 
       {verDetalle && (

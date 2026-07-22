@@ -65,7 +65,8 @@ public class EditarProductoCommandHandler : ICommandHandler<EditarProductoComman
             comando.PrecioVenta,
             comando.Marca,
             comando.CodigoBarras,
-            comando.StockMinimo);
+            comando.StockMinimo,
+            comando.Imagen);
 
         await _productoRepository.GuardarCambiosAsync(cancellationToken);
 

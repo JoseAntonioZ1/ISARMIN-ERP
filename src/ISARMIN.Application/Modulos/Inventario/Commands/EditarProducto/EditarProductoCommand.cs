@@ -10,4 +10,5 @@ public record EditarProductoCommand(
     decimal PrecioVenta,
     string? Marca,
     string? CodigoBarras,
-    decimal? StockMinimo);
+    decimal? StockMinimo,
+    string? Imagen);

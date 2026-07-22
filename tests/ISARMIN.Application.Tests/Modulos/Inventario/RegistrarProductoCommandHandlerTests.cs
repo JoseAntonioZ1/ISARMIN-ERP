@@ -25,7 +25,8 @@ public class RegistrarProductoCommandHandlerTests
         new(_productoRepository.Object, _categoriaRepository.Object, _unidadMedidaRepository.Object, _validator);
 
     private static RegistrarProductoCommand ComandoValido() => new(
-        "COD-001", "Taladro percutor", Guid.NewGuid(), Guid.NewGuid(), 100m, 150m, 10m, "Bosch", "7501234567890", 2m);
+        "COD-001", "Taladro percutor", Guid.NewGuid(), Guid.NewGuid(), 100m, 150m, 10m, "Bosch", "7501234567890", 2m,
+        "data:image/png;base64,abc123");
 
     [Fact]
     public async Task ManejarAsync_DatosValidos_RegistraElProducto()
@@ -35,6 +36,7 @@ public class RegistrarProductoCommandHandlerTests
 
         Assert.Equal("COD-001", resultado.CodigoInterno);
         Assert.Equal(50m, resultado.Margen);
+        Assert.Equal("data:image/png;base64,abc123", resultado.Imagen);
         _productoRepository.Verify(r => r.Agregar(It.IsAny<Producto>()), Times.Once);
         _productoRepository.Verify(r => r.GuardarCambiosAsync(It.IsAny<CancellationToken>()), Times.Once);
     }

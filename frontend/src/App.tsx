@@ -13,7 +13,9 @@ import { RolesPage } from '@/modules/roles/pages/RolesPage'
 import { ReportesPage } from '@/modules/reportes/pages/ReportesPage'
 import { ServiciosCampoPage } from '@/modules/serviciosCampo/pages/ServiciosCampoPage'
 import { TallerPage } from '@/modules/taller/pages/TallerPage'
-import { VentasPage } from '@/modules/ventas/pages/VentasPage'
+import { VentaPosPage } from '@/modules/ventas/pages/VentaPosPage'
+import { VentasHistorialPage } from '@/modules/ventas/pages/VentasHistorialPage'
+import { VentasLayout } from '@/modules/ventas/pages/VentasLayout'
 import { LoginPage } from '@/modules/usuarios/pages/LoginPage'
 import { UsuariosPage } from '@/modules/usuarios/pages/UsuariosPage'
 import { queryClient } from '@/shared/api/queryClient'
@@ -45,7 +47,10 @@ function App() {
             <Route path="/caja" element={<CajaPage />} />
             <Route path="/taller" element={<TallerPage />} />
             <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
-            <Route path="/ventas" element={<VentasPage />} />
+            <Route path="/ventas" element={<VentasLayout />}>
+              <Route index element={<VentaPosPage />} />
+              <Route path="historial" element={<VentasHistorialPage />} />
+            </Route>
             <Route path="/reportes" element={<ReportesPage />} />
             <Route path="/configuracion" element={<ConfiguracionPage />} />
             <Route path="/configuracion/empresa" element={<ConfiguracionEmpresaPage />} />

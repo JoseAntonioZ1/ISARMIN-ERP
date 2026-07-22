@@ -6,6 +6,23 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.22.0] - 22/07/2026
+
+### Agregado
+
+- **Rediseño de Ventas como Punto de Venta (POS) — tercer pedido de mejora post-Fase 4 del propietario, sin RF/UC asociado directamente (evolución de UC-14/RF-038 a RF-041).** La pantalla de registrar venta pasó de un diálogo modal con filas de selects a una experiencia de 3 paneles (categorías | buscador y grilla de productos | carrito y cobro), pensada para el uso diario de caja.
+  - **Backend — `Producto.Imagen`:** mismo patrón que `ConfiguracionEmpresa.Logo` (string Base64 embebido, sin validación de formato ni límite en el servidor, límite de 1.5 MB solo en frontend). Migración `AgregarImagenProducto` (columna `imagen text` nullable). `Domain`, `Application` (`RegistrarProductoCommand`/`EditarProductoCommand`/`ProductoDto`), `Infrastructure` (`ProductoConfiguration`) y `API` (`ProductosController`) actualizados; parámetro nuevo al final de constructores/DTOs, sin romper las llamadas existentes. 2 pruebas nuevas (251/251 en todo el backend).
+  - **Frontend — utilidad compartida** (`shared/utils/archivos.ts`): se extrajo el patrón de carga de imagen (`archivoABase64` + límite de 1.5 MB) ya usado en el logo de empresa, reutilizado ahora también en `CrearProductoDialog`/`EditarProductoDialog` (nuevo campo de imagen por producto).
+  - **`productosApi.buscar`** expone ahora el parámetro `categoria` que el backend ya soportaba (`BuscarProductosQuery.CategoriaId`) pero el frontend no exponía.
+  - **Nueva pantalla `/ventas` (POS)**: panel izquierdo con categorías (buscador + tarjetas con ícono heurístico por nombre — no existe campo de ícono en `Categoria`), panel central con buscador grande (por nombre, código interno o código de barras — ya soportado por `ProductoRepository`, verificado E2E) y grilla de productos con imagen/precio/stock, panel derecho con carrito (cantidad +/-, descuento % por línea aplicado directo sobre `precioUnitario` sin cambios de API), resumen con IGV desglosado (18%, cálculo asumiendo precio ya incluido — **no es un dato almacenado, solo se muestra**), tarjetas de medio de pago, monto recibido/vuelto para efectivo, y el botón "Finalizar Venta" reutilizando exactamente la regla de negocio de saldo pendiente con autorización ya existente (RN-031).
+  - **Lector de código de barras**: sin integración especial — los lectores USB/Bluetooth típicos emulan un teclado (HID keyboard wedge). El buscador central detecta Enter y, si el texto coincide exactamente con un `codigoBarras` del resultado actual, agrega el producto directo al carrito.
+  - **Historial movido a `/ventas/historial`** (tabla + anular + devoluciones, sin cambios de comportamiento), con dos pestañas simples (`VentasLayout`) para alternar entre "Punto de Venta" e "Historial". Se eliminaron `VentasPage.tsx`/`RegistrarVentaDialog.tsx` (reemplazados, sin referencias restantes).
+  - **Deliberadamente fuera de alcance:** el estado del carrito vive como estado local de la pantalla (no un store global), ya que no necesita persistir entre rutas — mismo criterio que ya usaba el diálogo anterior con `useState`.
+
+Verificado: 251/251 pruebas de backend; `npm run build` (1988 módulos) y `npx oxlint` sin advertencias; E2E manual contra Postgres real vía API — producto registrado con imagen persistida correctamente, filtro por categoría y búsqueda exacta por código de barras confirmados contra datos reales del catálogo. **No se realizó una prueba visual completa en navegador** (sin herramienta de automatización de navegador disponible en este entorno) — queda pendiente que el propietario recorra la pantalla POS una vez suba el logo/pruebe con datos reales.
+
+---
+
 ## [0.21.1] - 22/07/2026
 
 ### Agregado

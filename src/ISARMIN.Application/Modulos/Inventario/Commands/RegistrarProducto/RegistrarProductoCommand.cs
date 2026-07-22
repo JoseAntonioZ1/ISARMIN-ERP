@@ -10,4 +10,5 @@ public record RegistrarProductoCommand(
     decimal StockInicial,
     string? Marca,
     string? CodigoBarras,
-    decimal? StockMinimo);
+    decimal? StockMinimo,
+    string? Imagen);

@@ -15,7 +15,8 @@ public record ProductoDto(
     decimal Margen,
     decimal StockActual,
     decimal? StockMinimo,
-    string Estado);
+    string Estado,
+    string? Imagen);
 
 public static class ProductoMapper
 {
@@ -32,5 +33,6 @@ public static class ProductoMapper
         producto.Margen,
         producto.StockActual,
         producto.StockMinimo,
-        producto.Estado.ToString());
+        producto.Estado.ToString(),
+        producto.Imagen);
 }

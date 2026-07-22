@@ -46,6 +46,9 @@ public class ProductoConfiguration : IEntityTypeConfiguration<Producto>
         builder.Property(p => p.StockMinimo)
             .HasPrecision(12, 3);
 
+        builder.Property(p => p.Imagen)
+            .HasColumnType("text");
+
         builder.Property(p => p.Estado)
             .HasConversion<string>()
             .HasMaxLength(20)

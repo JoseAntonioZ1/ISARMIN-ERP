@@ -3,18 +3,9 @@ import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { configuracionEmpresaApi } from '@/modules/catalogos/api/catalogosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { archivoABase64, TAMANO_MAXIMO_IMAGEN_BYTES } from '@/shared/utils/archivos'
 
-const TAMANO_MAXIMO_LOGO_BYTES = 1.5 * 1024 * 1024 // 1.5 MB — el logo queda embebido (Base64) en la base de datos, no como archivo aparte
 const COLOR_PRINCIPAL_PREDETERMINADO = '#EE2027' // rojo de marca ISARMIN
-
-function archivoABase64(archivo: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const lector = new FileReader()
-    lector.onload = () => resolve(lector.result as string)
-    lector.onerror = () => reject(lector.error)
-    lector.readAsDataURL(archivo)
-  })
-}
 
 export function ConfiguracionEmpresaPage() {
   const queryClient = useQueryClient()
@@ -78,7 +69,7 @@ export function ConfiguracionEmpresaPage() {
     e.target.value = ''
     if (!archivo) return
 
-    if (archivo.size > TAMANO_MAXIMO_LOGO_BYTES) {
+    if (archivo.size > TAMANO_MAXIMO_IMAGEN_BYTES) {
       setError('El logo no puede pesar más de 1.5 MB. Usa una imagen más liviana (recomendado: PNG o JPG comprimido).')
       return
     }

@@ -18,6 +18,7 @@ public class Producto : Entity
     public decimal StockActual { get; private set; }
     public decimal? StockMinimo { get; private set; }
     public EstadoRegistro Estado { get; private set; }
+    public string? Imagen { get; private set; }
 
     /// <summary>Margen calculado (precio de venta - costo de referencia), no persistido (RF-023).</summary>
     public decimal Margen => PrecioVenta - CostoReferencia;
@@ -36,7 +37,8 @@ public class Producto : Entity
         decimal stockInicial,
         string? marca = null,
         string? codigoBarras = null,
-        decimal? stockMinimo = null)
+        decimal? stockMinimo = null,
+        string? imagen = null)
     {
         ValidarCodigoInterno(codigoInterno);
         ValidarNombre(nombre);
@@ -53,6 +55,7 @@ public class Producto : Entity
         Marca = marca;
         CodigoBarras = codigoBarras;
         StockMinimo = stockMinimo;
+        Imagen = imagen;
         Estado = EstadoRegistro.Activo;
     }
 
@@ -65,7 +68,8 @@ public class Producto : Entity
         decimal precioVenta,
         string? marca,
         string? codigoBarras,
-        decimal? stockMinimo)
+        decimal? stockMinimo,
+        string? imagen)
     {
         ValidarCodigoInterno(codigoInterno);
         ValidarNombre(nombre);
@@ -81,6 +85,7 @@ public class Producto : Entity
         Marca = marca;
         CodigoBarras = codigoBarras;
         StockMinimo = stockMinimo;
+        Imagen = imagen;
     }
 
     public void Activar() => Estado = EstadoRegistro.Activo;

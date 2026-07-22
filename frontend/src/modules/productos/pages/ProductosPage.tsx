@@ -99,9 +99,11 @@ export function ProductosPage() {
           <thead className="bg-slate-100 dark:bg-slate-700">
             <tr>
               <th className="px-4 py-2">Código</th>
+              <th className="px-4 py-2">Código de barras</th>
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Unidad</th>
+              <th className="px-4 py-2">Costo</th>
               <th className="px-4 py-2">Precio</th>
               <th className="px-4 py-2">Stock</th>
               <th className="px-4 py-2">Estado</th>
@@ -112,9 +114,11 @@ export function ProductosPage() {
             {listado?.datos.map((producto) => (
               <tr key={producto.id} className="border-t border-slate-200 dark:border-slate-700">
                 <td className="px-4 py-2">{producto.codigoInterno}</td>
+                <td className="px-4 py-2">{producto.codigoBarras}</td>
                 <td className="px-4 py-2">{producto.nombre}</td>
                 <td className="px-4 py-2">{nombreCategoria(producto.categoriaId)}</td>
                 <td className="px-4 py-2">{nombreUnidadMedida(producto.unidadMedidaId)}</td>
+                <td className="px-4 py-2">{producto.costoReferencia.toFixed(2)}</td>
                 <td className="px-4 py-2">{producto.precioVenta.toFixed(2)}</td>
                 <td className="px-4 py-2">{producto.stockActual}</td>
                 <td className="px-4 py-2">{producto.estado}</td>

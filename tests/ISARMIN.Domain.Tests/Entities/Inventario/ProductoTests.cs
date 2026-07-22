@@ -60,6 +60,17 @@ public class ProductoTests
         Assert.Equal(10m, producto.StockActual);
         Assert.Null(producto.StockMinimo);
         Assert.Null(producto.CodigoBarras);
+        Assert.Null(producto.Imagen);
+    }
+
+    [Fact]
+    public void Constructor_ConImagen_AsignaLaImagen()
+    {
+        var producto = new Producto(
+            "COD-001", "Taladro", Guid.NewGuid(), Guid.NewGuid(), 100m, 150m, 10m,
+            imagen: "data:image/png;base64,abc123");
+
+        Assert.Equal("data:image/png;base64,abc123", producto.Imagen);
     }
 
     [Fact]
@@ -69,7 +80,9 @@ public class ProductoTests
         var nuevaCategoria = Guid.NewGuid();
         var nuevaUnidad = Guid.NewGuid();
 
-        producto.ActualizarDatos("COD-002", "Taladro percutor 1/2", nuevaCategoria, nuevaUnidad, 120m, 180m, "Bosch", "7501234567890", 5m);
+        producto.ActualizarDatos(
+            "COD-002", "Taladro percutor 1/2", nuevaCategoria, nuevaUnidad, 120m, 180m,
+            "Bosch", "7501234567890", 5m, "data:image/png;base64,def456");
 
         Assert.Equal("COD-002", producto.CodigoInterno);
         Assert.Equal("Taladro percutor 1/2", producto.Nombre);
@@ -81,6 +94,7 @@ public class ProductoTests
         Assert.Equal("7501234567890", producto.CodigoBarras);
         Assert.Equal(5m, producto.StockMinimo);
         Assert.Equal(10m, producto.StockActual);
+        Assert.Equal("data:image/png;base64,def456", producto.Imagen);
     }
 
     [Fact]

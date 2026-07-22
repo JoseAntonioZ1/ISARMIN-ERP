@@ -60,7 +60,8 @@ public class RegistrarProductoCommandHandler : ICommandHandler<RegistrarProducto
             comando.StockInicial,
             comando.Marca,
             comando.CodigoBarras,
-            comando.StockMinimo);
+            comando.StockMinimo,
+            comando.Imagen);
 
         _productoRepository.Agregar(producto);
         await _productoRepository.GuardarCambiosAsync(cancellationToken);

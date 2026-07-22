@@ -57,7 +57,7 @@ public class ProductosController : ControllerBase
         var comando = new RegistrarProductoCommand(
             request.CodigoInterno, request.Nombre, request.CategoriaId, request.UnidadMedidaId,
             request.CostoReferencia, request.PrecioVenta, request.StockInicial,
-            request.Marca, request.CodigoBarras, request.StockMinimo);
+            request.Marca, request.CodigoBarras, request.StockMinimo, request.Imagen);
         var producto = await _registrarHandler.ManejarAsync(comando, cancellationToken);
         return CreatedAtAction(nameof(Buscar), new { }, producto);
     }
@@ -68,7 +68,8 @@ public class ProductosController : ControllerBase
     {
         var comando = new EditarProductoCommand(
             id, request.CodigoInterno, request.Nombre, request.CategoriaId, request.UnidadMedidaId,
-            request.CostoReferencia, request.PrecioVenta, request.Marca, request.CodigoBarras, request.StockMinimo);
+            request.CostoReferencia, request.PrecioVenta, request.Marca, request.CodigoBarras, request.StockMinimo,
+            request.Imagen);
         var producto = await _editarHandler.ManejarAsync(comando, cancellationToken);
         return Ok(producto);
     }
@@ -114,7 +115,8 @@ public record RegistrarProductoRequest(
     decimal StockInicial,
     string? Marca,
     string? CodigoBarras,
-    decimal? StockMinimo);
+    decimal? StockMinimo,
+    string? Imagen);
 
 public record EditarProductoRequest(
     string CodigoInterno,
@@ -125,7 +127,8 @@ public record EditarProductoRequest(
     decimal PrecioVenta,
     string? Marca,
     string? CodigoBarras,
-    decimal? StockMinimo);
+    decimal? StockMinimo,
+    string? Imagen);
 
 public record CambiarEstadoProductoRequest(bool Activo);
 
