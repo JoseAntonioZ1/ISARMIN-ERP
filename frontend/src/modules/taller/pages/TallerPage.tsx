@@ -105,11 +105,11 @@ export function TallerPage() {
             return (
               <div
                 key={estado}
-                className={`flex w-64 flex-shrink-0 flex-col rounded-lg border ${estado === 'Rechazado' ? 'opacity-80' : ''} border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/50`}
+                className={`flex w-64 flex-shrink-0 flex-col rounded-lg border ${estado === 'Rechazado' ? 'opacity-80' : ''} border-slate-200 bg-[var(--color-fondo)] dark:border-slate-700 dark:bg-slate-900/50`}
               >
                 <div className="flex items-center gap-2 border-b border-slate-200 p-3 dark:border-slate-700">
                   <Icono className="h-4 w-4 flex-shrink-0" />
-                  <span className="flex-1 text-sm font-semibold text-slate-700 dark:text-slate-200">{visual.etiqueta}</span>
+                  <span className="flex-1 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-200">{visual.etiqueta}</span>
                   <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-slate-700 dark:text-slate-300">
                     {ordenes.length}
                   </span>

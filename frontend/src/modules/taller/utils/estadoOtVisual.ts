@@ -30,14 +30,22 @@ export const ESTADOS_OT_VISUAL: Record<EstadoOt, EstadoVisual> = {
   Cotizado: {
     etiqueta: 'Cotizado',
     icono: FileText,
-    clase: 'text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-900',
+    // Mismo tono que --color-secundario (amarillo de marca) — se usa la variable directamente en vez
+    // de amber-* de Tailwind para que se note que es el amarillo de ISARMIN, no un ámbar genérico.
+    clase: 'text-[var(--color-secundario)] border-[var(--color-secundario)]/30 bg-[var(--color-secundario)]/10',
   },
   Aprobado: {
     etiqueta: 'Aprobado',
     icono: CircleCheck,
     clase: 'text-emerald-600 border-emerald-200 bg-emerald-50 dark:bg-emerald-950/40 dark:border-emerald-900',
   },
-  Rechazado: { etiqueta: 'Rechazado', icono: XCircle, clase: 'text-red-600 border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-900' },
+  Rechazado: {
+    etiqueta: 'Rechazado',
+    icono: XCircle,
+    // Mismo tono que --color-principal (rojo de marca) — coincide además con la convención universal
+    // de "rechazado/detenido" en rojo.
+    clase: 'text-[var(--color-principal)] border-[var(--color-principal)]/30 bg-[var(--color-principal)]/10',
+  },
   EnReparacion: { etiqueta: 'En reparación', icono: Stethoscope, clase: 'text-indigo-600 border-indigo-200 bg-indigo-50' },
   EnPruebas: { etiqueta: 'En pruebas', icono: Stethoscope, clase: 'text-indigo-600 border-indigo-200 bg-indigo-50' },
   ListoParaEntrega: {

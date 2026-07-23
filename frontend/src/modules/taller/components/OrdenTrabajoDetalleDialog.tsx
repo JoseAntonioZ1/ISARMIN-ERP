@@ -333,7 +333,7 @@ function TimelineOrdenTrabajo({ detalle }: { detalle: OrdenTrabajoDetalle }) {
               className={`flex h-6 w-6 items-center justify-center rounded-full border-2 ${
                 paso.estado === 'completado'
                   ? paso.negativo
-                    ? 'border-red-500 bg-red-500 text-white'
+                    ? 'border-[var(--color-principal)] bg-[var(--color-principal)] text-white'
                     : 'border-emerald-500 bg-emerald-500 text-white'
                   : paso.estado === 'actual'
                     ? 'border-[var(--color-principal)] text-[var(--color-principal)]'

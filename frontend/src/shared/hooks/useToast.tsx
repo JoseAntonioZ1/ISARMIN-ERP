@@ -38,7 +38,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               className={`pointer-events-auto flex items-center gap-2 rounded-lg px-4 py-3 text-sm text-white shadow-lg ${
-                toast.tipo === 'exito' ? 'bg-emerald-600' : 'bg-red-600'
+                toast.tipo === 'exito' ? 'bg-emerald-600' : 'bg-[var(--color-principal)]'
               }`}
             >
               <Icono className="h-4 w-4 flex-shrink-0" />
