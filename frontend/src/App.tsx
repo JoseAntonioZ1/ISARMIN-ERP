@@ -26,47 +26,50 @@ import { AppLayout } from '@/shared/components/AppLayout'
 import { ConfiguracionPage } from '@/shared/components/ConfiguracionPage'
 import { PaginaInicio } from '@/shared/components/PaginaInicio'
 import { RutaProtegida } from '@/shared/components/RutaProtegida'
+import { ToastProvider } from '@/shared/hooks/useToast'
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AplicarBranding />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            element={
-              <RutaProtegida>
-                <AppLayout />
-              </RutaProtegida>
-            }
-          >
-            <Route path="/" element={<PaginaInicio />} />
-            <Route path="/clientes" element={<ClientesPage />} />
-            <Route path="/proveedores" element={<ProveedoresPage />} />
-            <Route path="/productos" element={<ProductosPage />} />
-            <Route path="/compras" element={<ComprasLayout />}>
-              <Route index element={<CompraPosPage />} />
-              <Route path="historial" element={<ComprasHistorialPage />} />
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              element={
+                <RutaProtegida>
+                  <AppLayout />
+                </RutaProtegida>
+              }
+            >
+              <Route path="/" element={<PaginaInicio />} />
+              <Route path="/clientes" element={<ClientesPage />} />
+              <Route path="/proveedores" element={<ProveedoresPage />} />
+              <Route path="/productos" element={<ProductosPage />} />
+              <Route path="/compras" element={<ComprasLayout />}>
+                <Route index element={<CompraPosPage />} />
+                <Route path="historial" element={<ComprasHistorialPage />} />
+              </Route>
+              <Route path="/caja" element={<CajaPage />} />
+              <Route path="/taller" element={<TallerPage />} />
+              <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
+              <Route path="/ventas" element={<VentasLayout />}>
+                <Route index element={<VentaPosPage />} />
+                <Route path="historial" element={<VentasHistorialPage />} />
+              </Route>
+              <Route path="/reportes" element={<ReportesPage />} />
+              <Route path="/configuracion" element={<ConfiguracionPage />} />
+              <Route path="/configuracion/empresa" element={<ConfiguracionEmpresaPage />} />
+              <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
+              <Route path="/configuracion/roles" element={<RolesPage />} />
+              <Route path="/configuracion/categorias" element={<CategoriasPage />} />
+              <Route path="/configuracion/medios-pago" element={<MediosPagoPage />} />
+              <Route path="/configuracion/unidades-medida" element={<UnidadesMedidaPage />} />
             </Route>
-            <Route path="/caja" element={<CajaPage />} />
-            <Route path="/taller" element={<TallerPage />} />
-            <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
-            <Route path="/ventas" element={<VentasLayout />}>
-              <Route index element={<VentaPosPage />} />
-              <Route path="historial" element={<VentasHistorialPage />} />
-            </Route>
-            <Route path="/reportes" element={<ReportesPage />} />
-            <Route path="/configuracion" element={<ConfiguracionPage />} />
-            <Route path="/configuracion/empresa" element={<ConfiguracionEmpresaPage />} />
-            <Route path="/configuracion/usuarios" element={<UsuariosPage />} />
-            <Route path="/configuracion/roles" element={<RolesPage />} />
-            <Route path="/configuracion/categorias" element={<CategoriasPage />} />
-            <Route path="/configuracion/medios-pago" element={<MediosPagoPage />} />
-            <Route path="/configuracion/unidades-medida" element={<UnidadesMedidaPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </QueryClientProvider>
   )
 }

@@ -1,17 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
-import { mediosPagoApi } from '@/modules/catalogos/api/catalogosApi'
+import { useEffect, useState } from 'react'
+import { type MedioPago, mediosPagoApi } from '@/modules/catalogos/api/catalogosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { ConfirmDialog } from '@/shared/components/ConfirmDialog'
+import { EstadoBadge } from '@/shared/components/EstadoBadge'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { EstadoVacio } from '@/shared/components/EstadoVacio'
+import { useToast } from '@/shared/hooks/useToast'
 
 export function MediosPagoPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
   const [nombreNuevo, setNombreNuevo] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [cambiandoEstado, setCambiandoEstado] = useState<MedioPago | null>(null)
 
-  const { data: mediosPago, isLoading } = useQuery({
+  const {
+    data: mediosPago,
+    isLoading,
+    error: errorListado,
+  } = useQuery({
     queryKey: ['medios-pago'],
     queryFn: mediosPagoApi.listar,
   })
+
+  useEffect(() => {
+    if (errorListado) mostrarError('No se pudo cargar la lista de medios de pago.')
+  }, [errorListado, mostrarError])
 
   const invalidar = () => queryClient.invalidateQueries({ queryKey: ['medios-pago'] })
 
@@ -20,27 +34,29 @@ export function MediosPagoPage() {
     onSuccess: () => {
       invalidar()
       setNombreNuevo('')
+      mostrarExito('Medio de pago creado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo crear el medio de pago.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo crear el medio de pago.'),
   })
 
   const mutacionCambiarEstado = useMutation({
     mutationFn: ({ id, activo }: { id: string; activo: boolean }) => mediosPagoApi.cambiarEstado(id, activo),
-    onSuccess: invalidar,
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo cambiar el estado.'),
+    onSuccess: () => {
+      invalidar()
+      setCambiandoEstado(null)
+      mostrarExito('Estado del medio de pago actualizado.')
+    },
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo cambiar el estado.'),
   })
 
   const handleCrear = () => {
     if (!nombreNuevo.trim()) return
-    setError(null)
     mutacionCrear.mutate(nombreNuevo.trim())
   }
 
   return (
     <div>
       <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Medios de Pago</h1>
-
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       <div className="mb-4 flex gap-2">
         <input
@@ -60,7 +76,9 @@ export function MediosPagoPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
+      ) : mediosPago?.length === 0 ? (
+        <EstadoVacio mensaje="No hay medios de pago registrados." />
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
@@ -74,11 +92,13 @@ export function MediosPagoPage() {
             {mediosPago?.map((medioPago) => (
               <tr key={medioPago.id} className="border-t border-slate-200 dark:border-slate-700">
                 <td className="px-4 py-2">{medioPago.nombre}</td>
-                <td className="px-4 py-2">{medioPago.activo ? 'Activo' : 'Inactivo'}</td>
+                <td className="px-4 py-2">
+                  <EstadoBadge estado={medioPago.activo ? 'Activo' : 'Inactivo'} />
+                </td>
                 <td className="px-4 py-2">
                   <button
                     type="button"
-                    onClick={() => mutacionCambiarEstado.mutate({ id: medioPago.id, activo: !medioPago.activo })}
+                    onClick={() => setCambiandoEstado(medioPago)}
                     className="text-red-600 underline hover:text-red-800"
                   >
                     {medioPago.activo ? 'Desactivar' : 'Activar'}
@@ -88,6 +108,16 @@ export function MediosPagoPage() {
             ))}
           </tbody>
         </table>
+      )}
+
+      {cambiandoEstado && (
+        <ConfirmDialog
+          titulo={cambiandoEstado.activo ? 'Desactivar medio de pago' : 'Activar medio de pago'}
+          mensaje={`¿Confirmas ${cambiandoEstado.activo ? 'desactivar' : 'activar'} "${cambiandoEstado.nombre}"?`}
+          confirmando={mutacionCambiarEstado.isPending}
+          onConfirmar={() => mutacionCambiarEstado.mutate({ id: cambiandoEstado.id, activo: !cambiandoEstado.activo })}
+          onCancelar={() => setCambiandoEstado(null)}
+        />
       )}
     </div>
   )

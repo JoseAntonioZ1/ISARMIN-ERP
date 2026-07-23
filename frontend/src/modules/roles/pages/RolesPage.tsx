@@ -1,30 +1,47 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { type Permiso, type Rol, rolesApi } from '@/modules/roles/api/rolesApi'
 import { CrearRolDialog, type FormularioCrearRol } from '@/modules/roles/components/CrearRolDialog'
 import { EditarRolDialog } from '@/modules/roles/components/EditarRolDialog'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { EstadoVacio } from '@/shared/components/EstadoVacio'
+import { useToast } from '@/shared/hooks/useToast'
 
 export function RolesPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
   const [creandoRol, setCreandoRol] = useState(false)
   const [rolEditando, setRolEditando] = useState<Rol | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  const { data: roles, isLoading } = useQuery({
+  const {
+    data: roles,
+    isLoading,
+    error: errorListado,
+  } = useQuery({
     queryKey: ['roles-detalle'],
     queryFn: rolesApi.listarConPermisos,
   })
 
-  const invalidarRoles = () => queryClient.invalidateQueries({ queryKey: ['roles-detalle'] })
+  useEffect(() => {
+    if (errorListado) mostrarError('No se pudo cargar la lista de roles.')
+  }, [errorListado, mostrarError])
+
+  const invalidarRoles = () => {
+    queryClient.invalidateQueries({ queryKey: ['roles-detalle'] })
+    // Tambien invalida el listado resumido usado por SelectorRoles (Usuarios) — antes un rol nuevo
+    // no aparecia ahi hasta que otra accion disparara un refetch de esa query por separado.
+    queryClient.invalidateQueries({ queryKey: ['roles'] })
+  }
 
   const mutacionCrear = useMutation({
     mutationFn: rolesApi.crear,
     onSuccess: () => {
       invalidarRoles()
       setCreandoRol(false)
+      mostrarExito('Rol creado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo crear el rol.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo crear el rol.'),
   })
 
   const mutacionEditarDatos = useMutation({
@@ -33,8 +50,9 @@ export function RolesPage() {
     onSuccess: (rolActualizado) => {
       invalidarRoles()
       setRolEditando(rolActualizado)
+      mostrarExito('Rol actualizado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo editar el rol.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo editar el rol.'),
   })
 
   const mutacionAsignarPermisos = useMutation({
@@ -42,8 +60,9 @@ export function RolesPage() {
     onSuccess: (rolActualizado) => {
       invalidarRoles()
       setRolEditando(rolActualizado)
+      mostrarExito('Permisos actualizados correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudieron guardar los permisos.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudieron guardar los permisos.'),
   })
 
   const modulosConocidos = Array.from(
@@ -63,10 +82,10 @@ export function RolesPage() {
         </button>
       </div>
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
+      ) : roles?.length === 0 ? (
+        <EstadoVacio mensaje="No hay roles registrados." />
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
@@ -100,10 +119,7 @@ export function RolesPage() {
 
       {creandoRol && (
         <CrearRolDialog
-          onGuardar={(datos: FormularioCrearRol) => {
-            setError(null)
-            mutacionCrear.mutate(datos)
-          }}
+          onGuardar={(datos: FormularioCrearRol) => mutacionCrear.mutate(datos)}
           onCancelar={() => setCreandoRol(false)}
           guardando={mutacionCrear.isPending}
         />
@@ -113,14 +129,8 @@ export function RolesPage() {
         <EditarRolDialog
           rol={rolEditando}
           modulosConocidos={modulosConocidos}
-          onGuardarDatos={(datos) => {
-            setError(null)
-            mutacionEditarDatos.mutate({ id: rolEditando.id, datos })
-          }}
-          onGuardarPermisos={(permisos) => {
-            setError(null)
-            mutacionAsignarPermisos.mutate({ id: rolEditando.id, permisos })
-          }}
+          onGuardarDatos={(datos) => mutacionEditarDatos.mutate({ id: rolEditando.id, datos })}
+          onGuardarPermisos={(permisos) => mutacionAsignarPermisos.mutate({ id: rolEditando.id, permisos })}
           onCancelar={() => setRolEditando(null)}
           guardandoDatos={mutacionEditarDatos.isPending}
           guardandoPermisos={mutacionAsignarPermisos.isPending}

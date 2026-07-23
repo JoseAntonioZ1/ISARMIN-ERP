@@ -6,6 +6,23 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.26.0] - 23/07/2026
+
+### Agregado
+
+- **Mejora de UX transversal — séptimo pedido de mejora post-Fase 4 ("analiza toda la página y mejora la experiencia de usuario del frontend"), sin dirección específica más allá de "toda la página".** Antes de tocar código se hizo una auditoría completa (3 exploraciones en paralelo: infraestructura compartida, módulos CRUD de catálogo, módulos operativos) que confirmó con datos concretos los mismos problemas repetidos en 8+ pantallas. El propietario, ante el tamaño real de lo encontrado, eligió explícitamente el alcance: construir componentes compartidos y retro-aplicarlos a Clientes, Proveedores, Productos, Usuarios, Roles, Categorías, Medios de Pago y Unidades de Medida — dashboard de Inicio, hub de Configuración, gráficos/exportación en Reportes y el hueco de estados de Servicios de Campo quedan fuera de esta pasada (anotados como recomendación futura, el último probablemente necesita un endpoint nuevo de backend).
+  - **5 componentes/hook compartidos nuevos** en `frontend/src/shared/`: `EstadoBadge` (pastilla de color para Activo/Inactivo, antes texto plano sin diferenciación visual en 5 módulos), `ControlesPaginacion` (Anterior/Siguiente + "Mostrando X–Y de Z" — el backend de Clientes/Proveedores/Productos/Usuarios ya devolvía `total`/`pagina`/`tamanoPagina` en cada listado, pero ninguna pantalla los usaba: cualquier lista de más de 20 registros era simplemente inalcanzable), `EstadoCarga` (reemplaza 23+ `<p>Cargando...</p>` sueltos por un spinner), `EstadoVacio` (mensaje de "sin resultados", ninguna de las 8 pantallas lo tenía), y `useToast`/`ToastProvider` (notificaciones de éxito/error montadas una vez en `App.tsx`, reemplazando el patrón `useState<string|null>` + `<p roja>` reinventado en cada página — y agregando confirmación de éxito, que antes no existía en ningún lado).
+  - **Retro-aplicado en las 8 páginas** con el mismo patrón: paginación real (Clientes/Proveedores/Productos/Usuarios), badges de estado, toasts en vez de error inline, manejo del error de la propia consulta de lista (antes solo se manejaban errores de mutación, nunca de la carga inicial), y estado vacío.
+  - **Corrección real de inconsistencia encontrada**: `MediosPagoPage` desactivaba un medio de pago con un solo clic, sin la confirmación (`ConfirmDialog`) que ya protege el mismo tipo de acción en Clientes/Proveedores/Productos/Usuarios — corregido para ser consistente.
+  - **Bug de caché encontrado y corregido de paso**: crear un rol nuevo no invalidaba el listado resumido (`['roles']`) usado por el selector de roles al crear un Usuario — solo invalidaba `['roles-detalle']`. Ahora invalida ambos.
+  - Pequeño extra en Productos: resaltado en rojo cuando el stock actual está en o por debajo del stock mínimo (el dato ya existía en el modelo pero nunca se comparaba visualmente en la lista), y la tabla ahora tiene scroll horizontal propio en vez de desbordar la página en pantallas angostas.
+
+**Explícitamente fuera de esta pasada** (encontrado en la auditoría, no se toca ahora): dashboard real en la pantalla de Inicio (hoy solo logo + mensaje estático), rediseño de Configuración como hub con tarjetas (hoy una lista de links sin diseño), gráficos/exportación en Reportes, inconsistencia de formato de moneda en `CajaPage` (falta el prefijo "S/" en la tabla de movimientos, sí lo tiene en Reportes), y el hueco de Servicios de Campo donde 2 de sus 4 estados (Agendado/EnEjecucion) no tienen ninguna acción disponible en la UI actual.
+
+Verificado: `npm run build`/`npx oxlint` limpios (1 advertencia no bloqueante de fast-refresh en `useToast.tsx`, patrón estándar de contexto+hook); confirmado con datos reales contra Postgres que la paginación funciona de punta a punta (141 productos, página 1 y página 2 devuelven registros distintos). Sin cambios de backend.
+
+---
+
 ## [0.25.0] - 23/07/2026
 
 ### Agregado

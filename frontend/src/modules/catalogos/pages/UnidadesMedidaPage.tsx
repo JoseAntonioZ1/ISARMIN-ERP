@@ -1,19 +1,30 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { unidadesMedidaApi } from '@/modules/catalogos/api/catalogosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { EstadoVacio } from '@/shared/components/EstadoVacio'
+import { useToast } from '@/shared/hooks/useToast'
 
 export function UnidadesMedidaPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
   const [nombreNuevo, setNombreNuevo] = useState('')
   const [editandoId, setEditandoId] = useState<string | null>(null)
   const [nombreEditado, setNombreEditado] = useState('')
-  const [error, setError] = useState<string | null>(null)
 
-  const { data: unidadesMedida, isLoading } = useQuery({
+  const {
+    data: unidadesMedida,
+    isLoading,
+    error: errorListado,
+  } = useQuery({
     queryKey: ['unidades-medida'],
     queryFn: unidadesMedidaApi.listar,
   })
+
+  useEffect(() => {
+    if (errorListado) mostrarError('No se pudo cargar la lista de unidades de medida.')
+  }, [errorListado, mostrarError])
 
   const invalidar = () => queryClient.invalidateQueries({ queryKey: ['unidades-medida'] })
 
@@ -22,8 +33,9 @@ export function UnidadesMedidaPage() {
     onSuccess: () => {
       invalidar()
       setNombreNuevo('')
+      mostrarExito('Unidad de medida creada correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo crear la unidad de medida.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo crear la unidad de medida.'),
   })
 
   const mutacionEditar = useMutation({
@@ -31,21 +43,19 @@ export function UnidadesMedidaPage() {
     onSuccess: () => {
       invalidar()
       setEditandoId(null)
+      mostrarExito('Unidad de medida actualizada correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo editar la unidad de medida.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo editar la unidad de medida.'),
   })
 
   const handleCrear = () => {
     if (!nombreNuevo.trim()) return
-    setError(null)
     mutacionCrear.mutate(nombreNuevo.trim())
   }
 
   return (
     <div>
       <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Unidades de Medida</h1>
-
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
       <div className="mb-4 flex gap-2">
         <input
@@ -65,7 +75,9 @@ export function UnidadesMedidaPage() {
       </div>
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
+      ) : unidadesMedida?.length === 0 ? (
+        <EstadoVacio mensaje="No hay unidades de medida registradas." />
       ) : (
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
@@ -93,10 +105,7 @@ export function UnidadesMedidaPage() {
                     <>
                       <button
                         type="button"
-                        onClick={() => {
-                          setError(null)
-                          mutacionEditar.mutate({ id: unidadMedida.id, nombre: nombreEditado.trim() })
-                        }}
+                        onClick={() => mutacionEditar.mutate({ id: unidadMedida.id, nombre: nombreEditado.trim() })}
                         disabled={mutacionEditar.isPending}
                         className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
                       >

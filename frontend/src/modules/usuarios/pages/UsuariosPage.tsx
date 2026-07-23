@@ -1,22 +1,38 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usuariosApi, type Usuario } from '@/modules/usuarios/api/usuariosApi'
 import { CrearUsuarioDialog, type FormularioCrearUsuario } from '@/modules/usuarios/components/CrearUsuarioDialog'
 import { EditarUsuarioDialog, type FormularioEditarUsuario } from '@/modules/usuarios/components/EditarUsuarioDialog'
 import { ApiError } from '@/shared/api/httpClient'
 import { ConfirmDialog } from '@/shared/components/ConfirmDialog'
+import { ControlesPaginacion } from '@/shared/components/ControlesPaginacion'
+import { EstadoBadge } from '@/shared/components/EstadoBadge'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { EstadoVacio } from '@/shared/components/EstadoVacio'
+import { useToast } from '@/shared/hooks/useToast'
+
+const TAMANO_PAGINA = 20
 
 export function UsuariosPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
+  const [pagina, setPagina] = useState(1)
   const [creandoUsuario, setCreandoUsuario] = useState(false)
   const [usuarioEditando, setUsuarioEditando] = useState<Usuario | null>(null)
   const [usuarioACambiarEstado, setUsuarioACambiarEstado] = useState<Usuario | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  const { data: listado, isLoading } = useQuery({
-    queryKey: ['usuarios'],
-    queryFn: () => usuariosApi.listar(),
+  const {
+    data: listado,
+    isLoading,
+    error: errorListado,
+  } = useQuery({
+    queryKey: ['usuarios', pagina],
+    queryFn: () => usuariosApi.listar(pagina, TAMANO_PAGINA),
   })
+
+  useEffect(() => {
+    if (errorListado) mostrarError('No se pudo cargar la lista de usuarios.')
+  }, [errorListado, mostrarError])
 
   const invalidarUsuarios = () => queryClient.invalidateQueries({ queryKey: ['usuarios'] })
 
@@ -25,8 +41,9 @@ export function UsuariosPage() {
     onSuccess: () => {
       invalidarUsuarios()
       setCreandoUsuario(false)
+      mostrarExito('Usuario creado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo crear el usuario.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo crear el usuario.'),
   })
 
   const mutacionEditar = useMutation({
@@ -34,8 +51,9 @@ export function UsuariosPage() {
     onSuccess: () => {
       invalidarUsuarios()
       setUsuarioEditando(null)
+      mostrarExito('Usuario actualizado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo editar el usuario.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo editar el usuario.'),
   })
 
   const mutacionCambiarEstado = useMutation({
@@ -43,18 +61,15 @@ export function UsuariosPage() {
     onSuccess: () => {
       invalidarUsuarios()
       setUsuarioACambiarEstado(null)
+      mostrarExito('Estado del usuario actualizado.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo cambiar el estado del usuario.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo cambiar el estado del usuario.'),
   })
 
-  const handleCrear = (datos: FormularioCrearUsuario) => {
-    setError(null)
-    mutacionCrear.mutate(datos)
-  }
+  const handleCrear = (datos: FormularioCrearUsuario) => mutacionCrear.mutate(datos)
 
   const handleEditar = (datos: FormularioEditarUsuario) => {
     if (!usuarioEditando) return
-    setError(null)
     mutacionEditar.mutate({ id: usuarioEditando.id, datos })
   }
 
@@ -71,48 +86,53 @@ export function UsuariosPage() {
         </button>
       </div>
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
+      ) : listado?.datos.length === 0 ? (
+        <EstadoVacio mensaje="No hay usuarios registrados." />
       ) : (
-        <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
-          <thead className="bg-slate-100 dark:bg-slate-700">
-            <tr>
-              <th className="px-4 py-2">Nombre</th>
-              <th className="px-4 py-2">Usuario</th>
-              <th className="px-4 py-2">Roles</th>
-              <th className="px-4 py-2">Estado</th>
-              <th className="px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {listado?.datos.map((usuario) => (
-              <tr key={usuario.id} className="border-t border-slate-200 dark:border-slate-700">
-                <td className="px-4 py-2">{usuario.nombre}</td>
-                <td className="px-4 py-2">{usuario.nombreUsuario}</td>
-                <td className="px-4 py-2">{usuario.roles.map((r) => r.nombre).join(', ')}</td>
-                <td className="px-4 py-2">{usuario.estado}</td>
-                <td className="px-4 py-2">
-                  <button
-                    type="button"
-                    onClick={() => setUsuarioEditando(usuario)}
-                    className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setUsuarioACambiarEstado(usuario)}
-                    className="text-red-600 underline hover:text-red-800"
-                  >
-                    {usuario.estado === 'Activo' ? 'Desactivar' : 'Activar'}
-                  </button>
-                </td>
+        <>
+          <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
+            <thead className="bg-slate-100 dark:bg-slate-700">
+              <tr>
+                <th className="px-4 py-2">Nombre</th>
+                <th className="px-4 py-2">Usuario</th>
+                <th className="px-4 py-2">Roles</th>
+                <th className="px-4 py-2">Estado</th>
+                <th className="px-4 py-2">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {listado?.datos.map((usuario) => (
+                <tr key={usuario.id} className="border-t border-slate-200 dark:border-slate-700">
+                  <td className="px-4 py-2">{usuario.nombre}</td>
+                  <td className="px-4 py-2">{usuario.nombreUsuario}</td>
+                  <td className="px-4 py-2">{usuario.roles.map((r) => r.nombre).join(', ')}</td>
+                  <td className="px-4 py-2">
+                    <EstadoBadge estado={usuario.estado} />
+                  </td>
+                  <td className="px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => setUsuarioEditando(usuario)}
+                      className="mr-3 text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUsuarioACambiarEstado(usuario)}
+                      className="text-red-600 underline hover:text-red-800"
+                    >
+                      {usuario.estado === 'Activo' ? 'Desactivar' : 'Activar'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <ControlesPaginacion pagina={pagina} tamanoPagina={TAMANO_PAGINA} total={listado?.total ?? 0} onCambiarPagina={setPagina} />
+        </>
       )}
 
       {creandoUsuario && (
