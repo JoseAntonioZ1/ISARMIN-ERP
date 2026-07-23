@@ -5,11 +5,11 @@ import { clientesApi } from '@/modules/clientes/api/clientesApi'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
 import { CarritoPanelPos, type LineaCarritoPos } from '@/modules/ventas/components/pos/CarritoPanelPos'
-import { CategoriaSidebarPos } from '@/modules/ventas/components/pos/CategoriaSidebarPos'
-import { ProductoBuscadorGrid } from '@/modules/ventas/components/pos/ProductoBuscadorGrid'
 import { type DetalleVentaInput, type PagoVentaInput, type TipoComprobante, ventasApi } from '@/modules/ventas/api/ventasApi'
 import { generarComprobantePdf } from '@/modules/ventas/utils/comprobantePdf'
 import { ApiError } from '@/shared/api/httpClient'
+import { CategoriaSidebarPos } from '@/shared/components/pos/CategoriaSidebarPos'
+import { ProductoBuscadorGrid } from '@/shared/components/pos/ProductoBuscadorGrid'
 import { useBranding } from '@/shared/hooks/useBranding'
 
 export function VentaPosPage() {

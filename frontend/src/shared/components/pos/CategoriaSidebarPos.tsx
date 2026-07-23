@@ -1,7 +1,7 @@
 import { Search, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import type { Categoria } from '@/modules/catalogos/api/catalogosApi'
-import { iconoParaCategoria } from '@/modules/ventas/utils/iconosPos'
+import { iconoParaCategoria } from '@/shared/utils/iconosPos'
 
 interface CategoriaSidebarPosProps {
   categorias: Categoria[]
@@ -9,6 +9,8 @@ interface CategoriaSidebarPosProps {
   onSeleccionar: (id: string | null) => void
 }
 
+/** Panel izquierdo compartido por las pantallas tipo POS (Ventas y Compras) — filtra productos por
+ * categoría. No tiene nada específico de vender/comprar, por eso vive en shared. */
 export function CategoriaSidebarPos({ categorias, categoriaSeleccionadaId, onSeleccionar }: CategoriaSidebarPosProps) {
   const [busqueda, setBusqueda] = useState('')
 

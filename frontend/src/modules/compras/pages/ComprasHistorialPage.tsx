@@ -1,16 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { type Compra, comprasApi } from '@/modules/compras/api/comprasApi'
-import { RegistrarCompraDialog } from '@/modules/compras/components/RegistrarCompraDialog'
 import { productosApi } from '@/modules/productos/api/productosApi'
 import { proveedoresApi } from '@/modules/proveedores/api/proveedoresApi'
-import { ApiError } from '@/shared/api/httpClient'
 
-export function ComprasPage() {
-  const queryClient = useQueryClient()
-  const [registrando, setRegistrando] = useState(false)
+export function ComprasHistorialPage() {
   const [verDetalle, setVerDetalle] = useState<Compra | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
   const { data: listado, isLoading } = useQuery({
     queryKey: ['compras'],
@@ -27,17 +22,6 @@ export function ComprasPage() {
     queryFn: () => productosApi.buscar(undefined, 1, 200),
   })
 
-  const invalidar = () => queryClient.invalidateQueries({ queryKey: ['compras'] })
-
-  const mutacionRegistrar = useMutation({
-    mutationFn: comprasApi.registrar,
-    onSuccess: () => {
-      invalidar()
-      setRegistrando(false)
-    },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo registrar la compra.'),
-  })
-
   const nombreProveedor = (id: string) => proveedores?.datos.find((p) => p.id === id)?.nombreRazonSocial ?? '—'
   const nombreProducto = (id: string) => {
     const producto = productos?.datos.find((p) => p.id === id)
@@ -46,18 +30,7 @@ export function ComprasPage() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Compras</h1>
-        <button
-          type="button"
-          onClick={() => setRegistrando(true)}
-          className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
-        >
-          Registrar compra
-        </button>
-      </div>
-
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+      <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Historial de Compras</h1>
 
       {isLoading ? (
         <p className="text-[var(--color-terciario)]">Cargando...</p>
@@ -94,19 +67,6 @@ export function ComprasPage() {
             ))}
           </tbody>
         </table>
-      )}
-
-      {registrando && (
-        <RegistrarCompraDialog
-          proveedores={proveedores?.datos ?? []}
-          productos={productos?.datos ?? []}
-          onGuardar={(datos) => {
-            setError(null)
-            mutacionRegistrar.mutate(datos)
-          }}
-          onCancelar={() => setRegistrando(false)}
-          guardando={mutacionRegistrar.isPending}
-        />
       )}
 
       {verDetalle && (

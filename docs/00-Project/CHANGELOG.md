@@ -6,6 +6,20 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.24.0] - 23/07/2026
+
+### Agregado
+
+- **Rediseño de Compras con el mismo patrón de 3 paneles de Ventas — quinto pedido de mejora post-Fase 4, adaptado (no copiado) al caso de comprar en vez de vender.** Sin cambios de API/backend: `comprasApi`/`DatosRegistrarCompra` y el agregado `Compra` quedan exactamente iguales, esto fue una reconstrucción de la pantalla, no del negocio.
+  - **Refactor de reutilización primero**: `CategoriaSidebarPos` y `ProductoBuscadorGrid` (creados para el POS de Ventas) se movieron de `modules/ventas/components/pos/` a `shared/components/pos/`, y `iconoParaCategoria` a `shared/utils/iconosPos.ts` — son genéricos (filtrar por categoría, buscar productos), no específicos de vender, así que vivían en el módulo equivocado para que Compras los reutilizara sin duplicar ~150 líneas de lógica de debounce/lector de barras/grilla.
+  - **`ProductoBuscadorGrid` ganó 2 props opcionales** (con default que preserva el comportamiento exacto de Ventas): `obtenerPrecio` (qué precio mostrar en la tarjeta — Ventas usa `precioVenta`, Compras usa `costoReferencia`) y `validarStock` (Ventas no deja vender sin stock; en Compras el stock bajo o en cero es justo el motivo para comprar, así que no debe bloquear el botón "Agregar" ni marcarse en rojo).
+  - **Nuevo `CarritoPanelCompra`** (panel derecho, específico de Compras, no compartido): selector de **proveedor** en vez de cliente, **fecha** (editable — a diferencia de Ventas, el backend de Compras la recibe del cliente, no la genera el servidor), tipo de documento (Factura/Boleta/Guía de Remisión/Otro) y número de documento del proveedor, líneas con cantidad +/- y **costo unitario editable directamente por línea** (sin concepto de descuento — así ya funcionaba el diálogo anterior), Total, botón "Registrar Compra". **Deliberadamente sin** lo que no aplica a una compra: sin medios de pago/tarjetas (Compras no registra pagos, es un dato que no existe en el modelo), sin monto recibido/vuelto, sin IGV desglosado, sin autorización de saldo pendiente (ninguno de estos conceptos existe en `Compra`).
+  - `/compras` pasa a ser la pantalla de registrar compra (3 paneles); el historial existente (tabla + detalle, sin cambios) se mueve a `/compras/historial`, con las mismas pestañas simples que ya se usan en Ventas (`ComprasLayout`, calcado de `VentasLayout`). Se eliminaron `ComprasPage.tsx`/`RegistrarCompraDialog.tsx` (reemplazados, sin referencias restantes) — recordando que `Compra` no tiene edición ni anulación en el alcance actual (RF-033 a RF-036), así que el historial sigue siendo de solo lectura, igual que antes.
+
+Verificado: `npm run build`/`npx oxlint` limpios; E2E manual contra Postgres real — compra registrada vía API con el mismo payload que ya usaba el diálogo anterior, stock del producto incrementado correctamente (confirma que el cambio fue puramente de pantalla, sin tocar el contrato del backend).
+
+---
+
 ## [0.23.0] - 23/07/2026
 
 ### Agregado

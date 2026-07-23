@@ -8,9 +8,22 @@ import { productosApi } from '@/modules/productos/api/productosApi'
 interface ProductoBuscadorGridProps {
   categoriaId: string | null
   onAgregarProducto: (producto: Producto) => void
+  /** Qué precio mostrar en la tarjeta — venta usa precioVenta, compra usa costoReferencia. */
+  obtenerPrecio?: (producto: Producto) => number
+  /** En Ventas no se puede vender sin stock; en Compras el stock bajo/cero es justo el motivo para
+   * comprar, así que no debe bloquear ni marcarse como error. */
+  validarStock?: boolean
 }
 
-export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: ProductoBuscadorGridProps) {
+/** Panel central compartido por las pantallas tipo POS (Ventas y Compras) — buscador + grilla de
+ * productos. Maneja lector de código de barras: al detectar Enter, si el texto coincide exactamente
+ * con un codigoBarras del resultado actual, agrega el producto directo en vez de solo filtrar. */
+export function ProductoBuscadorGrid({
+  categoriaId,
+  onAgregarProducto,
+  obtenerPrecio = (p) => p.precioVenta,
+  validarStock = true,
+}: ProductoBuscadorGridProps) {
   const [termino, setTermino] = useState('')
   const [terminoDebounced, setTerminoDebounced] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -35,9 +48,6 @@ export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: Product
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter' || !termino.trim()) return
 
-    // Un lector de código de barras "escribe" el código y remata con Enter — si el texto
-    // coincide exactamente con un codigoBarras del catálogo, se agrega directo al carrito
-    // en vez de solo filtrar la grilla.
     const coincidenciaExacta = productos?.datos.find((p) => p.codigoBarras === termino.trim())
     if (coincidenciaExacta) {
       handleAgregar(coincidenciaExacta)
@@ -69,7 +79,13 @@ export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: Product
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
             {productos?.datos.map((producto) => (
-              <ProductoCardPos key={producto.id} producto={producto} onAgregar={() => handleAgregar(producto)} />
+              <ProductoCardPos
+                key={producto.id}
+                producto={producto}
+                precio={obtenerPrecio(producto)}
+                validarStock={validarStock}
+                onAgregar={() => handleAgregar(producto)}
+              />
             ))}
           </div>
         )}
@@ -78,9 +94,19 @@ export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: Product
   )
 }
 
-function ProductoCardPos({ producto, onAgregar }: { producto: Producto; onAgregar: () => void }) {
-  const sinStock = producto.stockActual <= 0
-  const stockBajo = producto.stockMinimo !== null && producto.stockActual <= producto.stockMinimo
+function ProductoCardPos({
+  producto,
+  precio,
+  validarStock,
+  onAgregar,
+}: {
+  producto: Producto
+  precio: number
+  validarStock: boolean
+  onAgregar: () => void
+}) {
+  const sinStock = validarStock && producto.stockActual <= 0
+  const stockBajo = validarStock && producto.stockMinimo !== null && producto.stockActual <= producto.stockMinimo
 
   return (
     <div className="flex flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800">
@@ -93,7 +119,7 @@ function ProductoCardPos({ producto, onAgregar }: { producto: Producto; onAgrega
       </div>
       <div className="flex flex-1 flex-col gap-1 p-2">
         <p className="line-clamp-2 text-sm font-medium text-slate-800 dark:text-slate-100">{producto.nombre}</p>
-        <p className="text-base font-semibold text-[var(--color-principal)]">S/ {producto.precioVenta.toFixed(2)}</p>
+        <p className="text-base font-semibold text-[var(--color-principal)]">S/ {precio.toFixed(2)}</p>
         <p className={`text-xs ${stockBajo ? 'text-red-600' : 'text-[var(--color-terciario)]'}`}>
           Stock: {producto.stockActual}
         </p>

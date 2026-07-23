@@ -6,7 +6,9 @@ import { MediosPagoPage } from '@/modules/catalogos/pages/MediosPagoPage'
 import { UnidadesMedidaPage } from '@/modules/catalogos/pages/UnidadesMedidaPage'
 import { CajaPage } from '@/modules/caja/pages/CajaPage'
 import { ClientesPage } from '@/modules/clientes/pages/ClientesPage'
-import { ComprasPage } from '@/modules/compras/pages/ComprasPage'
+import { ComprasHistorialPage } from '@/modules/compras/pages/ComprasHistorialPage'
+import { ComprasLayout } from '@/modules/compras/pages/ComprasLayout'
+import { CompraPosPage } from '@/modules/compras/pages/CompraPosPage'
 import { ProductosPage } from '@/modules/productos/pages/ProductosPage'
 import { ProveedoresPage } from '@/modules/proveedores/pages/ProveedoresPage'
 import { RolesPage } from '@/modules/roles/pages/RolesPage'
@@ -43,7 +45,10 @@ function App() {
             <Route path="/clientes" element={<ClientesPage />} />
             <Route path="/proveedores" element={<ProveedoresPage />} />
             <Route path="/productos" element={<ProductosPage />} />
-            <Route path="/compras" element={<ComprasPage />} />
+            <Route path="/compras" element={<ComprasLayout />}>
+              <Route index element={<CompraPosPage />} />
+              <Route path="historial" element={<ComprasHistorialPage />} />
+            </Route>
             <Route path="/caja" element={<CajaPage />} />
             <Route path="/taller" element={<TallerPage />} />
             <Route path="/servicios-campo" element={<ServiciosCampoPage />} />
