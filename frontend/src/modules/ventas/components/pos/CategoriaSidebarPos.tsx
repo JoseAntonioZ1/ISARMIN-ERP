@@ -15,7 +15,7 @@ export function CategoriaSidebarPos({ categorias, categoriaSeleccionadaId, onSel
   const categoriasFiltradas = categorias.filter((c) => c.nombre.toLowerCase().includes(busqueda.toLowerCase()))
 
   return (
-    <aside className="flex h-full w-full flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+    <aside className="flex h-full min-h-0 w-full flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
       <div className="border-b border-slate-200 p-3 dark:border-slate-700">
         <div className="relative">
           <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-[var(--color-terciario)]" />
@@ -28,7 +28,7 @@ export function CategoriaSidebarPos({ categorias, categoriaSeleccionadaId, onSel
         </div>
       </div>
 
-      <div className="flex-1 space-y-1 overflow-y-auto p-3">
+      <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
         <button
           type="button"
           onClick={() => onSeleccionar(null)}

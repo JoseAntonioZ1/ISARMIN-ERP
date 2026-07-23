@@ -69,7 +69,7 @@ export function VentaPosPage() {
           {exito && <p className="text-sm text-emerald-600">Venta registrada correctamente.</p>}
         </div>
       )}
-      <div className="grid flex-1 grid-cols-[25%_45%_30%] overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-[25%_45%_30%] overflow-hidden">
         <CategoriaSidebarPos categorias={categorias ?? []} categoriaSeleccionadaId={categoriaId} onSeleccionar={setCategoriaId} />
         <ProductoBuscadorGrid categoriaId={categoriaId} onAgregarProducto={agregarProducto} />
         <CarritoPanelPos

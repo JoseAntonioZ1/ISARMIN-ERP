@@ -45,7 +45,7 @@ export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: Product
   }
 
   return (
-    <section className="flex h-full w-full flex-col overflow-hidden">
+    <section className="flex h-full min-h-0 w-full flex-col overflow-hidden">
       <div className="border-b border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-800">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-3.5 h-5 w-5 text-[var(--color-terciario)]" />
@@ -61,7 +61,7 @@ export function ProductoBuscadorGrid({ categoriaId, onAgregarProducto }: Product
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="min-h-0 flex-1 overflow-y-auto p-3">
         {isLoading ? (
           <p className="text-[var(--color-terciario)]">Cargando...</p>
         ) : productos?.datos.length === 0 ? (
