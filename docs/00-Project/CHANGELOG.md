@@ -6,6 +6,22 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.25.0] - 23/07/2026
+
+### Agregado
+
+- **Rediseño de Taller como tablero Kanban — sexto pedido de mejora post-Fase 4 ("mejora las vistas para Taller, para una mejor experiencia de usuario"), sin dirección específica dada por el propietario más allá de "mejor UX".** Antes de tocar código, se revisó a fondo el módulo actual y se confirmaron 2 decisiones de diseño con el propietario: tablero Kanban por estado (en vez de tabla mejorada) y agregar el comprobante de recepción que UC-22/RF-051-053 pide y nunca se había implementado. **Sin cambios de backend** — es una reconstrucción de las vistas, no del negocio; las 9 transiciones de estado ya existentes se probaron E2E sin ninguna modificación (recepción → diagnóstico → cotización → decisión → reparación → entrega, ciclo completo verificado contra Postgres real).
+  - **`TallerPage.tsx`, reescrita como tablero Kanban**: columnas por estado en orden de flujo (Recibido, Diagnosticado, Cotizado, Aprobado, Listo para Entrega, Entregado) más una columna aparte para Rechazado (estado terminal, atenuada visualmente). Cada OT es una tarjeta con equipo, cliente y fecha; un clic abre el mismo `OrdenTrabajoDetalleDialog` de siempre, sin tocar la lógica de transiciones. Se agregó un buscador de texto libre (cliente/equipo/falla), 100% cliente-side, y `ordenesTrabajoApi.buscar` ahora pide hasta 200 resultados en vez de 20 para que el tablero muestre todo el trabajo abierto de un vistazo — el backend ya soportaba filtros por `estado`/`cliente` que nunca se habían expuesto en la UI.
+  - **Nuevo `estadoOtVisual.ts`**: mapeo único estado→color/ícono para los 7 estados alcanzables (`EnReparacion`/`EnPruebas` nunca se persisten, confirmado en el propio código de `RegistrarReparacionCommand`), reutilizado en las tarjetas del Kanban y en el badge del diálogo de detalle (antes texto plano sin color).
+  - **Timeline visual dentro de `OrdenTrabajoDetalleDialog`**: Recepción → Diagnóstico → Cotización → Decisión → Reparación → Entrega → Garantía, cada paso marcado como completado/actual/pendiente (y "Decisión" en rojo si fue rechazada) — capa puramente visual sobre los mismos datos que el diálogo ya recibía, sin pedir nada nuevo al backend.
+  - **Campo de evidencia de aprobación completado**: el backend ya soportaba `evidenciaAprobacion` en `CotizacionReparacion.RegistrarDecision` desde que se construyó el módulo, pero el formulario de "Aprobar" nunca lo pedía (siempre mandaba `null`). Se agregó el campo de texto libre — la forma exacta de evidenciar sigue sin resolver a nivel de negocio (BQ-034 sigue abierta), pero capturar lo que el propio backend ya permitía es terminar de conectar algo a medio construir, no inventar una regla nueva.
+  - **Atajo para el callejón sin salida de `Rechazado`**: antes solo mostraba un texto estático. Ahora un botón "Registrar nueva orden para este cliente" cierra el diálogo y abre "Nueva recepción" con el cliente ya preseleccionado (`RegistrarRecepcionDialog` gana una prop opcional `clienteInicialId`, sin cambios de API).
+  - **Comprobante de recepción de equipo en PDF** (UC-22/RF-051 a RF-053, nunca implementado ni en backend ni en frontend): nuevo `comprobanteRecepcionPdf.ts`, mismo patrón jsPDF que el comprobante de venta — se descarga automáticamente al registrar una recepción exitosa.
+
+Verificado: `npm run build`/`npx oxlint` limpios; ciclo E2E completo contra Postgres real (recepción → diagnóstico → cotización → decisión aprobada con evidencia guardada correctamente → reparación → entrega con pago completo), confirmando que el rediseño de vistas no alteró ningún comportamiento del backend.
+
+---
+
 ## [0.24.0] - 23/07/2026
 
 ### Agregado

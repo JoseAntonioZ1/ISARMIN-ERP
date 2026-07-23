@@ -1,23 +1,33 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Check, Circle } from 'lucide-react'
 import { useState } from 'react'
 import {
   type DetalleConsumoInput,
   type EstadoPago,
   ESTADOS_PAGO,
+  type OrdenTrabajoDetalle,
   ordenesTrabajoApi,
 } from '@/modules/taller/api/ordenesTrabajoApi'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import type { Usuario } from '@/modules/usuarios/api/usuariosApi'
 import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
+import { ESTADOS_OT_VISUAL } from '@/modules/taller/utils/estadoOtVisual'
 import { ApiError } from '@/shared/api/httpClient'
 
 interface OrdenTrabajoDetalleDialogProps {
   ordenTrabajoId: string
   productos: Producto[]
   onCerrar: () => void
+  /** Atajo desde un estado Rechazado: cierra este diálogo y abre "Nueva recepción" con el cliente ya preseleccionado. */
+  onNuevaOrdenParaCliente?: (clienteId: string) => void
 }
 
-export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar }: OrdenTrabajoDetalleDialogProps) {
+export function OrdenTrabajoDetalleDialog({
+  ordenTrabajoId,
+  productos,
+  onCerrar,
+  onNuevaOrdenParaCliente,
+}: OrdenTrabajoDetalleDialogProps) {
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)
 
@@ -107,12 +117,21 @@ export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar 
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
                 {detalle.ordenTrabajo.equipoDescripcion}
               </h2>
-              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-[var(--color-apoyo)] dark:bg-slate-700 dark:text-slate-200">
-                {detalle.ordenTrabajo.estado}
-              </span>
+              {(() => {
+                const visual = ESTADOS_OT_VISUAL[detalle.ordenTrabajo.estado]
+                const Icono = visual.icono
+                return (
+                  <span className={`flex items-center gap-1 rounded border px-2 py-1 text-xs font-medium ${visual.clase}`}>
+                    <Icono className="h-3.5 w-3.5" />
+                    {visual.etiqueta}
+                  </span>
+                )
+              })()}
             </div>
 
             {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+
+            <TimelineOrdenTrabajo detalle={detalle} />
 
             <p className="mb-1 text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold">Falla reportada:</span> {detalle.ordenTrabajo.fallaReportada}
@@ -233,7 +252,18 @@ export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar 
               )}
 
               {detalle.ordenTrabajo.estado === 'Rechazado' && (
-                <p className="text-sm text-[var(--color-terciario)]">El cliente rechazó la cotización. La OT queda cerrada.</p>
+                <div>
+                  <p className="mb-3 text-sm text-[var(--color-terciario)]">El cliente rechazó la cotización. La OT queda cerrada.</p>
+                  {onNuevaOrdenParaCliente && (
+                    <button
+                      type="button"
+                      onClick={() => onNuevaOrdenParaCliente(detalle.ordenTrabajo.clienteId)}
+                      className="rounded border border-slate-300 px-4 py-2 text-sm text-[var(--color-apoyo)] hover:bg-slate-100 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Registrar nueva orden para este cliente
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </>
@@ -249,6 +279,82 @@ export function OrdenTrabajoDetalleDialog({ ordenTrabajoId, productos, onCerrar 
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+type PasoEstado = 'completado' | 'actual' | 'pendiente' | 'omitido'
+
+function TimelineOrdenTrabajo({ detalle }: { detalle: OrdenTrabajoDetalle }) {
+  const ot = detalle.ordenTrabajo
+  const decisionRechazada = ot.cotizacionReparacion?.decisionCliente === 'Rechazada'
+
+  const pasos: { etiqueta: string; estado: PasoEstado; negativo?: boolean }[] = [
+    { etiqueta: 'Recepción', estado: 'completado' },
+    { etiqueta: 'Diagnóstico', estado: ot.diagnostico ? 'completado' : ot.estado === 'Recibido' ? 'actual' : 'pendiente' },
+    { etiqueta: 'Cotización', estado: ot.cotizacionReparacion ? 'completado' : ot.estado === 'Diagnosticado' ? 'actual' : 'pendiente' },
+    {
+      etiqueta: 'Decisión',
+      estado: ot.cotizacionReparacion?.decisionCliente ? 'completado' : ot.estado === 'Cotizado' ? 'actual' : 'pendiente',
+      negativo: decisionRechazada,
+    },
+    {
+      etiqueta: 'Reparación',
+      estado: decisionRechazada
+        ? 'omitido'
+        : ot.estado === 'ListoParaEntrega' || ot.estado === 'Entregado'
+          ? 'completado'
+          : ot.estado === 'Aprobado'
+            ? 'actual'
+            : 'pendiente',
+    },
+    {
+      etiqueta: 'Entrega',
+      estado: decisionRechazada
+        ? 'omitido'
+        : ot.estado === 'Entregado'
+          ? 'completado'
+          : ot.estado === 'ListoParaEntrega'
+            ? 'actual'
+            : 'pendiente',
+    },
+    {
+      etiqueta: 'Garantía',
+      estado: decisionRechazada ? 'omitido' : detalle.garantia ? 'completado' : ot.estado === 'Entregado' ? 'actual' : 'pendiente',
+    },
+  ]
+
+  return (
+    <div className="mb-4 flex items-center overflow-x-auto pb-2">
+      {pasos.map((paso, i) => (
+        <div key={paso.etiqueta} className="flex flex-shrink-0 items-center">
+          <div className="flex flex-col items-center gap-1">
+            <div
+              className={`flex h-6 w-6 items-center justify-center rounded-full border-2 ${
+                paso.estado === 'completado'
+                  ? paso.negativo
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : 'border-emerald-500 bg-emerald-500 text-white'
+                  : paso.estado === 'actual'
+                    ? 'border-[var(--color-principal)] text-[var(--color-principal)]'
+                    : 'border-slate-200 text-slate-300 dark:border-slate-700 dark:text-slate-600'
+              }`}
+            >
+              {paso.estado === 'completado' ? <Check className="h-3.5 w-3.5" /> : <Circle className="h-2 w-2 fill-current" />}
+            </div>
+            <span
+              className={`whitespace-nowrap text-[10px] ${
+                paso.estado === 'pendiente' || paso.estado === 'omitido'
+                  ? 'text-slate-300 dark:text-slate-600'
+                  : 'text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              {paso.etiqueta}
+            </span>
+          </div>
+          {i < pasos.length - 1 && <div className="mb-4 h-0.5 w-6 flex-shrink-0 bg-slate-200 dark:bg-slate-700" />}
+        </div>
+      ))}
     </div>
   )
 }
@@ -309,15 +415,28 @@ function FormularioDecision({
   guardando?: boolean
 }) {
   const [cobroDiagnostico, setCobroDiagnostico] = useState('')
+  const [evidenciaAprobacion, setEvidenciaAprobacion] = useState('')
 
   return (
     <div>
       <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Decisión del cliente</h3>
+
+      <label className="mb-1 block text-xs text-[var(--color-terciario)]">
+        Evidencia de aprobación (opcional — ej. "aprobó por WhatsApp", "firmó en recibo físico")
+      </label>
+      <input
+        value={evidenciaAprobacion}
+        onChange={(e) => setEvidenciaAprobacion(e.target.value)}
+        className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+      />
+
       <div className="mb-2 flex gap-3">
         <button
           type="button"
           disabled={guardando}
-          onClick={() => onGuardar({ decision: 'Aprobada', cobroDiagnosticoRechazo: null, evidenciaAprobacion: null })}
+          onClick={() =>
+            onGuardar({ decision: 'Aprobada', cobroDiagnosticoRechazo: null, evidenciaAprobacion: evidenciaAprobacion.trim() || null })
+          }
           className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 disabled:opacity-50 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
         >
           Aprobar

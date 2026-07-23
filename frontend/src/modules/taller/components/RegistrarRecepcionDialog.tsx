@@ -13,19 +13,22 @@ type FormularioRecepcion = z.infer<typeof esquemaRecepcion>
 
 interface RegistrarRecepcionDialogProps {
   clientes: Cliente[]
+  /** Preselecciona el cliente — usado por el atajo "Registrar nueva orden para este cliente" desde
+   * una OT en estado Rechazado. */
+  clienteInicialId?: string
   onGuardar: (datos: FormularioRecepcion) => void
   onCancelar: () => void
   guardando?: boolean
 }
 
-export function RegistrarRecepcionDialog({ clientes, onGuardar, onCancelar, guardando }: RegistrarRecepcionDialogProps) {
+export function RegistrarRecepcionDialog({ clientes, clienteInicialId, onGuardar, onCancelar, guardando }: RegistrarRecepcionDialogProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormularioRecepcion>({
     resolver: zodResolver(esquemaRecepcion),
-    defaultValues: { clienteId: '', equipoDescripcion: '', fallaReportada: '' },
+    defaultValues: { clienteId: clienteInicialId ?? '', equipoDescripcion: '', fallaReportada: '' },
   })
 
   return (
