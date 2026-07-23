@@ -6,6 +6,20 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.28.0] - 23/07/2026
+
+### Agregado
+
+- **Cierre de los pendientes de la auditoría de UX** — noveno pedido de mejora post-Fase 4 ("continúa con lo que falta"), completando todo lo que había quedado señalado como recomendación futura en las rondas anteriores. Sin cambios de backend — todo se resuelve con endpoints ya existentes.
+  - **`CajaPage`**: se corrigió la inconsistencia de formato de moneda encontrada en la auditoría (la tabla de movimientos no mostraba el prefijo "S/", a diferencia de todas las demás pantallas de dinero del sistema). De paso, mismo retrofit ya aplicado a los demás módulos: badge de color para Abierta/Cerrada, color-coding Ingreso/Egreso (verde/rojo, igual que ya hacía Reportes → Caja), y `useToast`/`EstadoCarga` en vez del `useState`/`<p roja>` de siempre.
+  - **`PaginaInicio` — dashboard real**: antes era solo logo + mensaje estático. Ahora muestra 6 tarjetas KPI (ventas de hoy, estado de caja, productos en quiebre, OT activas en Taller, servicios de campo pendientes, ticket promedio), cada una enlazando a su módulo. Todas reutilizan endpoints de `reportesApi`/`cajaApi`/`ordenesTrabajoApi`/`serviciosCampoApi` que ya existían — no se creó ningún endpoint nuevo. Cada tarjeta se maneja de forma independiente y silenciosa ante error (ej. un rol sin permiso sobre Reportes/Caja simplemente no ve esa tarjeta, sin ensuciar la pantalla de inicio con errores de autorización no accionables para ese usuario).
+  - **`ConfiguracionPage` — hub con tarjetas**: antes era una lista de 6 links subrayados sin ningún diseño. Ahora es una cuadrícula de tarjetas con ícono y descripción breve de cada sección.
+  - **Reportes — gráficos y exportación CSV en las 5 pestañas**: nuevo `GraficoBarras` (barras horizontales simples, sin librería nueva — se evitó deliberadamente sumar una dependencia de gráficos de terceros para 5 reportes con datos de conteo/monto que no necesitan zoom, animaciones ni tooltips interactivos) y `exportarCsv` (exportación genérica a CSV, con BOM UTF-8 para que Excel muestre bien tildes/ñ). Ventas grafica el monto por día (excluyendo anuladas, limitado a los últimos 31 días con datos para que no se vuelva ilegible con rangos muy amplios); Caja grafica ingresos vs. egresos; Inventario grafica Normal vs. En quiebre; Órdenes de Trabajo y Servicios de Campo grafican la cantidad por estado, reutilizando los mismos colores ya establecidos para cada estado en Taller/Servicios de Campo (`claseBarra`, campo nuevo agregado a `estadoOtVisual.ts`/`estadoServicioCampoVisual.ts`) — así el color de una barra coincide visualmente con el badge que se ve en las demás pantallas del mismo dato.
+
+Verificado: `npm run build`/`npx oxlint` limpios; confirmado contra Postgres real que los 5 endpoints que alimentan el nuevo dashboard de Inicio responden correctamente (200).
+
+---
+
 ## [0.27.0] - 23/07/2026
 
 ### Agregado

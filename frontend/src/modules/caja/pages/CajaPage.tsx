@@ -1,19 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cajaApi } from '@/modules/caja/api/cajaApi'
 import { AbrirCajaDialog } from '@/modules/caja/components/AbrirCajaDialog'
 import { CerrarCajaDialog } from '@/modules/caja/components/CerrarCajaDialog'
 import { RegistrarMovimientoCajaDialog } from '@/modules/caja/components/RegistrarMovimientoCajaDialog'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { useToast } from '@/shared/hooks/useToast'
 
 export function CajaPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
   const [abriendo, setAbriendo] = useState(false)
   const [cerrando, setCerrando] = useState(false)
   const [registrando, setRegistrando] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
-  const { data: caja, isLoading } = useQuery({ queryKey: ['caja', 'actual'], queryFn: cajaApi.obtenerActual })
+  const {
+    data: caja,
+    isLoading,
+    error: errorCaja,
+  } = useQuery({ queryKey: ['caja', 'actual'], queryFn: cajaApi.obtenerActual })
+
+  useEffect(() => {
+    if (errorCaja) mostrarError('No se pudo cargar el estado de la caja.')
+  }, [errorCaja, mostrarError])
 
   const { data: movimientos } = useQuery({
     queryKey: ['caja', 'movimientos', caja?.id],
@@ -30,8 +40,9 @@ export function CajaPage() {
     onSuccess: () => {
       invalidar()
       setAbriendo(false)
+      mostrarExito('Caja abierta correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo abrir la caja.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo abrir la caja.'),
   })
 
   const mutacionCerrar = useMutation({
@@ -39,8 +50,9 @@ export function CajaPage() {
     onSuccess: () => {
       invalidar()
       setCerrando(false)
+      mostrarExito('Caja cerrada correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo cerrar la caja.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo cerrar la caja.'),
   })
 
   const mutacionRegistrar = useMutation({
@@ -49,12 +61,13 @@ export function CajaPage() {
     onSuccess: () => {
       invalidar()
       setRegistrando(false)
+      mostrarExito('Movimiento registrado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo registrar el movimiento.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo registrar el movimiento.'),
   })
 
   if (isLoading) {
-    return <p className="text-[var(--color-terciario)]">Cargando...</p>
+    return <EstadoCarga />
   }
 
   return (
@@ -89,14 +102,21 @@ export function CajaPage() {
         )}
       </div>
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
-
       {!caja ? (
         <p className="text-[var(--color-terciario)]">Nunca se ha abierto una caja. Ábrela para empezar a registrar movimientos.</p>
       ) : (
         <div className="mb-6 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
           <p className="mb-1 text-sm">
-            <span className="font-semibold">Estado:</span> {caja.estado}
+            <span className="font-semibold">Estado:</span>{' '}
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                caja.estado === 'Abierta'
+                  ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                  : 'bg-slate-100 text-[var(--color-terciario)] dark:bg-slate-700 dark:text-slate-400'
+              }`}
+            >
+              {caja.estado}
+            </span>
           </p>
           <p className="mb-1 text-sm">
             <span className="font-semibold">Apertura:</span> {new Date(caja.fechaApertura).toLocaleString()} — S/{' '}
@@ -115,7 +135,7 @@ export function CajaPage() {
               </p>
               <p className="text-sm">
                 <span className="font-semibold">Diferencia:</span>{' '}
-                <span className={caja.diferencia && caja.diferencia !== 0 ? 'text-red-600' : ''}>
+                <span className={caja.diferencia && caja.diferencia !== 0 ? 'font-semibold text-red-600' : ''}>
                   S/ {caja.diferencia?.toFixed(2)}
                 </span>
               </p>
@@ -139,9 +159,11 @@ export function CajaPage() {
             {movimientos?.map((movimiento) => (
               <tr key={movimiento.id} className="border-t border-slate-200 dark:border-slate-700">
                 <td className="px-4 py-2">{new Date(movimiento.fecha).toLocaleString()}</td>
-                <td className="px-4 py-2">{movimiento.tipo}</td>
+                <td className="px-4 py-2">
+                  <span className={movimiento.tipo === 'Ingreso' ? 'text-emerald-600' : 'text-red-600'}>{movimiento.tipo}</span>
+                </td>
                 <td className="px-4 py-2">{movimiento.concepto}</td>
-                <td className="px-4 py-2">{movimiento.monto.toFixed(2)}</td>
+                <td className="px-4 py-2">S/ {movimiento.monto.toFixed(2)}</td>
                 <td className="px-4 py-2">{movimiento.descripcion ?? '—'}</td>
               </tr>
             ))}
@@ -158,10 +180,7 @@ export function CajaPage() {
 
       {abriendo && (
         <AbrirCajaDialog
-          onGuardar={(monto) => {
-            setError(null)
-            mutacionAbrir.mutate(monto)
-          }}
+          onGuardar={(monto) => mutacionAbrir.mutate(monto)}
           onCancelar={() => setAbriendo(false)}
           guardando={mutacionAbrir.isPending}
         />
@@ -169,10 +188,7 @@ export function CajaPage() {
 
       {cerrando && (
         <CerrarCajaDialog
-          onGuardar={(monto) => {
-            setError(null)
-            mutacionCerrar.mutate(monto)
-          }}
+          onGuardar={(monto) => mutacionCerrar.mutate(monto)}
           onCancelar={() => setCerrando(false)}
           guardando={mutacionCerrar.isPending}
         />
@@ -180,10 +196,7 @@ export function CajaPage() {
 
       {registrando && (
         <RegistrarMovimientoCajaDialog
-          onGuardar={(datos) => {
-            setError(null)
-            mutacionRegistrar.mutate(datos)
-          }}
+          onGuardar={(datos) => mutacionRegistrar.mutate(datos)}
           onCancelar={() => setRegistrando(false)}
           guardando={mutacionRegistrar.isPending}
         />

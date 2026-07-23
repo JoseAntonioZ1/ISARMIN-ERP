@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { reportesApi } from '@/modules/reportes/api/reportesApi'
+import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { GraficoBarras } from '@/shared/components/GraficoBarras'
+import { exportarCsv } from '@/shared/utils/exportarCsv'
 
 export function ReporteCajaTab() {
   const [desde, setDesde] = useState('')
@@ -11,6 +14,15 @@ export function ReporteCajaTab() {
     queryFn: () => reportesApi.caja(desde || undefined, hasta || undefined),
   })
 
+  const handleExportar = () => {
+    if (!reporte) return
+    exportarCsv(
+      `reporte-caja-${desde || 'inicio'}_${hasta || 'fin'}.csv`,
+      ['Fecha', 'Tipo', 'Concepto', 'Monto'],
+      reporte.movimientos.map((m) => [new Date(m.fecha).toLocaleDateString(), m.tipo, m.concepto, m.monto.toFixed(2)]),
+    )
+  }
+
   return (
     <div>
       <p className="mb-4 text-xs text-[var(--color-terciario)]">
@@ -18,25 +30,28 @@ export function ReporteCajaTab() {
         Ventas, Taller ni Servicios de Campo.
       </p>
 
-      <div className="mb-4 flex gap-3">
-        <div>
-          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
-          <input
-            type="date"
-            value={desde}
-            onChange={(e) => setDesde(e.target.value)}
-            className="rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div className="flex gap-3">
+          <div>
+            <label className="mb-1 block text-xs text-[var(--color-terciario)]">Desde</label>
+            <input
+              type="date"
+              value={desde}
+              onChange={(e) => setDesde(e.target.value)}
+              className="rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
+            <input
+              type="date"
+              value={hasta}
+              onChange={(e) => setHasta(e.target.value)}
+              className="rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+            />
+          </div>
         </div>
-        <div>
-          <label className="mb-1 block text-xs text-[var(--color-terciario)]">Hasta</label>
-          <input
-            type="date"
-            value={hasta}
-            onChange={(e) => setHasta(e.target.value)}
-            className="rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-        </div>
+        <BotonExportarCsv onClick={handleExportar} disabled={!reporte || reporte.movimientos.length === 0} />
       </div>
 
       {isLoading || !reporte ? (
@@ -58,6 +73,17 @@ export function ReporteCajaTab() {
             </div>
           </div>
 
+          <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
+            <h3 className="mb-3 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Ingresos vs. egresos</h3>
+            <GraficoBarras
+              datos={[
+                { etiqueta: 'Ingresos', valor: reporte.totalIngresos, claseColor: 'bg-emerald-500' },
+                { etiqueta: 'Egresos', valor: reporte.totalEgresos, claseColor: 'bg-red-500' },
+              ]}
+              formatoValor={(v) => `S/ ${v.toFixed(2)}`}
+            />
+          </div>
+
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -71,7 +97,9 @@ export function ReporteCajaTab() {
               {reporte.movimientos.map((m) => (
                 <tr key={m.id} className="border-t border-slate-200 dark:border-slate-700">
                   <td className="px-4 py-2">{new Date(m.fecha).toLocaleDateString()}</td>
-                  <td className="px-4 py-2">{m.tipo}</td>
+                  <td className="px-4 py-2">
+                    <span className={m.tipo === 'Ingreso' ? 'text-emerald-600' : 'text-red-600'}>{m.tipo}</span>
+                  </td>
                   <td className="px-4 py-2">{m.concepto}</td>
                   <td className="px-4 py-2">S/ {m.monto.toFixed(2)}</td>
                 </tr>

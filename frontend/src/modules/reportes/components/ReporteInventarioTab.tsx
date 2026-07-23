@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { reportesApi } from '@/modules/reportes/api/reportesApi'
+import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { GraficoBarras } from '@/shared/components/GraficoBarras'
+import { exportarCsv } from '@/shared/utils/exportarCsv'
 
 export function ReporteInventarioTab() {
   const { data: reporte, isLoading } = useQuery({
@@ -11,17 +14,41 @@ export function ReporteInventarioTab() {
     return <p className="text-[var(--color-terciario)]">Cargando...</p>
   }
 
+  const enQuiebre = reporte.productosEnQuiebre.length
+  const normal = reporte.productos.length - enQuiebre
+
+  const handleExportar = () => {
+    exportarCsv(
+      'reporte-inventario.csv',
+      ['Código', 'Nombre', 'Stock actual', 'Stock mínimo', 'Estado'],
+      reporte.productos.map((p) => [p.codigoInterno, p.nombre, p.stockActual, p.stockMinimo ?? '', p.estado]),
+    )
+  }
+
   return (
     <div>
-      <div className="mb-4 grid grid-cols-2 gap-4">
-        <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-          <p className="text-xs text-[var(--color-terciario)]">Productos</p>
-          <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{reporte.productos.length}</p>
+      <div className="mb-4 flex items-end justify-between gap-3">
+        <div className="grid flex-1 grid-cols-2 gap-4">
+          <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
+            <p className="text-xs text-[var(--color-terciario)]">Productos</p>
+            <p className="text-xl font-semibold text-slate-800 dark:text-slate-100">{reporte.productos.length}</p>
+          </div>
+          <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
+            <p className="text-xs text-[var(--color-terciario)]">En quiebre de stock</p>
+            <p className="text-xl font-semibold text-[var(--color-secundario)]">{enQuiebre}</p>
+          </div>
         </div>
-        <div className="rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
-          <p className="text-xs text-[var(--color-terciario)]">En quiebre de stock</p>
-          <p className="text-xl font-semibold text-[var(--color-secundario)]">{reporte.productosEnQuiebre.length}</p>
-        </div>
+        <BotonExportarCsv onClick={handleExportar} disabled={reporte.productos.length === 0} />
+      </div>
+
+      <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
+        <h3 className="mb-3 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Estado del inventario</h3>
+        <GraficoBarras
+          datos={[
+            { etiqueta: 'Normal', valor: normal, claseColor: 'bg-emerald-500' },
+            { etiqueta: 'En quiebre', valor: enQuiebre, claseColor: 'bg-[var(--color-secundario)]' },
+          ]}
+        />
       </div>
 
       {reporte.productosEnQuiebre.length > 0 && (
