@@ -23,6 +23,7 @@ public class ObtenerBrandingQueryHandlerTests
 
         Assert.Equal("ISARMIN PERÚ S.A.C.", resultado.RazonSocial);
         Assert.Equal("20123456789", resultado.Ruc);
+        Assert.Equal("Av. Principal 123", resultado.Direccion);
         Assert.Equal("https://ejemplo.com/logo.png", resultado.Logo);
         Assert.Equal("#1E293B", resultado.ColorAcento);
         Assert.Equal("Bienvenido al equipo", resultado.MensajeBienvenida);

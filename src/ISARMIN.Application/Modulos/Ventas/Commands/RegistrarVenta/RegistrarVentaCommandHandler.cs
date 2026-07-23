@@ -48,9 +48,12 @@ public class RegistrarVentaCommandHandler : ICommandHandler<RegistrarVentaComman
     {
         await _validator.ValidateAndThrowAsync(comando, cancellationToken);
 
-        if (comando.ClienteId is { } clienteId && await _clienteRepository.ObtenerPorIdAsync(clienteId, cancellationToken) is null)
+        var clienteTieneRucValido = false;
+        if (comando.ClienteId is { } clienteId)
         {
-            throw new ClienteNoEncontradoException(clienteId);
+            var cliente = await _clienteRepository.ObtenerPorIdAsync(clienteId, cancellationToken)
+                ?? throw new ClienteNoEncontradoException(clienteId);
+            clienteTieneRucValido = cliente.TipoDocumento == ISARMIN.Domain.Enums.TipoDocumento.Ruc;
         }
 
         var productos = new Dictionary<Guid, Producto>();
@@ -100,7 +103,8 @@ public class RegistrarVentaCommandHandler : ICommandHandler<RegistrarVentaComman
             fecha,
             comando.Detalles.Select(d => (d.ProductoId, d.Cantidad, d.PrecioUnitario)),
             comando.Pagos.Select(p => (p.MedioPagoId, p.Monto)),
-            comando.UsuarioAutorizoSaldoId);
+            comando.UsuarioAutorizoSaldoId,
+            clienteTieneRucValido);
 
         foreach (var (productoId, cantidadTotal) in cantidadPorProducto)
         {

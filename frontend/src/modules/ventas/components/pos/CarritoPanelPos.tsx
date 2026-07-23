@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { Cliente } from '@/modules/clientes/api/clientesApi'
 import type { MedioPago } from '@/modules/catalogos/api/catalogosApi'
 import type { Usuario } from '@/modules/usuarios/api/usuariosApi'
-import type { DetalleVentaInput, PagoVentaInput } from '@/modules/ventas/api/ventasApi'
+import { TIPOS_COMPROBANTE, type DetalleVentaInput, type PagoVentaInput, type TipoComprobante } from '@/modules/ventas/api/ventasApi'
 import { esMedioPagoEfectivo, iconoParaMedioPago } from '@/modules/ventas/utils/iconosPos'
 import { useSessionStore } from '@/shared/hooks/useSessionStore'
 
@@ -25,9 +25,11 @@ interface CarritoPanelPosProps {
   mediosPago: MedioPago[]
   onFinalizarVenta: (payload: {
     clienteId: string | null
+    tipoComprobante: TipoComprobante
     detalles: DetalleVentaInput[]
     pagos: PagoVentaInput[]
     usuarioAutorizoSaldoId: string | null
+    lineas: LineaCarritoPos[]
   }) => void
   guardando: boolean
 }
@@ -48,6 +50,7 @@ export function CarritoPanelPos({
   const vendedorNombre = useSessionStore((s) => s.usuario?.nombre)
 
   const [clienteId, setClienteId] = useState('')
+  const [tipoComprobante, setTipoComprobante] = useState<TipoComprobante>('Ticket')
   const [medioPagoId, setMedioPagoId] = useState('')
   const [montoPrincipal, setMontoPrincipal] = useState('')
   const [pagosAdicionales, setPagosAdicionales] = useState<{ medioPagoId: string; monto: string }[]>([])
@@ -74,8 +77,17 @@ export function CarritoPanelPos({
   const montoPagadoTotal = montoAplicadoPrincipal + montoAdicionales
   const saldoPendiente = total - montoPagadoTotal
 
+  const esFactura = tipoComprobante === 'Factura'
+  const clienteSeleccionado = clientes.find((c) => c.id === clienteId)
+  const clienteTieneRuc = clienteSeleccionado?.tipoDocumento === 'Ruc'
+  const clientesDisponibles = esFactura ? clientes.filter((c) => c.tipoDocumento === 'Ruc') : clientes
+
   const puedeFinalizar =
-    lineas.length > 0 && saldoPendiente >= -0.001 && (saldoPendiente <= 0.001 || usuarioAutorizoId) && !guardando
+    lineas.length > 0 &&
+    saldoPendiente >= -0.001 &&
+    (saldoPendiente <= 0.001 || usuarioAutorizoId) &&
+    (!esFactura || clienteTieneRuc) &&
+    !guardando
 
   const handleFinalizar = () => {
     const detalles: DetalleVentaInput[] = lineas.map((l) => ({
@@ -96,9 +108,11 @@ export function CarritoPanelPos({
 
     onFinalizarVenta({
       clienteId: clienteId || null,
+      tipoComprobante,
       detalles,
       pagos,
       usuarioAutorizoSaldoId: saldoPendiente > 0.001 ? usuarioAutorizoId : null,
+      lineas,
     })
   }
 
@@ -106,17 +120,33 @@ export function CarritoPanelPos({
     <aside className="flex h-full min-h-0 w-full flex-col border-l border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
       <div className="space-y-2 border-b border-slate-200 p-3 dark:border-slate-700">
         <select
+          value={tipoComprobante}
+          onChange={(e) => setTipoComprobante(e.target.value as TipoComprobante)}
+          className="w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+        >
+          {TIPOS_COMPROBANTE.map((tipo) => (
+            <option key={tipo} value={tipo}>
+              {tipo}
+            </option>
+          ))}
+        </select>
+
+        <select
           value={clienteId}
           onChange={(e) => setClienteId(e.target.value)}
           className="w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         >
           <option value="">Sin cliente registrado</option>
-          {clientes.map((c) => (
+          {clientesDisponibles.map((c) => (
             <option key={c.id} value={c.id}>
               {c.nombreRazonSocial}
             </option>
           ))}
         </select>
+        {esFactura && !clienteTieneRuc && (
+          <p className="text-xs text-red-600">Una Factura requiere seleccionar un cliente con RUC (RN-009).</p>
+        )}
+
         <p className="text-xs text-[var(--color-terciario)]">Vendedor: {vendedorNombre ?? '—'}</p>
       </div>
 

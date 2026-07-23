@@ -19,6 +19,7 @@ public class ObtenerBrandingQueryHandler : IQueryHandler<ObtenerBrandingQuery, B
     {
         var configuracion = await _configuracionEmpresaRepository.ObtenerAsync(cancellationToken);
         return new BrandingDto(
-            configuracion.RazonSocial, configuracion.Ruc, configuracion.Logo, configuracion.ColorAcento, configuracion.MensajeBienvenida);
+            configuracion.RazonSocial, configuracion.Ruc, configuracion.Direccion, configuracion.Logo,
+            configuracion.ColorAcento, configuracion.MensajeBienvenida);
     }
 }

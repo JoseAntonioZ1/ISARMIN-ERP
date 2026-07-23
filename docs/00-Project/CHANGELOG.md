@@ -6,6 +6,23 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.23.0] - 23/07/2026
+
+### Agregado
+
+- **Comprobante de venta imprimible/descargable + RN-009 (Factura exige RUC) — cuarto pedido de mejora post-Fase 4 del propietario.** Límite legal comunicado explícitamente antes de construir esto: una Factura peruana debe emitirse electrónicamente ante SUNAT (firma digital, XML/UBL, proveedor certificado PSE/OSE) — eso sigue fuera de alcance (RF-081, bloqueado por BQ-050/051/072/082, sin cambios). Lo que se construye aquí es un **comprobante interno en PDF**, regenerado siempre a partir de los datos ya persistidos de la venta (no se guarda ningún "snapshot" de lo impreso), con una leyenda explícita de que no es un documento electrónico válido ante SUNAT.
+  - **Backend — RN-009 implementada** (`Business-Rules.md`, documentada desde antes pero nunca codificada): `Venta` gana un parámetro `clienteTieneRucValido` (opcional, default `false` — no rompe ninguna llamada existente en `VentaTests.cs`) y rechaza con `ArgumentException` cualquier venta `Factura` sin cliente con RUC. `RegistrarVentaCommandHandler` ahora reutiliza el `Cliente` que ya obtenía (antes solo para verificar existencia) para calcular ese dato.
+  - **Bug real encontrado y corregido durante la verificación E2E, de alcance más amplio que este cambio:** `GlobalExceptionHandler` solo traducía `ValidationException` (FluentValidation) y `ExcepcionAplicacion` a respuestas controladas — cualquier `ArgumentException` simple lanzada directamente por una entidad de Domain (como la nueva regla RN-009, pero también posibles casos en `Producto`/`Cliente`) caía como 500 genérico ("Ocurrió un error inesperado") en vez de un 400 con el mensaje claro que la propia entidad ya construye. Se agregó el caso faltante, mapeando a 400 con código `SOLICITUD_INVALIDA`.
+  - **Branding público gana `Direccion`**: el comprobante necesita mostrar la dirección de la empresa, y el endpoint público `/configuracion/branding` (sin permiso, para que cualquier cajero de Ventas pueda generar un comprobante sin necesitar `Configuracion.Consultar`) no la exponía — se agregó, dato no sensible (ya se imprime en cualquier comprobante entregado a un cliente).
+  - Pruebas nuevas: 3 en Domain (`VentaTests`) + 2 en Application (`RegistrarVentaCommandHandlerTests`) + 1 actualizada (`ObtenerBrandingQueryHandlerTests`). 256/256 en todo el backend.
+  - **Frontend**: nueva dependencia `jspdf` (generación 100% cliente, sin backend, funciona offline). `frontend/src/modules/ventas/utils/comprobantePdf.ts` arma el PDF (encabezado con logo/razón social/RUC/dirección, tipo de comprobante, cliente, tabla de productos, subtotal/descuento/IGV/total, medios de pago, leyenda de que no es válido ante SUNAT) — misma función reutilizada para la descarga automática al finalizar una venta (`VentaPosPage`) y para el botón "Descargar comprobante" agregado en el historial (`VentaDetalleDialog`), sin necesidad de guardar nada aparte.
+  - `CarritoPanelPos` ahora tiene un selector de tipo de comprobante (antes el POS mandaba `'Ticket'` fijo, sin poder elegir Boleta/Factura/Nota de Venta/Cotización) — al elegir Factura, el selector de cliente se filtra para mostrar solo clientes con RUC y bloquea "Finalizar Venta" con un mensaje claro si no hay uno seleccionado, reflejando en el cliente la misma regla RN-009 ya exigida en el backend.
+  - **Otras recomendaciones dadas al propietario** (no implementadas, quedan como su decisión futura): contratar un PSE/OSE certificado por SUNAT cuando decida facturar electrónicamente de verdad (son proveedores externos, no algo que se resuelva con código); el "N° de operación" del PDF no es una serie/correlativo oficial SUNAT (eso sigue bloqueado, RF-081/RN-035); va a necesitar el RUC de su propia empresa validado (ya existe el campo); conviene que consulte con su contador desde qué volumen de ventas SUNAT exige emisión electrónica obligatoria.
+
+Verificado E2E contra Postgres real: Factura sin cliente con RUC rechazada (400, `SOLICITUD_INVALIDA`, antes devolvía 500); Factura con cliente con RUC válido aceptada; `GET /configuracion/branding` ahora incluye `direccion`; `npm run build`/`npx oxlint` limpios.
+
+---
+
 ## [0.22.0] - 22/07/2026
 
 ### Agregado

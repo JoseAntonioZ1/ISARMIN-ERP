@@ -63,6 +63,31 @@ public class VentaTests
     }
 
     [Fact]
+    public void Constructor_FacturaSinCliente_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Venta(null, TipoComprobante.Factura, Guid.NewGuid(), Fecha, DetalleValido(), [(Guid.NewGuid(), 100m)], null, clienteTieneRucValido: true));
+    }
+
+    [Fact]
+    public void Constructor_FacturaConClienteSinRucValido_LanzaExcepcion()
+    {
+        Assert.Throws<ArgumentException>(() =>
+            new Venta(Guid.NewGuid(), TipoComprobante.Factura, Guid.NewGuid(), Fecha, DetalleValido(), [(Guid.NewGuid(), 100m)], null, clienteTieneRucValido: false));
+    }
+
+    [Fact]
+    public void Constructor_FacturaConClienteConRucValido_CreaLaVenta()
+    {
+        var venta = new Venta(
+            Guid.NewGuid(), TipoComprobante.Factura, Guid.NewGuid(), Fecha, DetalleValido(), [(Guid.NewGuid(), 100m)], null,
+            clienteTieneRucValido: true);
+
+        Assert.Equal(TipoComprobante.Factura, venta.TipoComprobante);
+        Assert.Equal(EstadoVenta.Pagada, venta.Estado);
+    }
+
+    [Fact]
     public void Anular_VentaRegistrada_QuedaAnuladaConMotivo()
     {
         var venta = new Venta(null, TipoComprobante.Ticket, Guid.NewGuid(), Fecha, DetalleValido(), [(Guid.NewGuid(), 100m)], null);

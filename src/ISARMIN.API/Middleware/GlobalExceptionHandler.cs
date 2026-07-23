@@ -48,6 +48,25 @@ public class GlobalExceptionHandler : IExceptionHandler
             return true;
         }
 
+        // Las entidades de Domain lanzan ArgumentException para sus invariantes propias (ej. RN-009:
+        // Factura exige RUC) que no siempre pasan primero por un validador de FluentValidation — sin
+        // este caso, cualquier violación de una regla de Domain caía como 500 genérico en vez de un
+        // 400 con el mensaje claro que la propia entidad ya construye.
+        if (exception is ArgumentException argumentException)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await httpContext.Response.WriteAsJsonAsync(new
+            {
+                error = new
+                {
+                    codigo = "SOLICITUD_INVALIDA",
+                    mensaje = argumentException.Message,
+                    detalles = (object?)null
+                }
+            }, cancellationToken);
+            return true;
+        }
+
         _logger.LogError(exception, "Excepción no controlada: {Mensaje}", exception.Message);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;

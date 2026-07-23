@@ -120,6 +120,48 @@ public class RegistrarVentaCommandHandlerTests
     }
 
     [Fact]
+    public async Task ManejarAsync_FacturaConClienteSinRuc_LanzaExcepcion()
+    {
+        var producto = CrearProducto(10m);
+        var medioPago = new MedioPago("Efectivo");
+        var cliente = new Cliente("Juan Pérez", "999888777", null, TipoDocumento.Dni, "12345678");
+        _productoRepository.Setup(r => r.ObtenerPorIdAsync(producto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(producto);
+        _medioPagoRepository.Setup(r => r.ObtenerPorIdAsync(medioPago.Id, It.IsAny<CancellationToken>())).ReturnsAsync(medioPago);
+        _clienteRepository.Setup(r => r.ObtenerPorIdAsync(cliente.Id, It.IsAny<CancellationToken>())).ReturnsAsync(cliente);
+
+        var handler = CrearHandler();
+        var comando = new RegistrarVentaCommand(
+            cliente.Id, TipoComprobante.Factura,
+            [new DetalleVentaInput(producto.Id, 1m, 150m)],
+            [new PagoVentaInput(medioPago.Id, 150m)],
+            null, Guid.NewGuid());
+
+        await Assert.ThrowsAsync<ArgumentException>(() => handler.ManejarAsync(comando));
+    }
+
+    [Fact]
+    public async Task ManejarAsync_FacturaConClienteConRuc_CreaLaVenta()
+    {
+        var producto = CrearProducto(10m);
+        var medioPago = new MedioPago("Efectivo");
+        var cliente = new Cliente("ISARMIN SAC", "999888777", null, TipoDocumento.Ruc, "20100070970");
+        _productoRepository.Setup(r => r.ObtenerPorIdAsync(producto.Id, It.IsAny<CancellationToken>())).ReturnsAsync(producto);
+        _medioPagoRepository.Setup(r => r.ObtenerPorIdAsync(medioPago.Id, It.IsAny<CancellationToken>())).ReturnsAsync(medioPago);
+        _clienteRepository.Setup(r => r.ObtenerPorIdAsync(cliente.Id, It.IsAny<CancellationToken>())).ReturnsAsync(cliente);
+
+        var handler = CrearHandler();
+        var comando = new RegistrarVentaCommand(
+            cliente.Id, TipoComprobante.Factura,
+            [new DetalleVentaInput(producto.Id, 1m, 150m)],
+            [new PagoVentaInput(medioPago.Id, 150m)],
+            null, Guid.NewGuid());
+
+        var resultado = await handler.ManejarAsync(comando);
+
+        Assert.Equal("Pagada", resultado.Estado);
+    }
+
+    [Fact]
     public async Task ManejarAsync_MedioPagoInexistente_LanzaExcepcion()
     {
         var producto = CrearProducto(10m);

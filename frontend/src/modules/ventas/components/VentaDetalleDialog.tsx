@@ -1,8 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { mediosPagoApi } from '@/modules/catalogos/api/catalogosApi'
+import { clientesApi } from '@/modules/clientes/api/clientesApi'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import { type DetalleDevolucionInput, ventasApi } from '@/modules/ventas/api/ventasApi'
+import { generarComprobantePdf } from '@/modules/ventas/utils/comprobantePdf'
 import { ApiError } from '@/shared/api/httpClient'
+import { useBranding } from '@/shared/hooks/useBranding'
 
 interface VentaDetalleDialogProps {
   ventaId: string
@@ -18,6 +22,22 @@ export function VentaDetalleDialog({ ventaId, productos, onCerrar }: VentaDetall
     queryKey: ['ventas', ventaId],
     queryFn: () => ventasApi.obtener(ventaId),
   })
+
+  const { data: mediosPago } = useQuery({ queryKey: ['medios-pago'], queryFn: mediosPagoApi.listar })
+  const { data: branding } = useBranding()
+  const { data: clientes } = useQuery({ queryKey: ['clientes', 'todos'], queryFn: () => clientesApi.buscar(undefined, 1, 200) })
+
+  const handleDescargarComprobante = () => {
+    if (!venta) return
+    const cliente = venta.clienteId ? (clientes?.datos.find((c) => c.id === venta.clienteId) ?? null) : null
+    generarComprobantePdf({
+      venta,
+      productos,
+      cliente,
+      mediosPago: mediosPago ?? [],
+      branding: branding ?? null,
+    }).save(`comprobante-${venta.tipoComprobante}-${venta.id.slice(0, 8)}.pdf`)
+  }
 
   const invalidar = () => {
     queryClient.invalidateQueries({ queryKey: ['ventas', ventaId] })
@@ -123,7 +143,16 @@ export function VentaDetalleDialog({ ventaId, productos, onCerrar }: VentaDetall
           </>
         )}
 
-        <div className="mt-5 flex justify-end">
+        <div className="mt-5 flex justify-end gap-3">
+          {venta && (
+            <button
+              type="button"
+              onClick={handleDescargarComprobante}
+              className="rounded bg-[var(--color-principal)] px-4 py-2 text-sm text-white hover:brightness-90 dark:bg-[var(--color-principal)] dark:hover:brightness-110"
+            >
+              Descargar comprobante
+            </button>
+          )}
           <button
             type="button"
             onClick={onCerrar}

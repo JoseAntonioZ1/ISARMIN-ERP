@@ -7,8 +7,10 @@ import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
 import { CarritoPanelPos, type LineaCarritoPos } from '@/modules/ventas/components/pos/CarritoPanelPos'
 import { CategoriaSidebarPos } from '@/modules/ventas/components/pos/CategoriaSidebarPos'
 import { ProductoBuscadorGrid } from '@/modules/ventas/components/pos/ProductoBuscadorGrid'
-import { type DetalleVentaInput, type PagoVentaInput, ventasApi } from '@/modules/ventas/api/ventasApi'
+import { type DetalleVentaInput, type PagoVentaInput, type TipoComprobante, ventasApi } from '@/modules/ventas/api/ventasApi'
+import { generarComprobantePdf } from '@/modules/ventas/utils/comprobantePdf'
 import { ApiError } from '@/shared/api/httpClient'
+import { useBranding } from '@/shared/hooks/useBranding'
 
 export function VentaPosPage() {
   const queryClient = useQueryClient()
@@ -41,16 +43,30 @@ export function VentaPosPage() {
 
   const quitarLinea = (productoId: string) => setLineas((actual) => actual.filter((l) => l.productoId !== productoId))
 
+  const { data: branding } = useBranding()
+
   const mutacionRegistrar = useMutation({
     mutationFn: (payload: {
       clienteId: string | null
+      tipoComprobante: TipoComprobante
       detalles: DetalleVentaInput[]
       pagos: PagoVentaInput[]
       usuarioAutorizoSaldoId: string | null
-    }) => ventasApi.registrar(payload.clienteId, 'Ticket', payload.detalles, payload.pagos, payload.usuarioAutorizoSaldoId),
-    onSuccess: () => {
+      lineas: LineaCarritoPos[]
+    }) => ventasApi.registrar(payload.clienteId, payload.tipoComprobante, payload.detalles, payload.pagos, payload.usuarioAutorizoSaldoId),
+    onSuccess: (venta, payload) => {
       queryClient.invalidateQueries({ queryKey: ['ventas', 'lista'] })
       queryClient.invalidateQueries({ queryKey: ['productos', 'pos'] })
+
+      const clienteSeleccionado = clientes?.datos.find((c) => c.id === payload.clienteId) ?? null
+      generarComprobantePdf({
+        venta,
+        productos: payload.lineas.map((l) => ({ id: l.productoId, nombre: l.nombre })),
+        cliente: clienteSeleccionado,
+        mediosPago: mediosPago ?? [],
+        branding: branding ?? null,
+      }).save(`comprobante-${venta.tipoComprobante}-${venta.id.slice(0, 8)}.pdf`)
+
       setLineas([])
       setExito(true)
       setError(null)

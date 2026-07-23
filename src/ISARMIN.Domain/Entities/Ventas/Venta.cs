@@ -40,7 +40,8 @@ public class Venta : Entity
         DateTime fecha,
         IEnumerable<(Guid ProductoId, decimal Cantidad, decimal PrecioUnitario)> detalles,
         IEnumerable<(Guid MedioPagoId, decimal Monto)> pagos,
-        Guid? usuarioAutorizoSaldoId)
+        Guid? usuarioAutorizoSaldoId,
+        bool clienteTieneRucValido = false)
     {
         if (usuarioId == Guid.Empty)
         {
@@ -51,6 +52,11 @@ public class Venta : Entity
         if (listaDetalles.Count == 0)
         {
             throw new ArgumentException("La venta debe tener al menos un producto.", nameof(detalles));
+        }
+
+        if (tipoComprobante == TipoComprobante.Factura && !(clienteId is not null && clienteTieneRucValido))
+        {
+            throw new ArgumentException("Una Factura solo puede emitirse a un cliente con RUC válido (RN-009).", nameof(tipoComprobante));
         }
 
         ClienteId = clienteId;
