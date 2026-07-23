@@ -1,24 +1,41 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { mediosPagoApi } from '@/modules/catalogos/api/catalogosApi'
 import { clientesApi } from '@/modules/clientes/api/clientesApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
 import { ServicioCampoDetalleDialog } from '@/modules/serviciosCampo/components/ServicioCampoDetalleDialog'
 import { SolicitarServicioCampoDialog } from '@/modules/serviciosCampo/components/SolicitarServicioCampoDialog'
-import { serviciosCampoApi } from '@/modules/serviciosCampo/api/serviciosCampoApi'
+import { type EstadoServicioCampo, serviciosCampoApi } from '@/modules/serviciosCampo/api/serviciosCampoApi'
+import { ESTADOS_SERVICIO_CAMPO_FILTRABLES, ESTADOS_SERVICIO_CAMPO_VISUAL } from '@/modules/serviciosCampo/utils/estadoServicioCampoVisual'
 import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { ControlesPaginacion } from '@/shared/components/ControlesPaginacion'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
+import { EstadoVacio } from '@/shared/components/EstadoVacio'
+import { useToast } from '@/shared/hooks/useToast'
+
+const TAMANO_PAGINA = 20
 
 export function ServiciosCampoPage() {
   const queryClient = useQueryClient()
+  const { mostrarExito, mostrarError } = useToast()
+  const [filtroEstado, setFiltroEstado] = useState<EstadoServicioCampo | ''>('')
+  const [pagina, setPagina] = useState(1)
   const [solicitando, setSolicitando] = useState(false)
   const [verDetalle, setVerDetalle] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  const { data: listado, isLoading } = useQuery({
-    queryKey: ['servicios-campo', 'lista'],
-    queryFn: () => serviciosCampoApi.buscar(),
+  const {
+    data: listado,
+    isLoading,
+    error: errorListado,
+  } = useQuery({
+    queryKey: ['servicios-campo', 'lista', filtroEstado, pagina],
+    queryFn: () => serviciosCampoApi.buscar(filtroEstado || undefined, undefined, pagina, TAMANO_PAGINA),
   })
+
+  useEffect(() => {
+    if (errorListado) mostrarError('No se pudo cargar la lista de servicios de campo.')
+  }, [errorListado, mostrarError])
 
   const { data: clientes } = useQuery({
     queryKey: ['clientes', 'todos'],
@@ -49,8 +66,9 @@ export function ServiciosCampoPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['servicios-campo', 'lista'] })
       setSolicitando(false)
+      mostrarExito('Servicio de campo solicitado correctamente.')
     },
-    onError: (e) => setError(e instanceof ApiError ? e.message : 'No se pudo solicitar el servicio de campo.'),
+    onError: (e) => mostrarError(e instanceof ApiError ? e.message : 'No se pudo solicitar el servicio de campo.'),
   })
 
   return (
@@ -66,51 +84,76 @@ export function ServiciosCampoPage() {
         </button>
       </div>
 
-      {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+      <select
+        value={filtroEstado}
+        onChange={(e) => {
+          setFiltroEstado(e.target.value as EstadoServicioCampo | '')
+          setPagina(1)
+        }}
+        className="mb-4 rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+      >
+        <option value="">Todos los estados</option>
+        {ESTADOS_SERVICIO_CAMPO_FILTRABLES.map((estado) => (
+          <option key={estado} value={estado}>
+            {ESTADOS_SERVICIO_CAMPO_VISUAL[estado].etiqueta}
+          </option>
+        ))}
+      </select>
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
+      ) : listado?.datos.length === 0 ? (
+        <EstadoVacio mensaje="No se encontraron servicios de campo." />
       ) : (
-        <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
-          <thead className="bg-slate-100 dark:bg-slate-700">
-            <tr>
-              <th className="px-4 py-2">Solicitud</th>
-              <th className="px-4 py-2">Cliente</th>
-              <th className="px-4 py-2">Trabajo</th>
-              <th className="px-4 py-2">Estado</th>
-              <th className="px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {listado?.datos.map((servicio) => (
-              <tr key={servicio.id} className="border-t border-slate-200 dark:border-slate-700">
-                <td className="px-4 py-2">{new Date(servicio.fechaSolicitud).toLocaleDateString()}</td>
-                <td className="px-4 py-2">{nombreCliente(servicio.clienteId)}</td>
-                <td className="px-4 py-2">{servicio.descripcionTrabajo}</td>
-                <td className="px-4 py-2">{servicio.estado}</td>
-                <td className="px-4 py-2">
-                  <button
-                    type="button"
-                    onClick={() => setVerDetalle(servicio.id)}
-                    className="text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
-                  >
-                    Ver / Gestionar
-                  </button>
-                </td>
+        <>
+          <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
+            <thead className="bg-slate-100 dark:bg-slate-700">
+              <tr>
+                <th className="px-4 py-2">Solicitud</th>
+                <th className="px-4 py-2">Cliente</th>
+                <th className="px-4 py-2">Trabajo</th>
+                <th className="px-4 py-2">Estado</th>
+                <th className="px-4 py-2">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {listado?.datos.map((servicio) => {
+                const visual = ESTADOS_SERVICIO_CAMPO_VISUAL[servicio.estado]
+                const Icono = visual.icono
+                return (
+                  <tr key={servicio.id} className="border-t border-slate-200 dark:border-slate-700">
+                    <td className="px-4 py-2">{new Date(servicio.fechaSolicitud).toLocaleDateString()}</td>
+                    <td className="px-4 py-2">{nombreCliente(servicio.clienteId)}</td>
+                    <td className="px-4 py-2">{servicio.descripcionTrabajo}</td>
+                    <td className="px-4 py-2">
+                      <span className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-xs font-medium ${visual.clase}`}>
+                        <Icono className="h-3 w-3" />
+                        {visual.etiqueta}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                      <button
+                        type="button"
+                        onClick={() => setVerDetalle(servicio.id)}
+                        className="text-[var(--color-apoyo)] underline hover:text-slate-900 dark:text-slate-300"
+                      >
+                        Ver / Gestionar
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          <ControlesPaginacion pagina={pagina} tamanoPagina={TAMANO_PAGINA} total={listado?.total ?? 0} onCambiarPagina={setPagina} />
+        </>
       )}
 
       {solicitando && (
         <SolicitarServicioCampoDialog
           clientes={clientes?.datos ?? []}
           usuarios={usuarios?.datos ?? []}
-          onGuardar={(datos) => {
-            setError(null)
-            mutacionSolicitar.mutate(datos)
-          }}
+          onGuardar={(datos) => mutacionSolicitar.mutate(datos)}
           onCancelar={() => setSolicitando(false)}
           guardando={mutacionSolicitar.isPending}
         />

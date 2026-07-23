@@ -6,6 +6,19 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.27.0] - 23/07/2026
+
+### Agregado
+
+- **Mejora de Servicios de Campo — octavo pedido de mejora post-Fase 4.** Antes de diseñar nada se confirmó, leyendo el propio dominio (`ServicioCampo.cs`), que **solo existen 2 estados alcanzables en la práctica: Solicitado → Cerrado** — el propio código dice explícitamente "más simple que Taller: no tiene una máquina de estados con aprobación formal" y `Cerrar()` exige `Estado == Solicitado`, saltando directo a `Cerrado`. `Agendado`/`EnEjecucion` están declarados en el enum pero ningún comando los persiste jamás — mismo caso que `EnReparacion`/`EnPruebas` en Taller, no un bug. Confirmado además con datos reales: de los servicios de campo existentes, los únicos estados presentes son `Solicitado` y `Cerrado`.
+  - Con esto confirmado, y consultado con el propietario, se descartó forzar un tablero Kanban (se vería vacío/engañoso con solo 2 columnas reales) a favor de una **tabla mejorada** con el mismo patrón ya aplicado a Clientes/Proveedores/Productos/Usuarios: filtro por estado (solo ofrece Solicitado/Cerrado, no los 2 estados que nunca ocurren), paginación real (`ControlesPaginacion`, reutilizado), badge de color por estado (nuevo `estadoServicioCampoVisual.ts`: Solicitado en `--color-secundario`/amarillo de marca — "pendiente de atención" —, Cerrado en `--color-terciario`/gris — "hecho", mismo criterio que Taller para su estado `Entregado`), y notificaciones de éxito/error (`useToast`, reemplazando el `useState<string|null>` + `<p roja>` de siempre).
+  - **No se agregó un buscador de texto libre** en esta pantalla — a diferencia de Taller (que carga hasta 200 órdenes para el tablero Kanban, haciendo válido un filtro cliente-side), esta página usa paginación real de 20 en 20; combinar un buscador cliente-side con paginación de servidor daría resultados incompletos o engañosos, así que se limitó al filtro de estado que sí es 100% correcto contra el servidor.
+  - **Campo "Estado final" del cierre**: sigue siendo texto libre (así lo define el backend, no es un enum) pero ahora ofrece sugerencias (`<datalist>`: Completado, Completado con observaciones, Pendiente de repuesto, Cancelado por el cliente) sin convertirlo en un catálogo cerrado que el negocio nunca pidió.
+
+Verificado: `npm run build`/`npx oxlint` limpios; confirmado contra Postgres real que el filtro por estado funciona correctamente y que, de los servicios de campo existentes, ninguno está ni podría estar en Agendado/EnEjecucion. Sin cambios de backend.
+
+---
+
 ## [0.26.0] - 23/07/2026
 
 ### Agregado

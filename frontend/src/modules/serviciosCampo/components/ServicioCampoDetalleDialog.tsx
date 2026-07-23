@@ -3,9 +3,11 @@ import { useState } from 'react'
 import type { MedioPago } from '@/modules/catalogos/api/catalogosApi'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import { type DetalleConsumoCampoInput, serviciosCampoApi } from '@/modules/serviciosCampo/api/serviciosCampoApi'
+import { ESTADOS_SERVICIO_CAMPO_VISUAL } from '@/modules/serviciosCampo/utils/estadoServicioCampoVisual'
 import type { Usuario } from '@/modules/usuarios/api/usuariosApi'
 import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { useToast } from '@/shared/hooks/useToast'
 
 interface ServicioCampoDetalleDialogProps {
   servicioCampoId: string
@@ -16,7 +18,7 @@ interface ServicioCampoDetalleDialogProps {
 
 export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosPago, onCerrar }: ServicioCampoDetalleDialogProps) {
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
+  const { mostrarExito, mostrarError } = useToast()
 
   const { data: servicio, isLoading } = useQuery({
     queryKey: ['servicios-campo', servicioCampoId],
@@ -30,11 +32,14 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
     queryClient.invalidateQueries({ queryKey: ['servicios-campo', 'lista'] })
   }
 
-  const onError = (e: unknown, mensaje: string) => setError(e instanceof ApiError ? e.message : mensaje)
+  const onError = (e: unknown, mensaje: string) => mostrarError(e instanceof ApiError ? e.message : mensaje)
 
   const mutacionCotizar = useMutation({
     mutationFn: (montoEstimado: number) => serviciosCampoApi.cotizar(servicioCampoId, montoEstimado),
-    onSuccess: invalidar,
+    onSuccess: () => {
+      invalidar()
+      mostrarExito('Cotización registrada correctamente.')
+    },
     onError: (e) => onError(e, 'No se pudo registrar la cotización.'),
   })
 
@@ -48,7 +53,10 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
       estadoFinal: string
       observaciones: string | null
     }) => serviciosCampoApi.cerrar(servicioCampoId, consumos, estadoFinal, observaciones),
-    onSuccess: invalidar,
+    onSuccess: () => {
+      invalidar()
+      mostrarExito('Servicio cerrado correctamente.')
+    },
     onError: (e) => onError(e, 'No se pudo cerrar el servicio.'),
   })
 
@@ -64,7 +72,10 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
       saldoPendiente: number | null
       usuarioAutorizoSaldoId: string | null
     }) => serviciosCampoApi.cobrar(servicioCampoId, medioPagoId, montoPagado, saldoPendiente, usuarioAutorizoSaldoId),
-    onSuccess: invalidar,
+    onSuccess: () => {
+      invalidar()
+      mostrarExito('Cobro registrado correctamente.')
+    },
     onError: (e) => onError(e, 'No se pudo registrar el cobro.'),
   })
 
@@ -82,12 +93,17 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
           <>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Servicio de campo</h2>
-              <span className="rounded bg-slate-100 px-2 py-1 text-xs font-medium text-[var(--color-apoyo)] dark:bg-slate-700 dark:text-slate-200">
-                {servicio.estado}
-              </span>
+              {(() => {
+                const visual = ESTADOS_SERVICIO_CAMPO_VISUAL[servicio.estado]
+                const Icono = visual.icono
+                return (
+                  <span className={`flex items-center gap-1 rounded border px-2 py-1 text-xs font-medium ${visual.clase}`}>
+                    <Icono className="h-3.5 w-3.5" />
+                    {visual.etiqueta}
+                  </span>
+                )
+              })()}
             </div>
-
-            {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
 
             <p className="mb-1 text-sm text-slate-600 dark:text-slate-400">
               <span className="font-semibold">Trabajo:</span> {servicio.descripcionTrabajo}
@@ -139,18 +155,12 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
                 <div className="space-y-4">
                   <FormularioCotizar
                     guardando={mutacionCotizar.isPending}
-                    onGuardar={(monto) => {
-                      setError(null)
-                      mutacionCotizar.mutate(monto)
-                    }}
+                    onGuardar={(monto) => mutacionCotizar.mutate(monto)}
                   />
                   <FormularioCerrar
                     productos={productos}
                     guardando={mutacionCerrar.isPending}
-                    onGuardar={(datos) => {
-                      setError(null)
-                      mutacionCerrar.mutate(datos)
-                    }}
+                    onGuardar={(datos) => mutacionCerrar.mutate(datos)}
                   />
                 </div>
               )}
@@ -160,10 +170,7 @@ export function ServicioCampoDetalleDialog({ servicioCampoId, productos, mediosP
                   mediosPago={mediosPago}
                   usuarios={usuarios?.datos ?? []}
                   guardando={mutacionCobrar.isPending}
-                  onGuardar={(datos) => {
-                    setError(null)
-                    mutacionCobrar.mutate(datos)
-                  }}
+                  onGuardar={(datos) => mutacionCobrar.mutate(datos)}
                 />
               )}
             </div>
@@ -280,8 +287,16 @@ function FormularioCerrar({
         value={estadoFinal}
         onChange={(e) => setEstadoFinal(e.target.value)}
         placeholder="Completado, Pendiente de repuesto, etc."
+        list="sugerencias-estado-final"
         className="mb-2 w-full rounded border border-slate-300 px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
       />
+      {/* Sugerencias, no un catálogo cerrado — el backend guarda este campo como texto libre. */}
+      <datalist id="sugerencias-estado-final">
+        <option value="Completado" />
+        <option value="Completado con observaciones" />
+        <option value="Pendiente de repuesto" />
+        <option value="Cancelado por el cliente" />
+      </datalist>
 
       <label className="mb-1 block text-xs text-[var(--color-terciario)]">Observaciones (opcional)</label>
       <textarea
