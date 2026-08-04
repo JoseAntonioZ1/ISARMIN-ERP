@@ -72,13 +72,16 @@ using ISARMIN.Application.Modulos.Reportes.Queries.ReporteServiciosCampo;
 using ISARMIN.Application.Modulos.Reportes.Queries.ReporteCaja;
 using ISARMIN.Application.Modulos.Usuarios.Commands.AsignarPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CambiarEstadoUsuario;
+using ISARMIN.Application.Modulos.Usuarios.Commands.CerrarSesion;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearRol;
 using ISARMIN.Application.Modulos.Usuarios.Commands.CrearUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.EditarRol;
 using ISARMIN.Application.Modulos.Usuarios.Commands.EditarUsuario;
 using ISARMIN.Application.Modulos.Usuarios.Commands.IniciarSesion;
+using ISARMIN.Application.Modulos.Usuarios.Commands.RenovarSesion;
 using ISARMIN.Application.Modulos.Usuarios.Commands.RestablecerCredencial;
 using ISARMIN.Application.Modulos.Usuarios.DTOs;
+using ISARMIN.Application.Modulos.Usuarios.Servicios;
 using ISARMIN.Application.Modulos.Usuarios.Queries.ListarRoles;
 using ISARMIN.Application.Modulos.Usuarios.Queries.ListarRolesConPermisos;
 using ISARMIN.Application.Modulos.Usuarios.Queries.ListarUsuarios;
@@ -95,7 +98,10 @@ public static class DependencyInjection
         services.AddAutoMapper(cfg => { }, applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly);
 
+        services.AddScoped<EmisorSesion>();
         services.AddScoped<ICommandHandler<IniciarSesionCommand, SesionDto>, IniciarSesionCommandHandler>();
+        services.AddScoped<ICommandHandler<RenovarSesionCommand, SesionDto>, RenovarSesionCommandHandler>();
+        services.AddScoped<ICommandHandler<CerrarSesionCommand, Unit>, CerrarSesionCommandHandler>();
         services.AddScoped<ICommandHandler<CrearUsuarioCommand, UsuarioDto>, CrearUsuarioCommandHandler>();
         services.AddScoped<ICommandHandler<EditarUsuarioCommand, UsuarioDto>, EditarUsuarioCommandHandler>();
         services.AddScoped<ICommandHandler<CambiarEstadoUsuarioCommand, Unit>, CambiarEstadoUsuarioCommandHandler>();

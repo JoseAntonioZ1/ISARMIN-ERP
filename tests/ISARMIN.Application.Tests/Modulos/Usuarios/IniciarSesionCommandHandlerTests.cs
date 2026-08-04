@@ -3,6 +3,7 @@ using ISARMIN.Application.Common;
 using ISARMIN.Application.Common.Excepciones;
 using ISARMIN.Application.Modulos.Usuarios;
 using ISARMIN.Application.Modulos.Usuarios.Commands.IniciarSesion;
+using ISARMIN.Application.Modulos.Usuarios.Servicios;
 using ISARMIN.Domain.Entities.Identidad;
 using Moq;
 using Xunit;
@@ -16,17 +17,22 @@ public class IniciarSesionCommandHandlerTests
     private readonly Mock<IUsuarioRepository> _usuarioRepository = new();
     private readonly Mock<IPasswordHasher> _passwordHasher = new();
     private readonly Mock<IGeneradorTokenJwt> _generadorTokenJwt = new();
+    private readonly Mock<IGeneradorTokenOpaco> _generadorTokenOpaco = new();
+    private readonly Mock<IRefreshTokenRepository> _refreshTokenRepository = new();
     private readonly Mock<IFechaHoraProvider> _fechaHoraProvider = new();
     private readonly IValidator<IniciarSesionCommand> _validator = new IniciarSesionCommandValidator();
 
     private IniciarSesionCommandHandler CrearHandler()
     {
         _fechaHoraProvider.Setup(f => f.UtcAhora).Returns(Ahora);
+        _generadorTokenOpaco.Setup(g => g.Generar()).Returns("refresh-token-crudo");
+
+        var emisorSesion = new EmisorSesion(_generadorTokenJwt.Object, _generadorTokenOpaco.Object, _refreshTokenRepository.Object);
 
         return new IniciarSesionCommandHandler(
             _usuarioRepository.Object,
             _passwordHasher.Object,
-            _generadorTokenJwt.Object,
+            emisorSesion,
             _fechaHoraProvider.Object,
             _validator);
     }

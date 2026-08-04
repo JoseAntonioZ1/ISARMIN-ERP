@@ -20,6 +20,7 @@ public class IsarminDbContext : DbContext
     }
 
     public DbSet<Usuario> Usuarios => Set<Usuario>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Rol> Roles => Set<Rol>();
     public DbSet<Permiso> Permisos => Set<Permiso>();
     public DbSet<UsuarioRol> UsuarioRoles => Set<UsuarioRol>();

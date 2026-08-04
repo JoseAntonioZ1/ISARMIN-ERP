@@ -30,6 +30,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IRolRepository, RolRepository>();
         services.AddScoped<ICategoriaRepository, CategoriaRepository>();
         services.AddScoped<IMedioPagoRepository, MedioPagoRepository>();
@@ -49,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<IReporteRepository, ReporteRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
         services.AddSingleton<IGeneradorTokenJwt, GeneradorTokenJwt>();
+        services.AddSingleton<IGeneradorTokenOpaco, GeneradorTokenOpaco>();
         services.AddSingleton<IFechaHoraProvider, FechaHoraProvider>();
 
         return services;

@@ -1,10 +1,13 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using ISARMIN.API.Authorization;
 using ISARMIN.API.Middleware;
 using ISARMIN.Application;
 using ISARMIN.Infrastructure;
+using ISARMIN.Infrastructure.Salud;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
@@ -59,6 +62,37 @@ builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+builder.Services.AddHealthChecks().AddCheck<PostgresHealthCheck>("postgresql");
+
+// Límite global permisivo (red de seguridad para todo el API) + límite estricto
+// adicional para autenticación (login/refresh), que es el blanco típico de fuerza
+// bruta. El límite global se aplica siempre; el de "Autenticacion" se suma encima
+// solo en los endpoints marcados con [EnableRateLimiting("Autenticacion")].
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(contexto =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: contexto.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = 300,
+                QueueLimit = 0,
+            }));
+
+    options.AddPolicy("Autenticacion", contexto =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: contexto.Connection.RemoteIpAddress?.ToString() ?? "desconocido",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                Window = TimeSpan.FromMinutes(1),
+                PermitLimit = 10,
+                QueueLimit = 0,
+            }));
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -96,9 +130,12 @@ app.UseHttpsRedirection();
 
 app.UseCors("FrontendDesarrollo");
 
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.Run();

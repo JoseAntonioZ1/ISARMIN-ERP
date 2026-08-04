@@ -2,6 +2,7 @@ using FluentValidation;
 using ISARMIN.Application.Common;
 using ISARMIN.Application.Common.Excepciones;
 using ISARMIN.Application.Modulos.Usuarios.DTOs;
+using ISARMIN.Application.Modulos.Usuarios.Servicios;
 
 namespace ISARMIN.Application.Modulos.Usuarios.Commands.IniciarSesion;
 
@@ -9,20 +10,20 @@ public class IniciarSesionCommandHandler : ICommandHandler<IniciarSesionCommand,
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IGeneradorTokenJwt _generadorTokenJwt;
+    private readonly EmisorSesion _emisorSesion;
     private readonly IFechaHoraProvider _fechaHoraProvider;
     private readonly IValidator<IniciarSesionCommand> _validator;
 
     public IniciarSesionCommandHandler(
         IUsuarioRepository usuarioRepository,
         IPasswordHasher passwordHasher,
-        IGeneradorTokenJwt generadorTokenJwt,
+        EmisorSesion emisorSesion,
         IFechaHoraProvider fechaHoraProvider,
         IValidator<IniciarSesionCommand> validator)
     {
         _usuarioRepository = usuarioRepository;
         _passwordHasher = passwordHasher;
-        _generadorTokenJwt = generadorTokenJwt;
+        _emisorSesion = emisorSesion;
         _fechaHoraProvider = fechaHoraProvider;
         _validator = validator;
     }
@@ -61,14 +62,10 @@ public class IniciarSesionCommandHandler : ICommandHandler<IniciarSesionCommand,
         usuario.RegistrarInicioSesionExitoso();
 
         var permisos = await _usuarioRepository.ObtenerPermisosEfectivosAsync(usuario.Id, cancellationToken);
-        var token = _generadorTokenJwt.Generar(usuario, permisos);
+        var sesion = _emisorSesion.Emitir(usuario, permisos, ahora);
 
         await _usuarioRepository.GuardarCambiosAsync(cancellationToken);
 
-        return new SesionDto(
-            token.Token,
-            token.ExpiraEnUtc,
-            new UsuarioSesionDto(usuario.Id, usuario.Nombre),
-            permisos);
+        return sesion;
     }
 }
