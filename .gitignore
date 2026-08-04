@@ -14,6 +14,10 @@ publish/
 appsettings.*.local.json
 secrets.json
 
+# Credenciales de Google Drive (backup service) - nunca deben versionarse
+*credenciales*.json
+*credentials*.json
+
 # === Node / Frontend ===
 node_modules/
 dist/
