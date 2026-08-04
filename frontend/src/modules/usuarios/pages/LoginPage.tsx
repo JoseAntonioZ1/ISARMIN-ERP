@@ -47,7 +47,7 @@ export function LoginPage() {
   const mutacionLogin = useMutation({
     mutationFn: authApi.login,
     onSuccess: (sesion) => {
-      establecerSesion({ ...sesion.usuario, permisos: sesion.permisos }, sesion.token)
+      establecerSesion({ ...sesion.usuario, permisos: sesion.permisos }, sesion.token, sesion.refreshToken)
       navigate('/', { replace: true })
     },
   })

@@ -10,7 +10,8 @@ interface UsuarioSesion {
 interface SessionState {
   usuario: UsuarioSesion | null
   token: string | null
-  establecerSesion: (usuario: UsuarioSesion, token: string) => void
+  refreshToken: string | null
+  establecerSesion: (usuario: UsuarioSesion, token: string, refreshToken: string) => void
   cerrarSesion: () => void
   tienePermiso: (permiso: string) => boolean
 }
@@ -20,8 +21,9 @@ export const useSessionStore = create<SessionState>()(
     (set, get) => ({
       usuario: null,
       token: null,
-      establecerSesion: (usuario, token) => set({ usuario, token }),
-      cerrarSesion: () => set({ usuario: null, token: null }),
+      refreshToken: null,
+      establecerSesion: (usuario, token, refreshToken) => set({ usuario, token, refreshToken }),
+      cerrarSesion: () => set({ usuario: null, token: null, refreshToken: null }),
       tienePermiso: (permiso) => get().usuario?.permisos.includes(permiso) ?? false,
     }),
     { name: 'isarmin-sesion' },

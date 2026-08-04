@@ -22,7 +22,50 @@ export class ApiError extends Error {
   }
 }
 
-async function request<TRespuesta>(path: string, init?: RequestInit): Promise<TRespuesta> {
+interface SesionRenovada {
+  token: string
+  refreshToken: string
+  usuario: { id: string; nombre: string }
+  permisos: string[]
+}
+
+// Varias peticiones pueden recibir un 401 al mismo tiempo cuando el token expira;
+// se comparte una sola llamada de refresh en vuelo para no disparar una por cada una.
+let renovacionEnCurso: Promise<string | null> | null = null
+
+async function renovarSesion(): Promise<string | null> {
+  renovacionEnCurso ??= (async () => {
+    const refreshToken = useSessionStore.getState().refreshToken
+    if (!refreshToken) return null
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      })
+
+      if (!response.ok) {
+        useSessionStore.getState().cerrarSesion()
+        return null
+      }
+
+      const sesion = (await response.json()) as SesionRenovada
+      useSessionStore
+        .getState()
+        .establecerSesion({ ...sesion.usuario, permisos: sesion.permisos }, sesion.token, sesion.refreshToken)
+      return sesion.token
+    } catch {
+      return null
+    }
+  })().finally(() => {
+    renovacionEnCurso = null
+  })
+
+  return renovacionEnCurso
+}
+
+async function request<TRespuesta>(path: string, init?: RequestInit, reintentando = false): Promise<TRespuesta> {
   const token = useSessionStore.getState().token
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
@@ -33,6 +76,13 @@ async function request<TRespuesta>(path: string, init?: RequestInit): Promise<TR
       ...init?.headers,
     },
   })
+
+  if (response.status === 401 && !reintentando && path !== '/auth/login' && path !== '/auth/refresh') {
+    const nuevoToken = await renovarSesion()
+    if (nuevoToken) {
+      return request<TRespuesta>(path, init, true)
+    }
+  }
 
   if (!response.ok) {
     const cuerpo = await response.json().catch(() => undefined)

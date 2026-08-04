@@ -3,6 +3,7 @@ import {
   Home,
   LogOut,
   MapPin,
+  Menu,
   Package,
   Receipt,
   Settings,
@@ -12,6 +13,7 @@ import {
   Wallet,
   Wrench,
 } from 'lucide-react'
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router'
 import { authApi } from '@/modules/usuarios/api/authApi'
 import { LOGO_PREDETERMINADO } from '@/shared/constants/branding'
@@ -63,12 +65,14 @@ const GRUPOS_NAV: GrupoNav[] = [
 export function AppLayout() {
   const navigate = useNavigate()
   const usuario = useSessionStore((s) => s.usuario)
+  const refreshToken = useSessionStore((s) => s.refreshToken)
   const cerrarSesion = useSessionStore((s) => s.cerrarSesion)
   const { data: branding } = useBranding()
+  const [menuAbierto, setMenuAbierto] = useState(false)
 
   const handleLogout = async () => {
     try {
-      await authApi.logout()
+      await authApi.logout(refreshToken)
     } finally {
       cerrarSesion()
       navigate('/login', { replace: true })
@@ -77,7 +81,19 @@ export function AppLayout() {
 
   return (
     <div className="flex h-screen bg-[var(--color-fondo)] dark:bg-slate-900">
-      <aside className="flex w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800">
+      {menuAbierto && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={() => setMenuAbierto(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white transition-transform duration-200 dark:border-slate-700 dark:bg-slate-800 md:static md:translate-x-0 ${
+          menuAbierto ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-4 dark:border-slate-700">
           <img src={branding?.logo ?? LOGO_PREDETERMINADO} alt="Logo" className="h-8 w-8 flex-shrink-0 object-contain" />
           <span className="truncate font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</span>
@@ -97,8 +113,9 @@ export function AppLayout() {
                     key={item.to}
                     to={item.to}
                     end={item.fin}
+                    onClick={() => setMenuAbierto(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 rounded px-3 py-2 text-sm transition-colors ${
+                      `flex items-center gap-3 rounded px-3 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-principal)] ${
                         isActive
                           ? 'bg-[var(--color-principal)] text-white'
                           : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'
@@ -119,7 +136,7 @@ export function AppLayout() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
+            className="flex w-full items-center gap-3 rounded px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-principal)] dark:text-slate-300 dark:hover:bg-slate-700"
           >
             <LogOut className="h-4 w-4 flex-shrink-0" />
             Cerrar sesión
@@ -127,9 +144,23 @@ export function AppLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-6">
-        <Outlet />
-      </main>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <header className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800 md:hidden">
+          <button
+            type="button"
+            onClick={() => setMenuAbierto(true)}
+            aria-label="Abrir menú"
+            className="rounded p-2 text-slate-600 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-principal)] dark:text-slate-300 dark:hover:bg-slate-700"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <span className="truncate font-semibold text-slate-800 dark:text-slate-100">{branding?.razonSocial ?? 'ISARMIN ERP'}</span>
+        </header>
+
+        <main className="flex-1 overflow-y-auto p-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
