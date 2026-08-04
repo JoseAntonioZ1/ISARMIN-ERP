@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 
 interface KardexDialogProps {
   producto: Producto
@@ -20,10 +21,11 @@ export function KardexDialog({ producto, onCerrar }: KardexDialogProps) {
         <p className="mb-4 text-sm text-[var(--color-terciario)] dark:text-slate-400">Stock actual: {producto.stockActual}</p>
 
         {isLoading ? (
-          <p className="text-[var(--color-terciario)]">Cargando...</p>
+          <EstadoCarga />
         ) : !movimientos || movimientos.length === 0 ? (
           <p className="text-[var(--color-terciario)]">Aún no hay movimientos registrados para este producto.</p>
         ) : (
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -44,6 +46,7 @@ export function KardexDialog({ producto, onCerrar }: KardexDialogProps) {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         <div className="mt-5 flex justify-end">

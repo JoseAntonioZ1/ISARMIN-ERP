@@ -13,3 +13,9 @@
 body {
   margin: 0;
 }
+
+/* Indicador de foco para navegación por teclado — antes no existía ninguno en el sistema. */
+:focus-visible {
+  outline: 2px solid var(--color-principal);
+  outline-offset: 2px;
+}

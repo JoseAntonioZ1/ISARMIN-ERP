@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { type Compra, comprasApi } from '@/modules/compras/api/comprasApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
 import { proveedoresApi } from '@/modules/proveedores/api/proveedoresApi'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 
 export function ComprasHistorialPage() {
   const [verDetalle, setVerDetalle] = useState<Compra | null>(null)
@@ -33,8 +34,9 @@ export function ComprasHistorialPage() {
       <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Historial de Compras</h1>
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
             <tr>
@@ -67,6 +69,7 @@ export function ComprasHistorialPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {verDetalle && (
@@ -79,6 +82,7 @@ export function ComprasHistorialPage() {
               {nombreProveedor(verDetalle.proveedorId)} — {verDetalle.fecha}
             </p>
 
+            <div className="overflow-x-auto">
             <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
               <thead className="bg-slate-100 dark:bg-slate-700">
                 <tr>
@@ -99,6 +103,7 @@ export function ComprasHistorialPage() {
                 ))}
               </tbody>
             </table>
+            </div>
 
             <p className="mt-3 text-right text-sm font-semibold text-slate-800 dark:text-slate-100">
               Total: {verDetalle.total.toFixed(2)}

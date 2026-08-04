@@ -4,6 +4,7 @@ import { clientesApi } from '@/modules/clientes/api/clientesApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
 import { VentaDetalleDialog } from '@/modules/ventas/components/VentaDetalleDialog'
 import { ventasApi } from '@/modules/ventas/api/ventasApi'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 
 export function VentasHistorialPage() {
   const [verDetalle, setVerDetalle] = useState<string | null>(null)
@@ -30,8 +31,9 @@ export function VentasHistorialPage() {
       <h1 className="mb-4 text-xl font-semibold text-slate-800 dark:text-slate-100">Historial de Ventas</h1>
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
             <tr>
@@ -64,6 +66,7 @@ export function VentasHistorialPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {verDetalle && (

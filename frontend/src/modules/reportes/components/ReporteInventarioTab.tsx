@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { reportesApi } from '@/modules/reportes/api/reportesApi'
 import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { GraficoBarras } from '@/shared/components/GraficoBarras'
 import { exportarCsv } from '@/shared/utils/exportarCsv'
 
@@ -11,7 +12,7 @@ export function ReporteInventarioTab() {
   })
 
   if (isLoading || !reporte) {
-    return <p className="text-[var(--color-terciario)]">Cargando...</p>
+    return <EstadoCarga />
   }
 
   const enQuiebre = reporte.productosEnQuiebre.length
@@ -54,6 +55,7 @@ export function ReporteInventarioTab() {
       {reporte.productosEnQuiebre.length > 0 && (
         <div className="mb-4">
           <h3 className="mb-2 text-sm font-semibold text-[var(--color-secundario)]">Productos en quiebre</h3>
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -74,10 +76,12 @@ export function ReporteInventarioTab() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       <h3 className="mb-2 text-sm font-semibold text-[var(--color-apoyo)] dark:text-slate-300">Todos los productos</h3>
+      <div className="overflow-x-auto">
       <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
         <thead className="bg-slate-100 dark:bg-slate-700">
           <tr>
@@ -98,6 +102,7 @@ export function ReporteInventarioTab() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

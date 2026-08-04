@@ -10,6 +10,7 @@ import { RegistrarRecepcionDialog } from '@/modules/taller/components/RegistrarR
 import { generarComprobanteRecepcionPdf } from '@/modules/taller/utils/comprobanteRecepcionPdf'
 import { COLUMNAS_KANBAN_OT, ESTADOS_OT_VISUAL } from '@/modules/taller/utils/estadoOtVisual'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { useBranding } from '@/shared/hooks/useBranding'
 
 export function TallerPage() {
@@ -95,7 +96,7 @@ export function TallerPage() {
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {isLoading ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
         <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto pb-2">
           {[...COLUMNAS_KANBAN_OT, 'Rechazado' as const].map((estado) => {

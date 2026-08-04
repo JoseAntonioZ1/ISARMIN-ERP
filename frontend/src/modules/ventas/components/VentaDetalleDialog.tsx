@@ -6,6 +6,7 @@ import type { Producto } from '@/modules/productos/api/productosApi'
 import { type DetalleDevolucionInput, ventasApi } from '@/modules/ventas/api/ventasApi'
 import { generarComprobantePdf } from '@/modules/ventas/utils/comprobantePdf'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { useBranding } from '@/shared/hooks/useBranding'
 
 interface VentaDetalleDialogProps {
@@ -68,7 +69,7 @@ export function VentaDetalleDialog({ ventaId, productos, onCerrar }: VentaDetall
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6 shadow-lg dark:bg-slate-800">
         {isLoading || !venta ? (
-          <p className="text-[var(--color-terciario)]">Cargando...</p>
+          <EstadoCarga />
         ) : (
           <>
             <div className="mb-4 flex items-center justify-between">

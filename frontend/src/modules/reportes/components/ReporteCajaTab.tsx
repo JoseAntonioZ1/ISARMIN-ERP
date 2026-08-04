@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { reportesApi } from '@/modules/reportes/api/reportesApi'
 import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { GraficoBarras } from '@/shared/components/GraficoBarras'
 import { exportarCsv } from '@/shared/utils/exportarCsv'
 
@@ -55,7 +56,7 @@ export function ReporteCajaTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
         <>
           <div className="mb-4 grid grid-cols-3 gap-4">
@@ -84,6 +85,7 @@ export function ReporteCajaTab() {
             />
           </div>
 
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -106,6 +108,7 @@ export function ReporteCajaTab() {
               ))}
             </tbody>
           </table>
+          </div>
         </>
       )}
     </div>

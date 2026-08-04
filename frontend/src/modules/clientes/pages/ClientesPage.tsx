@@ -103,6 +103,7 @@ export function ClientesPage() {
         <EstadoVacio mensaje="No se encontraron clientes." />
       ) : (
         <>
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -144,6 +145,7 @@ export function ClientesPage() {
               ))}
             </tbody>
           </table>
+          </div>
           <ControlesPaginacion pagina={pagina} tamanoPagina={TAMANO_PAGINA} total={listado?.total ?? 0} onCambiarPagina={setPagina} />
         </>
       )}

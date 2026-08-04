@@ -162,7 +162,12 @@ export function CarritoPanelPos({
               <li key={linea.productoId} className="rounded-lg border border-slate-200 p-2 dark:border-slate-700">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{linea.nombre}</p>
-                  <button type="button" onClick={() => onQuitar(linea.productoId)} className="text-red-600 hover:text-red-800">
+                  <button
+                    type="button"
+                    onClick={() => onQuitar(linea.productoId)}
+                    aria-label={`Quitar ${linea.nombre} del carrito`}
+                    className="text-red-600 hover:text-red-800"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -171,6 +176,7 @@ export function CarritoPanelPos({
                     <button
                       type="button"
                       onClick={() => onCambiarCantidad(linea.productoId, Math.max(1, linea.cantidad - 1))}
+                      aria-label={`Reducir cantidad de ${linea.nombre}`}
                       className="rounded border border-slate-300 p-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"
                     >
                       <Minus className="h-3 w-3" />
@@ -179,6 +185,7 @@ export function CarritoPanelPos({
                     <button
                       type="button"
                       onClick={() => onCambiarCantidad(linea.productoId, linea.cantidad + 1)}
+                      aria-label={`Aumentar cantidad de ${linea.nombre}`}
                       className="rounded border border-slate-300 p-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700"
                     >
                       <Plus className="h-3 w-3" />
@@ -298,6 +305,7 @@ export function CarritoPanelPos({
             <button
               type="button"
               onClick={() => setPagosAdicionales(pagosAdicionales.filter((_, i) => i !== index))}
+              aria-label="Quitar este pago adicional"
               className="text-red-600 hover:text-red-800"
             >
               <Trash2 className="h-4 w-4" />

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import type { Producto } from '@/modules/productos/api/productosApi'
 import { productosApi } from '@/modules/productos/api/productosApi'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 
 interface ProductoBuscadorGridProps {
   categoriaId: string | null
@@ -73,7 +74,7 @@ export function ProductoBuscadorGrid({
 
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         {isLoading ? (
-          <p className="text-[var(--color-terciario)]">Cargando...</p>
+          <EstadoCarga />
         ) : productos?.datos.length === 0 ? (
           <p className="text-[var(--color-terciario)]">Sin productos que coincidan con la búsqueda.</p>
         ) : (

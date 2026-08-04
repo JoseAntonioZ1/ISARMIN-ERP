@@ -5,6 +5,7 @@ import type { EstadoServicioCampo } from '@/modules/serviciosCampo/api/servicios
 import { ESTADOS_SERVICIO_CAMPO_VISUAL } from '@/modules/serviciosCampo/utils/estadoServicioCampoVisual'
 import { usuariosApi } from '@/modules/usuarios/api/usuariosApi'
 import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { GraficoBarras } from '@/shared/components/GraficoBarras'
 import { exportarCsv } from '@/shared/utils/exportarCsv'
 
@@ -90,7 +91,7 @@ export function ReporteServiciosCampoTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
         <>
           <div className="mb-4 rounded-lg bg-white p-4 shadow-sm dark:bg-slate-800">
@@ -103,6 +104,7 @@ export function ReporteServiciosCampoTab() {
             <GraficoBarras datos={conteoPorEstado} />
           </div>
 
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -123,6 +125,7 @@ export function ReporteServiciosCampoTab() {
               ))}
             </tbody>
           </table>
+          </div>
         </>
       )}
     </div>

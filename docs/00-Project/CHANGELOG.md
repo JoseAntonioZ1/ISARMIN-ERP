@@ -6,6 +6,35 @@ Todos los cambios importantes del proyecto serán registrados en este documento.
 
 ---
 
+## [0.30.0] - 04/08/2026
+
+### Agregado
+
+- **Segunda ronda de mejoras de diseño**, a partir de una auditoría de UX/accesibilidad hecha con grep sobre los 65 archivos `.tsx` del frontend (no impresiones generales).
+  - **Responsive real, por primera vez**: antes 0 de 15 módulos usaban algún breakpoint (`sm:`/`md:`/`lg:`), y el sidebar de `AppLayout` era fijo (`w-64`) y siempre visible, sin colapso. Ahora es un drawer: en `md:` y superior se comporta exactamente igual que antes (estático, siempre visible); por debajo de `md:` queda oculto detrás de un botón de menú hamburguesa en una barra superior nueva, con overlay para cerrarlo al tocar fuera. Relevante sobre todo para **Servicios de Campo**, el módulo con más probabilidad de usarse desde una tablet/celular fuera de la tienda.
+  - **`overflow-x-auto` en las 19 tablas que no lo tenían** (Clientes, Productos, Usuarios, Caja, Roles, Compras/Ventas historial, las 5 pestañas de Reportes, etc.) — antes se desbordaban en pantallas angostas en vez de scrollear dentro de su propia tarjeta.
+  - **Accesibilidad**: `:focus-visible` global en `index.css` (antes no existía ningún indicador de foco de teclado en todo el sistema), más `aria-label` en los botones de solo-ícono que sí existían (quitar/aumentar/reducir cantidad en los carritos de Ventas y Compras POS, y el nuevo botón de menú hamburguesa).
+  - **Consistencia de carga**: los 14 archivos que aún mostraban `<p>Cargando...</p>` como texto plano (Taller, historiales de Ventas/Compras, las 5 pestañas de Reportes, varios diálogos de detalle) ahora usan el mismo `EstadoCarga` (spinner) que ya usaba el resto de la aplicación.
+
+Verificado: `npm run build`/`npm run test` (7/7)/`npx oxlint` limpios. No se verificó visualmente en navegador (sin acceso a uno en este entorno) — recomendable probar el drawer móvil con las herramientas de dispositivo del navegador antes de dar por cerrado el punto de responsive.
+
+---
+
+## [0.29.0] - 04/08/2026
+
+### Agregado
+
+- **Endurecimiento para producción, a partir de la revisión general del sistema.** Backend con 256/256 pruebas pasando y build limpio; se atendieron las brechas encontradas al evaluar qué faltaba antes de un despliegue real.
+  - **Rate limiting**: límite global de 300 req/min por IP para todo el API, y uno adicional de 10 req/min por IP específico para `auth/login` y `auth/refresh` (vía `[EnableRateLimiting]`), para mitigar fuerza bruta sobre credenciales. Verificado en vivo: a partir del request 11 en la ventana de 1 minuto, el servidor responde 429.
+  - **Refresh tokens**: el JWT de acceso sigue durando 60 minutos, pero ahora el login también entrega un refresh token opaco (7 días, hash SHA-256 en BD, nunca se guarda en claro) que permite renovar la sesión sin pedir credenciales de nuevo. Nueva entidad `RefreshToken` + tabla `refresh_tokens` (migración `AgregarRefreshTokens`), endpoint `POST /auth/refresh` con **rotación** (cada uso invalida el token anterior y emite uno nuevo — verificado en vivo que reusar un refresh token ya rotado responde 401), y `POST /auth/logout` ahora sí revoca el refresh token asociado (antes no invalidaba nada del lado del servidor). El frontend detecta un 401, renueva la sesión automáticamente y reintenta la petición original una sola vez, sin interrumpir al usuario a media jornada.
+  - **Endpoint `/health`**: verifica conectividad real a PostgreSQL (`PostgresHealthCheck`, usa `CanConnectAsync`, sin librería de terceros), pensado para monitoreo/uptime si el sistema se despliega en un hosting externo.
+  - **Code-splitting por ruta** en el frontend (`React.lazy` + `Suspense`): el bundle principal bajó de 985 KB a 277 KB comprimido; cada página y librerías pesadas usadas ocasionalmente (`jsPDF`, `html2canvas`) ahora cargan solo cuando se visita esa ruta o se genera un PDF.
+  - **Vitest + Testing Library**: primera infraestructura de pruebas automatizadas del frontend (antes había cero). Se agregaron pruebas base para `useSessionStore`, `EstadoBadge` y, la más relevante, el interceptor de renovación automática de `httpClient` (confirma que renueva y reintenta ante un 401, deduplicando renovaciones concurrentes, y que propaga el error si el refresh también falla).
+
+Verificado: `dotnet build`/`dotnet test` (256/256) limpios; `npm run build`/`npm run test` (7/7)/`npx oxlint` limpios; probado en vivo contra Postgres real (login → refresh → reuso de token rotado → rate limiting).
+
+---
+
 ## [0.28.0] - 23/07/2026
 
 ### Agregado

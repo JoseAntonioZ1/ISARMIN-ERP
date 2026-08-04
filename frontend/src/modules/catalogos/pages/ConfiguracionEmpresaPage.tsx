@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { configuracionEmpresaApi } from '@/modules/catalogos/api/catalogosApi'
 import { ApiError } from '@/shared/api/httpClient'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { archivoABase64, TAMANO_MAXIMO_IMAGEN_BYTES } from '@/shared/utils/archivos'
 
 const COLOR_PRINCIPAL_PREDETERMINADO = '#EE2027' // rojo de marca ISARMIN
@@ -80,7 +81,7 @@ export function ConfiguracionEmpresaPage() {
   }
 
   if (isLoading) {
-    return <p className="text-[var(--color-terciario)]">Cargando...</p>
+    return <EstadoCarga />
   }
 
   return (

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { reportesApi } from '@/modules/reportes/api/reportesApi'
 import { BotonExportarCsv } from '@/shared/components/BotonExportarCsv'
+import { EstadoCarga } from '@/shared/components/EstadoCarga'
 import { GraficoBarras } from '@/shared/components/GraficoBarras'
 import { exportarCsv } from '@/shared/utils/exportarCsv'
 
@@ -64,7 +65,7 @@ export function ReporteVentasTab() {
       </div>
 
       {isLoading || !reporte ? (
-        <p className="text-[var(--color-terciario)]">Cargando...</p>
+        <EstadoCarga />
       ) : (
         <>
           <div className="mb-4 grid grid-cols-2 gap-4">
@@ -83,6 +84,7 @@ export function ReporteVentasTab() {
             <GraficoBarras datos={ventasPorDia} formatoValor={(v) => `S/ ${v.toFixed(2)}`} />
           </div>
 
+          <div className="overflow-x-auto">
           <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
             <thead className="bg-slate-100 dark:bg-slate-700">
               <tr>
@@ -103,6 +105,7 @@ export function ReporteVentasTab() {
               ))}
             </tbody>
           </table>
+          </div>
         </>
       )}
     </div>

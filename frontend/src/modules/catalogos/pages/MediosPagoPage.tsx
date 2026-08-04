@@ -80,6 +80,7 @@ export function MediosPagoPage() {
       ) : mediosPago?.length === 0 ? (
         <EstadoVacio mensaje="No hay medios de pago registrados." />
       ) : (
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse overflow-hidden rounded-lg bg-white text-left text-sm shadow-sm dark:bg-slate-800">
           <thead className="bg-slate-100 dark:bg-slate-700">
             <tr>
@@ -108,6 +109,7 @@ export function MediosPagoPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
 
       {cambiandoEstado && (
